@@ -12,17 +12,22 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
   bool _addToFavorites = false;
   bool _addressIsEntered = true;
 
-  String _name;
+  String _name = "";
   String _address;
-  String _port;
-  String _username;
-  String _passwordOrKey;
-  String _path;
+  String _port = "";
+  String _username = "";
+  String _passwordOrKey = "";
+  String _path = "~/";
 
   Container _buildTextField({String label, String hint, String onChangedText, bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
+        cursorColor: Theme.of(context).accentColor,
+        decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
+          labelText: label,
+          hintText: hint,
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         obscureText: isPassword,
@@ -108,16 +113,17 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         elevation: 4.0,
         child: Icon(Icons.done),
         onPressed: () {
-          if (_addToFavorites) {
-            setState(() {
-              FavoritesPage.favorites.add({});
-              FavoritesPage.favorites[FavoritesPage.favorites.length - 1].addAll(_getConnectionMap());
-            });
-          }
-          RecentlyAddedPage.recentlyAdded.add({});
-          RecentlyAddedPage.recentlyAdded[RecentlyAddedPage.recentlyAdded.length - 1].addAll(_getConnectionMap());
-          ConnectionPage().connectToSftpMap(_getConnectionMap());
-          Navigator.pop(context);
+          if (_address != null) {
+            if (_addToFavorites) {
+              setState(() {
+                FavoritesPage.favorites.insert(0, {});
+                FavoritesPage.favorites[0].addAll(_getConnectionMap());
+              });
+            }
+            RecentlyAddedPage.recentlyAdded.insert(0, {});
+            RecentlyAddedPage.recentlyAdded[0].addAll(_getConnectionMap());
+            ConnectionPage().connectToSftpMap(_getConnectionMap());
+            Navigator.pop(context);
           } else {
             setState(() {
               _addressIsEntered = false;
@@ -133,11 +139,11 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
                   margin: EdgeInsets.all(20.0),
                   child: Column(children: <Widget>[
                     _buildTextField(label: "Name", onChangedText: "name"),
-                    _buildTextField(label: "Address", onChangedText: "address"),
-                    _buildTextField(label: "Port (optional)", hint: "22", onChangedText: "port"),
+                    _buildTextField(label: "Address*", onChangedText: "address"),
+                    _buildTextField(label: "Port", hint: "22", onChangedText: "port"),
                     _buildTextField(label: "Username", onChangedText: "username"),
                     _buildTextField(label: "Password or Key", onChangedText: "passwordOrKey", isPassword: true),
-                    _buildTextField(label: "Path (optional)", onChangedText: "path"),
+                    _buildTextField(label: "Path", onChangedText: "path"),
                   ])),
               CheckboxListTile(
                 secondary: Padding(
