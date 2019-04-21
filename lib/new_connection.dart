@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'favorites_page.dart';
 import 'recently_added_page.dart';
 import 'connection.dart';
+import 'main.dart';
 
 class NewConnectionPage extends StatefulWidget {
   @override
@@ -118,6 +119,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
               setState(() {
                 FavoritesPage.favorites.insert(0, {});
                 FavoritesPage.favorites[0].addAll(_getConnectionMap());
+                MyHomePage().writeFavoriteStorageList();
               });
             }
             RecentlyAddedPage.recentlyAdded.insert(0, {});

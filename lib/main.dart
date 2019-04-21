@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
@@ -54,8 +55,22 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
-  static List<Map<String, String>> favorites = [];
-  static List<Map<String, String>> recentlyAdded = [];
+  static List<FlutterSecureStorage> favoriteStorageList = List.filled(FavoritesPage.favorites.length, FlutterSecureStorage());
+  static List<FlutterSecureStorage> recentlyAddedStorageList = List.filled(RecentlyAddedPage.recentlyAdded.length, FlutterSecureStorage());
+
+  writeFavoriteStorageList() async {
+    for (int i = 0; i < FavoritesPage.favorites.length; i++) {
+      List<String> keys = [];
+      List<String> values = [];
+      FavoritesPage.favorites[i].forEach((k, v) {
+        keys.add(k);
+        values.add(v);
+      });
+      for (int x = 0; x < FavoritesPage.favorites[i].length; x++) {
+        await favoriteStorageList[i].write(key: keys[x], value: values[x]);
+      }
+    }
+  }
 
   showConnectionDialog({
     @required BuildContext context,

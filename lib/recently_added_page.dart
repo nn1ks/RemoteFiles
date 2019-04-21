@@ -89,6 +89,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                           onPressed: () {
                             setState(() {
                               FavoritesPage.favorites.insert(0, RecentlyAddedPage.recentlyAdded[index]);
+                              MyHomePage().writeFavoriteStorageList();
                             });
                             Navigator.pop(context);
                           },
