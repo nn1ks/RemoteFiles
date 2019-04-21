@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
+import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
 import 'connection.dart';
@@ -275,12 +276,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 17.0),
                 ),
               ),
-              IconButton(
-                icon: Icon(Icons.add_circle_outline),
-                onPressed: () {
-                  _addFavorite(address: "192.168.2.2", username: "niklas", passwordOrKey: "esse850ni", path: "/mnt/server-hdd/niklas", name: "fileserver");
-                  _addRecentlyAdded(address: "192.168.2.2", username: "niklas", passwordOrKey: "esse850ni", path: "/mnt/server-hdd/niklas", name: "fileserver");
-                },
+              CustomTooltip(
+                message: "Search",
+                child: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {},
+                ),
+              ),
+              CustomTooltip(
+                message: "About RemoteFiles",
+                child: IconButton(
+                  icon: Icon(Icons.info_outline),
+                  onPressed: () {},
+                ),
               ),
             ],
           ),
