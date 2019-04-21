@@ -10,6 +10,7 @@ class NewConnectionPage extends StatefulWidget {
 
 class _NewConnectionPageState extends State<NewConnectionPage> {
   bool _addToFavorites = false;
+  bool _addressIsEntered = true;
 
   String _name;
   String _address;
@@ -22,7 +23,8 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
     return Container(
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
-        decoration: InputDecoration(labelText: label, hintText: hint),
+          errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
+        ),
         obscureText: isPassword,
         onChanged: (String value) {
           _onTextFieldChanged(value, onChangedText);
@@ -116,6 +118,11 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
           RecentlyAddedPage.recentlyAdded[RecentlyAddedPage.recentlyAdded.length - 1].addAll(_getConnectionMap());
           ConnectionPage().connectToSftpMap(_getConnectionMap());
           Navigator.pop(context);
+          } else {
+            setState(() {
+              _addressIsEntered = false;
+            });
+          }
         },
       ),
       body: SafeArea(
