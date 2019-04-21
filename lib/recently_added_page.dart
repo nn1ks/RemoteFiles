@@ -20,7 +20,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
         _output += "Address: " + RecentlyAddedPage.recentlyAdded[index]["address"];
         _addressIsInOutput = true;
       }
-      if (RecentlyAddedPage.recentlyAdded[index]["port"] != null) {
+      if (RecentlyAddedPage.recentlyAdded[index]["port"] != "") {
         if (_addressIsInOutput) {
           _output += ", ";
         }
@@ -31,10 +31,10 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
         }
         _output += "Port: 22";
       }
-      if (RecentlyAddedPage.recentlyAdded[index]["username"] != null) {
+      if (RecentlyAddedPage.recentlyAdded[index]["username"] != "") {
         _output += ", Username: " + RecentlyAddedPage.recentlyAdded[index]["username"];
       }
-      if (RecentlyAddedPage.recentlyAdded[index]["path"] != null) {
+      if (RecentlyAddedPage.recentlyAdded[index]["path"] != "") {
         _output += ", Path: " + RecentlyAddedPage.recentlyAdded[index]["path"];
       }
     }
@@ -50,7 +50,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
           return RecentlyAddedPage.recentlyAdded.length > 0
               ? ListTile(
                   contentPadding: EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 10.0),
-                  title: RecentlyAddedPage.recentlyAdded[index]["name"] != null
+                  title: RecentlyAddedPage.recentlyAdded[index]["name"] != ""
                       ? Text(RecentlyAddedPage.recentlyAdded[index]["name"])
                       : Text(RecentlyAddedPage.recentlyAdded[index]["address"]),
                   subtitle: Text(_getSubtitle(index)),
@@ -88,7 +88,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                           elevation: .0,
                           onPressed: () {
                             setState(() {
-                              FavoritesPage.favorites.add(RecentlyAddedPage.recentlyAdded[index]);
+                              FavoritesPage.favorites.insert(0, RecentlyAddedPage.recentlyAdded[index]);
                             });
                             Navigator.pop(context);
                           },

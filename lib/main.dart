@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
@@ -16,36 +15,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
     return DynamicTheme(
-        defaultBrightness: Brightness.light,
-        data: (brightness) => ThemeData(
-              scaffoldBackgroundColor: Colors.white,
-              accentColor: Colors.blueAccent[700],
-              primaryColor: Colors.white,
-              buttonTheme: ButtonThemeData(
-                textTheme: ButtonTextTheme.primary,
-                buttonColor: Theme.of(context).accentColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-              ),
-              inputDecorationTheme: InputDecorationTheme(
-                focusedBorder:
-                    OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0), borderRadius: BorderRadius.circular(4.0)),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
-                labelStyle: TextStyle(fontSize: 16.0, color: Theme.of(context).hintColor),
-                contentPadding: EdgeInsets.all(14.0),
-              ),
-              textTheme: TextTheme(
-                button: TextStyle(fontFamily: "GoogleSans"),
-              ),
+      defaultBrightness: Brightness.light,
+      data: (brightness) => ThemeData(
+            scaffoldBackgroundColor: Colors.white,
+            accentColor: Colors.blueAccent[700],
+            primaryColor: Colors.white,
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+              buttonColor: Theme.of(context).accentColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             ),
-        themedWidgetBuilder: (context, theme) {
-          return MaterialApp(
-            title: 'RemoteFiles',
-            theme: theme,
-            debugShowCheckedModeBanner: false,
-            home: MyHomePage(title: 'RemoteFiles'),
-          );
-        });
+            inputDecorationTheme: InputDecorationTheme(
+              focusedBorder:
+                  OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0), borderRadius: BorderRadius.circular(4.0)),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+              labelStyle: TextStyle(fontSize: 16.0, color: Theme.of(context).hintColor),
+              contentPadding: EdgeInsets.all(14.0),
+            ),
+            textTheme: TextTheme(
+              button: TextStyle(fontFamily: "GoogleSans"),
+            ),
+          ),
+      themedWidgetBuilder: (context, theme) {
+        return MaterialApp(
+          title: 'RemoteFiles',
+          theme: theme,
+          debugShowCheckedModeBanner: false,
+          home: MyHomePage(title: 'RemoteFiles'),
+        );
+      },
+    );
   }
 }
 
@@ -73,33 +73,33 @@ class MyHomePage extends StatefulWidget {
       "path": "-",
     };
     if (page == "favorites") {
-      if (FavoritesPage.favorites[index]["name"] != null) values["name"] = FavoritesPage.favorites[index]["name"];
-      if (FavoritesPage.favorites[index]["addres"] != null) values["addres"] = FavoritesPage.favorites[index]["addres"];
-      if (FavoritesPage.favorites[index]["port"] != null) values["port"] = FavoritesPage.favorites[index]["port"];
-      if (FavoritesPage.favorites[index]["username"] != null) values["username"] = FavoritesPage.favorites[index]["username"];
-      if (FavoritesPage.favorites[index]["passwordOrKey"] != null) values["passwordOrKey"] = FavoritesPage.favorites[index]["passwordOrKey"];
-      if (FavoritesPage.favorites[index]["path"] != null) values["path"] = FavoritesPage.favorites[index]["path"];
+      if (FavoritesPage.favorites[index]["name"] != "") values["name"] = FavoritesPage.favorites[index]["name"];
+      if (FavoritesPage.favorites[index]["address"] != "") values["address"] = FavoritesPage.favorites[index]["address"];
+      if (FavoritesPage.favorites[index]["port"] != "") values["port"] = FavoritesPage.favorites[index]["port"];
+      if (FavoritesPage.favorites[index]["username"] != "") values["username"] = FavoritesPage.favorites[index]["username"];
+      if (FavoritesPage.favorites[index]["passwordOrKey"] != "") values["passwordOrKey"] = FavoritesPage.favorites[index]["passwordOrKey"];
+      if (FavoritesPage.favorites[index]["path"] != "") values["path"] = FavoritesPage.favorites[index]["path"];
     } else if (page == "recentlyAdded") {
-      if (RecentlyAddedPage.recentlyAdded[index]["name"] != null) values["name"] = RecentlyAddedPage.recentlyAdded[index]["name"];
-      if (RecentlyAddedPage.recentlyAdded[index]["addres"] != null) values["addres"] = RecentlyAddedPage.recentlyAdded[index]["addres"];
-      if (RecentlyAddedPage.recentlyAdded[index]["port"] != null) values["port"] = RecentlyAddedPage.recentlyAdded[index]["port"];
-      if (RecentlyAddedPage.recentlyAdded[index]["username"] != null) values["username"] = RecentlyAddedPage.recentlyAdded[index]["username"];
-      if (RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"] != null) values["passwordOrKey"] = RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"];
-      if (RecentlyAddedPage.recentlyAdded[index]["path"] != null) values["path"] = RecentlyAddedPage.recentlyAdded[index]["path"];
+      if (RecentlyAddedPage.recentlyAdded[index]["name"] != "") values["name"] = RecentlyAddedPage.recentlyAdded[index]["name"];
+      if (RecentlyAddedPage.recentlyAdded[index]["address"] != "") values["address"] = RecentlyAddedPage.recentlyAdded[index]["address"];
+      if (RecentlyAddedPage.recentlyAdded[index]["port"] != "") values["port"] = RecentlyAddedPage.recentlyAdded[index]["port"];
+      if (RecentlyAddedPage.recentlyAdded[index]["username"] != "") values["username"] = RecentlyAddedPage.recentlyAdded[index]["username"];
+      if (RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"] != "") values["passwordOrKey"] = RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"];
+      if (RecentlyAddedPage.recentlyAdded[index]["path"] != "") values["path"] = RecentlyAddedPage.recentlyAdded[index]["path"];
     } else if (page == "connection") {
-      if (ConnectionPage.currentConnection["name"] != null) values["name"] = ConnectionPage.currentConnection["name"];
-      if (ConnectionPage.currentConnection["addres"] != null) values["addres"] = ConnectionPage.currentConnection["addres"];
-      if (ConnectionPage.currentConnection["port"] != null) values["port"] = ConnectionPage.currentConnection["port"];
-      if (ConnectionPage.currentConnection["username"] != null) values["username"] = ConnectionPage.currentConnection["username"];
-      if (ConnectionPage.currentConnection["passwordOrKey"] != null) values["passwordOrKey"] = ConnectionPage.currentConnection["passwordOrKey"];
-      if (ConnectionPage.currentConnection["path"] != null) values["path"] = ConnectionPage.currentConnection["path"];
+      if (ConnectionPage.currentConnection["name"] != "null") values["name"] = ConnectionPage.currentConnection["name"];
+      if (ConnectionPage.currentConnection["address"] != "null") values["address"] = ConnectionPage.currentConnection["address"];
+      if (ConnectionPage.currentConnection["port"] != "null") values["port"] = ConnectionPage.currentConnection["port"];
+      if (ConnectionPage.currentConnection["username"] != "null") values["username"] = ConnectionPage.currentConnection["username"];
+      if (ConnectionPage.currentConnection["passwordOrKey"] != "null") values["passwordOrKey"] = ConnectionPage.currentConnection["passwordOrKey"];
+      if (ConnectionPage.currentConnection["path"] != "null") values["path"] = ConnectionPage.currentConnection["path"];
     }
     customShowDialog(
         context: context,
         builder: (BuildContext context) {
           return CustomAlertDialog(
             title: Text(
-              values["name"],
+              values["name"] != "-" ? values["name"] : values["address"],
               style: TextStyle(
                 fontFamily: "GoogleSans",
               ),
@@ -127,34 +127,34 @@ class MyHomePage extends StatefulWidget {
                             style: TextStyle(),
                           )
                         ]),
-                        values["passwordOrKey"] != "-"
-                            ? TableRow(
-                                children: [
-                                  Text("Password/Key:"),
-                                  Row(
+                        TableRow(
+                          children: [
+                            Text("Password/Key:"),
+                            values["passwordOrKey"] != "-"
+                                ? Row(
                                     children: <Widget>[
                                       Container(
-                                        margin: EdgeInsets.only(top: 7.0, right: 3.0),
-                                        width: 6.0,
-                                        height: 6.0,
+                                        margin: EdgeInsets.only(top: 8.0, right: 4.0),
+                                        width: 4.0,
+                                        height: 4.0,
                                         decoration: BoxDecoration(
                                           color: Colors.black,
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(top: 7.0, right: 3.0),
-                                        width: 6.0,
-                                        height: 6.0,
+                                        margin: EdgeInsets.only(top: 8.0, right: 4.0),
+                                        width: 4.0,
+                                        height: 4.0,
                                         decoration: BoxDecoration(
                                           color: Colors.black,
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(top: 7.0, right: 3.0),
-                                        width: 6.0,
-                                        height: 6.0,
+                                        margin: EdgeInsets.only(top: 8.0),
+                                        width: 4.0,
+                                        height: 4.0,
                                         decoration: BoxDecoration(
                                           color: Colors.black,
                                           shape: BoxShape.circle,
@@ -162,9 +162,9 @@ class MyHomePage extends StatefulWidget {
                                       )
                                     ],
                                   )
-                                ],
-                              )
-                            : Container(),
+                                : Text("-"),
+                          ],
+                        ),
                         TableRow(children: [
                           Text("Path:"),
                           Text(values["path"]),
@@ -192,32 +192,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   TabController _tabController;
-
-  _addFavorite({@required String address, String port, String username, String passwordOrKey, String path, String name}) {
-    setState(() {
-      FavoritesPage.favorites.add({
-        "address": address,
-        "port": port,
-        "username": username,
-        "passwordOrKey": passwordOrKey,
-        "path": path,
-        "name": name,
-      });
-    });
-  }
-
-  _addRecentlyAdded({@required String address, String port, String username, String passwordOrKey, String path, String name}) {
-    setState(() {
-      RecentlyAddedPage.recentlyAdded.add({
-        "address": address,
-        "port": port,
-        "username": username,
-        "passwordOrKey": passwordOrKey,
-        "path": path,
-        "name": name,
-      });
-    });
-  }
 
   @override
   void initState() {

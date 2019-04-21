@@ -6,10 +6,6 @@ import 'main.dart';
 class FavoritesPage extends StatefulWidget {
   static List<Map<String, String>> favorites = [];
 
-  testMethod(int index) {
-    _FavoritesPageState()._testMethod(index);
-  }
-
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
 }
@@ -23,7 +19,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         _output += "Address: " + FavoritesPage.favorites[index]["address"];
         _addressIsInOutput = true;
       }
-      if (FavoritesPage.favorites[index]["port"] != null) {
+      if (FavoritesPage.favorites[index]["port"] != "") {
         if (_addressIsInOutput) {
           _output += ", ";
         }
@@ -34,10 +30,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
         }
         _output += "Port: 22";
       }
-      if (FavoritesPage.favorites[index]["username"] != null) {
+      if (FavoritesPage.favorites[index]["username"] != "") {
         _output += ", Username: " + FavoritesPage.favorites[index]["username"];
       }
-      if (FavoritesPage.favorites[index]["path"] != null) {
+      if (FavoritesPage.favorites[index]["path"] != "") {
         _output += ", Path: " + FavoritesPage.favorites[index]["path"];
       }
     }
@@ -53,7 +49,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           return FavoritesPage.favorites.length > 0
               ? ListTile(
                   contentPadding: EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 10.0),
-                  title: FavoritesPage.favorites[index]["name"] != null
+                  title: FavoritesPage.favorites[index]["name"] != ""
                       ? Text(FavoritesPage.favorites[index]["name"])
                       : Text(FavoritesPage.favorites[index]["address"]),
                   subtitle: Text(_getSubtitle(index)),
@@ -145,12 +141,5 @@ class _FavoritesPageState extends State<FavoritesPage> {
         },
       ),
     );
-  }
-
-  _testMethod(int index) {
-    setState(() {
-      FavoritesPage.favorites.removeAt(index);
-    });
-    Navigator.pop(context);
   }
 }
