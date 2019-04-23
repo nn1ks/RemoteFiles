@@ -447,31 +447,26 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         elevation: 8.0,
         child: Container(
           height: 55.0,
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Row(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: BouncingScrollPhysics(),
+            child: Row(
                 children: <Widget>[
-                  IconButton(
+                CustomTooltip(
+                  message: "Back",
+                  child: IconButton(
                     icon: Icon(Icons.chevron_left),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  InkWell(
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      width: _isLoading ? constraints.maxWidth - 5 * 48.0 : constraints.maxWidth - 4 * 48.0, // 48.0 ~= IconButton width
-                      height: 55.0, // 55.0 = BottomAppBar height,
-                      padding: EdgeInsets.only(top: 18.0),
-                      child: Text(
-                        ConnectionPage.currentConnection["path"] != null
-                            ? ConnectionPage.currentConnection["path"] != "" ? ConnectionPage.currentConnection["path"] : "/"
-                            : "",
-                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, fontFamily: "GoogleSans"),
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
                       ),
+                CustomTooltip(
+                  message: "Show connection infos",
+                  child: IconButton(
+                    icon: Padding(
+                      padding: EdgeInsets.only(top: 1.0),
+                      child: Icon(OMIcons.flashOn),
                     ),
-                    onTap: () {
+                    onPressed: () {
                       MyHomePage().showConnectionDialog(
                         context: context,
                         page: "connection",
@@ -524,18 +519,16 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                       );
                     },
                   ),
-                  RotatedBox(
-                    quarterTurns: 2,
-                    child: CustomTooltip(
+                ),
+                CustomTooltip(
                       message: "Go to parent directory",
                       child: IconButton(
-                        icon: Icon(Icons.subdirectory_arrow_right),
+                    icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
                         onPressed: () {
                           _connectToDirectoryBefore();
                         },
                       ),
                     ),
-                  ),
                   CustomTooltip(
                     message: "Go to specific directory",
                     child: IconButton(
@@ -556,7 +549,13 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               content: Container(
                                 width: 260.0,
                                 child: TextField(
-                                  decoration: InputDecoration(labelText: "Path"),
+                                decoration: InputDecoration(
+                                  labelText: "Path",
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+                                  ),
+                                ),
+                                cursorColor: Theme.of(context).accentColor,
                                   autofocus: true,
                                   onSubmitted: (String value) {
                                     _goToDirectory(value);
@@ -581,7 +580,16 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                       },
                     ),
                   ),
-                  _showProgressIndicator
+                CustomTooltip(
+                  message: "Reload",
+                  child: IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () {
+                      _connectToSftpMap(ConnectionPage.currentConnection);
+                    },
+                  ),
+                ),
+                _isLoading
                       ? Container(
                           margin: EdgeInsets.only(left: 6.0),
                           height: 24.0,
@@ -592,8 +600,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         )
                       : Container(),
                 ],
-              );
-            },
+            ),
           ),
         ),
       ),
@@ -618,7 +625,8 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               backgroundColor: Colors.white,
               foregroundColor: Theme.of(context).accentColor,
               elevation: 3.0,
-              onTap: () {}),
+            onTap: () {},
+          ),
           SpeedDialChild(
               label: "Create Folder",
               labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
@@ -626,7 +634,8 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               backgroundColor: Colors.white,
               foregroundColor: Theme.of(context).accentColor,
               elevation: 3.0,
-              onTap: () {}),
+            onTap: () {},
+          ),
         ],
       ),
       body: SafeArea(
