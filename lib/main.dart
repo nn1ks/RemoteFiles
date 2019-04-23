@@ -225,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2.7,
+        elevation: 1.8,
         backgroundColor: Colors.white,
         flexibleSpace: SafeArea(
           child: Column(
