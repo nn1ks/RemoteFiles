@@ -115,7 +115,7 @@ class MyHomePage extends StatefulWidget {
         builder: (BuildContext context) {
           return CustomAlertDialog(
             title: Text(
-              values["name"] != "-" ? values["name"] : values["address"],
+              page == "connection" ? "Current connection" : values["name"] != "-" ? values["name"] : values["address"],
               style: TextStyle(
                 fontFamily: "GoogleSans",
               ),
