@@ -10,12 +10,12 @@ import 'main.dart';
 class ConnectionPage extends StatefulWidget {
   ConnectionPage({Key key, this.address, this.port, this.username, this.passwordOrKey, this.path, this.map}) : super(key: key);
 
-  String address;
-  String port;
-  String username;
-  String passwordOrKey;
-  String path;
-  Map<String, String> map;
+  final String address;
+  final String port;
+  final String username;
+  final String passwordOrKey;
+  final String path;
+  final Map<String, String> map;
 
   connectToSftpMap(Map<String, String> map) {
     _ConnectionPageState()._connectToSftpMap(map);
