@@ -150,7 +150,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
                   ])),
               CheckboxListTile(
                 secondary: Padding(
-                  padding: EdgeInsets.only(left: 12.0, bottom: .0),
+                  padding: EdgeInsets.only(left: 6.0),
                   child: Icon(Icons.star_border),
                 ),
                 title: Padding(
