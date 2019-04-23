@@ -200,7 +200,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
                 },
               ),
               SizedBox(
-                height: 34.0,
+                height: 76.0,
               )
             ],
           ),
