@@ -425,6 +425,22 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40.0),
+        child: AppBar(
+          elevation: 1.2,
+          automaticallyImplyLeading: false,
+          title: Text(
+            ConnectionPage.currentConnection["path"] != null
+                ? ConnectionPage.currentConnection["path"] != "" ? ConnectionPage.currentConnection["path"] : "/"
+                : "",
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500, fontFamily: "GoogleSans"),
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.fade,
+          ),
+        ),
+      ),
       bottomNavigationBar: BottomAppBar(
         notchMargin: 4.0,
         shape: CircularNotchedRectangle(),
