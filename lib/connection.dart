@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ssh/ssh.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io' as Io;
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'favorites_page.dart';
@@ -133,6 +136,42 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     setState(() {
       _showProgressIndicator = !_showProgressIndicator;
     });
+  }
+
+  Future<bool> _downloadFile(String filePath) async {
+    await Future.delayed(Duration(seconds: 2));
+    //bool checkResult = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+    PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+    if (permissionStatus == PermissionStatus.denied || permissionStatus == PermissionStatus.disabled) {
+      //var status = await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+      Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
+        var res = await _saveFile(filePath);
+        return res != null;
+      }
+    } else {
+      var res = await _saveFile(filePath);
+      return res != null;
+    }
+    return false;
+  }
+
+  Future<String> _saveFile(String filePath) async {
+    try {
+      var dir = await getExternalStorageDirectory();
+      var testdir = await Io.Directory('${dir.path}/RemoteFiles').create(recursive: true);
+      var filePathDownload = await _client.sftpDownload(
+        path: filePath,
+        toPath: testdir.path,
+        callback: (progress) {
+          print(progress); // read download progress
+        },
+      );
+      return filePathDownload;
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   AnimationController _rotationController;
