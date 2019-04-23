@@ -178,7 +178,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
 
   @override
   void initState() {
-    _rotationController = AnimationController(duration: const Duration(milliseconds: 100), vsync: this);
+    _rotationController = AnimationController(duration: Duration(milliseconds: 100), vsync: this);
     _connectToSftp(
       address: widget.address,
       port: widget.port,
@@ -481,8 +481,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        notchMargin: 4.0,
-        shape: CircularNotchedRectangle(),
         elevation: 8.0,
         child: Container(
           height: 55.0,
@@ -490,14 +488,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             scrollDirection: Axis.horizontal,
             physics: BouncingScrollPhysics(),
             child: Row(
-                children: <Widget>[
+              children: <Widget>[
                 CustomTooltip(
                   message: "Back",
                   child: IconButton(
                     icon: Icon(Icons.chevron_left),
                     onPressed: () => Navigator.pop(context),
                   ),
-                      ),
+                ),
                 CustomTooltip(
                   message: "Show connection infos",
                   child: IconButton(
@@ -560,34 +558,34 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                   ),
                 ),
                 CustomTooltip(
-                      message: "Go to parent directory",
-                      child: IconButton(
+                  message: "Go to parent directory",
+                  child: IconButton(
                     icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
-                        onPressed: () {
-                          _connectToDirectoryBefore();
-                        },
-                      ),
-                    ),
-                  CustomTooltip(
-                    message: "Go to specific directory",
-                    child: IconButton(
-                      icon: Icon(Icons.youtube_searched_for),
-                      onPressed: () {
-                        _connectToSftp(
-                          address: ConnectionPage.currentConnection["address"],
-                          port: ConnectionPage.currentConnection["port"],
-                          username: ConnectionPage.currentConnection["username"],
-                          passwordOrKey: ConnectionPage.currentConnection["passwordOrKey"],
-                          path: ConnectionPage.currentConnection["path"],
-                        );
-                        customShowDialog(
-                          context: context,
-                          builder: (context) {
-                            return CustomAlertDialog(
-                              title: Text("Go to directory", style: TextStyle(fontFamily: "GoogleSans", fontSize: 18.0)),
-                              content: Container(
-                                width: 260.0,
-                                child: TextField(
+                    onPressed: () {
+                      _connectToDirectoryBefore();
+                    },
+                  ),
+                ),
+                CustomTooltip(
+                  message: "Go to specific directory",
+                  child: IconButton(
+                    icon: Icon(Icons.youtube_searched_for),
+                    onPressed: () {
+                      _connectToSftp(
+                        address: ConnectionPage.currentConnection["address"],
+                        port: ConnectionPage.currentConnection["port"],
+                        username: ConnectionPage.currentConnection["username"],
+                        passwordOrKey: ConnectionPage.currentConnection["passwordOrKey"],
+                        path: ConnectionPage.currentConnection["path"],
+                      );
+                      customShowDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomAlertDialog(
+                            title: Text("Go to directory", style: TextStyle(fontFamily: "GoogleSans", fontSize: 18.0)),
+                            content: Container(
+                              width: 260.0,
+                              child: TextField(
                                 decoration: InputDecoration(
                                   labelText: "Path",
                                   focusedBorder: OutlineInputBorder(
@@ -595,30 +593,30 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                   ),
                                 ),
                                 cursorColor: Theme.of(context).accentColor,
-                                  autofocus: true,
-                                  onSubmitted: (String value) {
-                                    _goToDirectory(value);
-                                    Navigator.pop(context);
-                                  },
-                                ),
+                                autofocus: true,
+                                onSubmitted: (String value) {
+                                  _goToDirectory(value);
+                                  Navigator.pop(context);
+                                },
                               ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                  CustomTooltip(
-                    message: _showHiddenFiles ? "Don't show hidden files" : "Show hidden files",
-                    child: IconButton(
-                      icon: Icon(_showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _showHiddenFiles = !_showHiddenFiles;
-                        });
-                      },
-                    ),
+                ),
+                CustomTooltip(
+                  message: _showHiddenFiles ? "Don't show hidden files" : "Show hidden files",
+                  child: IconButton(
+                    icon: Icon(_showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _showHiddenFiles = !_showHiddenFiles;
+                      });
+                    },
                   ),
+                ),
                 CustomTooltip(
                   message: "Reload",
                   child: IconButton(
@@ -629,16 +627,16 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                   ),
                 ),
                 _isLoading
-                      ? Container(
-                          margin: EdgeInsets.only(left: 6.0),
-                          height: 24.0,
-                          width: 24.0,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 3.0,
-                          ),
-                        )
-                      : Container(),
-                ],
+                    ? Container(
+                        margin: EdgeInsets.only(left: 6.0),
+                        height: 24.0,
+                        width: 24.0,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3.0,
+                        ),
+                      )
+                    : Container(),
+              ],
             ),
           ),
         ),
@@ -658,21 +656,21 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         },
         children: [
           SpeedDialChild(
-              label: "Upload File",
-              labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
-              child: Icon(OMIcons.cloudUpload),
-              backgroundColor: Colors.white,
-              foregroundColor: Theme.of(context).accentColor,
-              elevation: 3.0,
+            label: "Upload File",
+            labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
+            child: Icon(OMIcons.cloudUpload),
+            backgroundColor: Colors.white,
+            foregroundColor: Theme.of(context).accentColor,
+            elevation: 3.0,
             onTap: () {},
           ),
           SpeedDialChild(
-              label: "Create Folder",
-              labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
-              child: Icon(OMIcons.createNewFolder),
-              backgroundColor: Colors.white,
-              foregroundColor: Theme.of(context).accentColor,
-              elevation: 3.0,
+            label: "Create Folder",
+            labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
+            child: Icon(OMIcons.createNewFolder),
+            backgroundColor: Colors.white,
+            foregroundColor: Theme.of(context).accentColor,
+            elevation: 3.0,
             onTap: () {},
           ),
         ],
