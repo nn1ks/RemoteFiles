@@ -44,6 +44,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     return Scrollbar(
       child: ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1,
         itemBuilder: (BuildContext context, int index) {
           return FavoritesPage.favorites.length > 0

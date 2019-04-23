@@ -45,6 +45,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
   Widget build(BuildContext context) {
     return Scrollbar(
       child: ListView.builder(
+        physics: BouncingScrollPhysics(),
         itemCount: RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1,
         itemBuilder: (BuildContext context, int index) {
           return RecentlyAddedPage.recentlyAdded.length > 0

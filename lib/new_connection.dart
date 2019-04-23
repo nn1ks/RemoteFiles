@@ -136,6 +136,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
       body: SafeArea(
         child: Scrollbar(
           child: ListView(
+            physics: BouncingScrollPhysics(),
             children: <Widget>[
               Container(
                   margin: EdgeInsets.all(20.0),

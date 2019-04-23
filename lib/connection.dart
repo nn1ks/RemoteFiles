@@ -347,6 +347,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             key: _refreshKey,
             onRefresh: () => _refresh(),
             child: ListView.builder(
+              physics: BouncingScrollPhysics(),
               itemCount: _itemNum,
               itemBuilder: (BuildContext context, int index) {
                 return Column(
