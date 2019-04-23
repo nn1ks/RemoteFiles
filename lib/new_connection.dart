@@ -32,6 +32,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         obscureText: isPassword,
+        textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         onChanged: (String value) {
           _onTextFieldChanged(value, onChangedText);
         },
