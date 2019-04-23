@@ -103,12 +103,12 @@ class MyHomePage extends StatefulWidget {
       if (RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"] != "") values["passwordOrKey"] = RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"];
       if (RecentlyAddedPage.recentlyAdded[index]["path"] != "") values["path"] = RecentlyAddedPage.recentlyAdded[index]["path"];
     } else if (page == "connection") {
-      if (ConnectionPage.currentConnection["name"] != "null") values["name"] = ConnectionPage.currentConnection["name"];
-      if (ConnectionPage.currentConnection["address"] != "null") values["address"] = ConnectionPage.currentConnection["address"];
-      if (ConnectionPage.currentConnection["port"] != "null") values["port"] = ConnectionPage.currentConnection["port"];
-      if (ConnectionPage.currentConnection["username"] != "null") values["username"] = ConnectionPage.currentConnection["username"];
-      if (ConnectionPage.currentConnection["passwordOrKey"] != "null") values["passwordOrKey"] = ConnectionPage.currentConnection["passwordOrKey"];
-      if (ConnectionPage.currentConnection["path"] != "null") values["path"] = ConnectionPage.currentConnection["path"];
+      if (ConnectionPage.currentConnection["name"] != null) values["name"] = ConnectionPage.currentConnection["name"];
+      if (ConnectionPage.currentConnection["address"] != null) values["address"] = ConnectionPage.currentConnection["address"];
+      if (ConnectionPage.currentConnection["port"] != null) values["port"] = ConnectionPage.currentConnection["port"];
+      if (ConnectionPage.currentConnection["username"] != null) values["username"] = ConnectionPage.currentConnection["username"];
+      if (ConnectionPage.currentConnection["passwordOrKey"] != null) values["passwordOrKey"] = ConnectionPage.currentConnection["passwordOrKey"];
+      if (ConnectionPage.currentConnection["path"] != null) values["path"] = ConnectionPage.currentConnection["path"];
     }
     customShowDialog(
         context: context,
