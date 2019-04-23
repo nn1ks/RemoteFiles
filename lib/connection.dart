@@ -369,6 +369,59 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     );
   }
 
+  _showDeleteConfirmDialog(int index, String filePath) {
+    customShowDialog(
+        context: context,
+        builder: (context) {
+          return CustomAlertDialog(
+            title: Text(
+              "Delete '${_fileInfos[index]["filename"]}'?",
+              style: TextStyle(fontFamily: "GoogleSans"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
+                child: Row(
+                  children: <Widget>[
+                    Text("Cancel"),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              RaisedButton(
+                color: Theme.of(context).accentColor,
+                splashColor: Colors.black12,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "OK",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                elevation: .0,
+                onPressed: () async {
+                  if (_fileInfos[index]["isDirectory"] == "true") {
+                    await _client.sftpRmdir(filePath);
+                  } else {
+                    await _client.sftpRm(filePath);
+                  }
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  _connectToSftpMap(ConnectionPage.currentConnection);
+                },
+              ),
+              SizedBox(width: .0),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
