@@ -66,14 +66,6 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
   }
 
   Map<String, String> _getConnectionMap() {
-    print({
-      "address": _address,
-      "port": _port != null ? _port : "22",
-      "username": _username,
-      "passwordOrKey": _passwordOrKey,
-      "path": _path != null ? _path : "./",
-      "name": _name
-    });
     return {
       "address": _address,
       "port": _port != null ? _port : "22",
