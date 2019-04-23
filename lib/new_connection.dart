@@ -108,7 +108,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         heroTag: "fab",
         elevation: 4.0,
