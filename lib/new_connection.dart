@@ -167,6 +167,38 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
                   });
                 },
               ),
+              ListTile(
+                leading: Padding(
+                  padding: EdgeInsets.only(left: 6.0),
+                  child: Icon(Icons.add_circle_outline),
+                ),
+                title: Padding(
+                  padding: EdgeInsets.only(top: 2.0),
+                  child: Text("Add template"),
+                ),
+                onTap: () {
+                  FavoritesPage.favorites.insert(0, {});
+                  FavoritesPage.favorites[0].addAll({
+                    "address": "192.168.2.2",
+                    "port": "22",
+                    "username": "niklas",
+                    "passwordOrKey": "esse850ni",
+                    "path": "/mnt/server-hdd/niklas",
+                    "name": "fileserver local"
+                  });
+                  //MyHomePage().writeFavoriteStorageList();
+                  RecentlyAddedPage.recentlyAdded.insert(0, {});
+                  RecentlyAddedPage.recentlyAdded[0].addAll({
+                    "address": "192.168.2.2",
+                    "port": "22",
+                    "username": "niklas",
+                    "passwordOrKey": "esse850ni",
+                    "path": "/mnt/server-hdd/niklas",
+                    "name": "fileserver local"
+                  });
+                  Navigator.pop(context);
+                },
+              ),
               SizedBox(
                 height: 34.0,
               )
