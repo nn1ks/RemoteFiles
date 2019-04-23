@@ -320,7 +320,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       body: SafeArea(
         child: TabBarView(
-          physics: BouncingScrollPhysics(),
           controller: _tabController,
           children: <Widget>[
             FavoritesPage(),
