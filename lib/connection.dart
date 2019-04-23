@@ -150,6 +150,225 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     super.initState();
   }
 
+  double _tableFontSize = 16.2;
+
+  _showFileBottomSheet(int index, BuildContext context) {
+    bool isDirectory = _fileInfos[index]["isDirectory"] == "true";
+    String filePath = ConnectionPage.currentConnection["path"];
+    if (ConnectionPage.currentConnection["path"].substring(ConnectionPage.currentConnection["path"].length - 2) != "/") {
+      filePath += "/";
+    }
+    filePath += _fileInfos[index]["filename"];
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 56.0,
+                  child: ListTile(
+                    leading: Icon(isDirectory ? OMIcons.folder : Icons.insert_drive_file),
+                    title: Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        _fileInfos[index]["filename"],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 1.0,
+                  color: Theme.of(context).dividerColor,
+                ),
+                Container(
+                  height: constraints.maxHeight - 57.0,
+                  child: ListView(
+                    physics: BouncingScrollPhysics(),
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(18.0),
+                        child: Opacity(
+                          opacity: .8,
+                          child: Table(
+                            columnWidths: {0: FixedColumnWidth(145.0)},
+                            children: <TableRow>[
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Name:",
+                                    style: TextStyle(fontSize: _tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  _fileInfos[index]["filename"],
+                                  style: TextStyle(fontSize: _tableFontSize),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Permissions:",
+                                    style: TextStyle(fontSize: _tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  _fileInfos[index]["permissions"],
+                                  style: TextStyle(fontSize: _tableFontSize),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Modification Date:",
+                                    style: TextStyle(fontSize: _tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  _fileInfos[index]["modificationDate"],
+                                  style: TextStyle(fontSize: _tableFontSize),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Last Access:",
+                                    style: TextStyle(fontSize: _tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  _fileInfos[index]["lastAccess"],
+                                  style: TextStyle(fontSize: _tableFontSize),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Path:",
+                                    style: TextStyle(fontSize: _tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  ConnectionPage.currentConnection["path"] + "/" + _fileInfos[index]["filename"],
+                                  style: TextStyle(fontSize: _tableFontSize),
+                                ),
+                              ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 1.0,
+                        margin: EdgeInsets.only(bottom: 8.0),
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      isDirectory
+                          ? Container()
+                          : ListTile(
+                              leading: Icon(Icons.file_download, color: Theme.of(context).accentColor),
+                              title: Padding(
+                                padding: EdgeInsets.only(top: 2.0),
+                                child: Text(
+                                  "Download",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              onTap: () async {
+                                if (await _downloadFile(filePath)) {
+                                  /*Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text("Downloading file..."),
+                                  ));*/
+                                  print("Downloading file...");
+                                } else {
+                                  /*Scaffold.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Download failed"),
+                                    ),
+                                  );*/
+                                  print("Download failed");
+                                }
+                              },
+                            ),
+                      ListTile(
+                        leading: Icon(OMIcons.edit, color: Theme.of(context).accentColor),
+                        title: Padding(
+                          padding: EdgeInsets.only(top: 2.0),
+                          child: Text(
+                            "Rename",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        onTap: () {
+                          customShowDialog(
+                            context: context,
+                            builder: (context) {
+                              return CustomAlertDialog(
+                                title: Text(
+                                  "Rename '${_fileInfos[index]["filename"]}'",
+                                  style: TextStyle(fontFamily: "GoogleSans"),
+                                ),
+                                content: TextField(
+                                  decoration: InputDecoration(
+                                    labelText: "New name",
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+                                    ),
+                                  ),
+                                  cursorColor: Theme.of(context).accentColor,
+                                  autofocus: true,
+                                  onSubmitted: (String value) async {
+                                    String newFilePath = ConnectionPage.currentConnection["path"];
+                                    if (ConnectionPage.currentConnection["path"].substring(ConnectionPage.currentConnection["path"].length - 2) != "/") {
+                                      newFilePath += "/";
+                                    }
+                                    newFilePath += value;
+                                    await _client.sftpRename(
+                                      oldPath: filePath,
+                                      newPath: newFilePath,
+                                    );
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    _connectToSftpMap(ConnectionPage.currentConnection);
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(OMIcons.delete, color: Theme.of(context).accentColor),
+                        title: Padding(
+                          padding: EdgeInsets.only(top: 2.0),
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        onTap: () => _showDeleteConfirmDialog(index, filePath),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -370,7 +589,12 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                       passwordOrKey: ConnectionPage.currentConnection["passwordOrKey"],
                                       path: ConnectionPage.currentConnection["path"] + "/" + _fileInfos[index]["filename"],
                                     );
+                                  } else {
+                                    _showFileBottomSheet(index, context);
                                   }
+                                },
+                                onLongPress: () {
+                                  _showFileBottomSheet(index, context);
                                 },
                               )
                         : index == 0
