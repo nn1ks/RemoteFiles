@@ -671,7 +671,34 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             backgroundColor: Colors.white,
             foregroundColor: Theme.of(context).accentColor,
             elevation: 3.0,
-            onTap: () {},
+            onTap: () async {
+              customShowDialog(
+                context: context,
+                builder: (context) {
+                  return CustomAlertDialog(
+                    title: Text(
+                      "Folder Name",
+                      style: TextStyle(fontFamily: "GoogleSans"),
+                    ),
+                    content: TextField(
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+                        ),
+                      ),
+                      cursorColor: Theme.of(context).accentColor,
+                      autofocus: true,
+                      autocorrect: false,
+                      onSubmitted: (String value) async {
+                        await _client.sftpMkdir(ConnectionPage.currentConnection["path"] + "/" + value);
+                        Navigator.pop(context);
+                        _connectToSftpMap(ConnectionPage.currentConnection);
+                      },
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ],
       ),
