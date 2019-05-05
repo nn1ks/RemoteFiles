@@ -8,7 +8,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="remote_files"
+        android:label="RemoteFiles"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
