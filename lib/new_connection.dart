@@ -5,6 +5,15 @@ import 'connection.dart';
 import 'main.dart';
 
 class NewConnectionPage extends StatefulWidget {
+  static Map<String, String> _values = {
+    "name": "",
+    "address": null,
+    "port": "",
+    "username": "",
+    "passwordOrKey": "",
+    "path": "~/",
+  };
+
   @override
   _NewConnectionPageState createState() => _NewConnectionPageState();
 }
@@ -13,67 +22,30 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
   bool _addToFavorites = false;
   bool _addressIsEntered = true;
 
-  String _name = "";
-  String _address;
-  String _port = "";
-  String _username = "";
-  String _passwordOrKey = "";
-  String _path = "~/";
+  List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode()];
 
-  Container _buildTextField({String label, String hint, String onChangedText, bool isPassword = false}) {
+  Container _buildTextField({String label, String hint, String valueText, bool isPassword = false, FocusNode focusNode, int index}) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
+        focusNode: focusNodes[index],
         cursorColor: Theme.of(context).accentColor,
+        obscureText: isPassword,
+        textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
           labelText: label,
           hintText: hint,
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
-        obscureText: isPassword,
-        textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         onChanged: (String value) {
-          _onTextFieldChanged(value, onChangedText);
+          setState(() => NewConnectionPage._values[valueText] = value);
+        },
+        onSubmitted: (String value) {
+          if (index < focusNodes.length - 1) FocusScope.of(context).requestFocus(focusNodes[index + 1]);
         },
       ),
     );
-  }
-
-  _onTextFieldChanged(String value, String title) {
-    setState(() {
-      switch (title) {
-        case "name":
-          _name = value;
-          break;
-        case "address":
-          _address = value;
-          break;
-        case "port":
-          _port = value;
-          break;
-        case "username":
-          _username = value;
-          break;
-        case "passwordOrKey":
-          _passwordOrKey = value;
-          break;
-        case "path":
-          _path = value;
-          break;
-      }
-    });
-  }
-
-  Map<String, String> _getConnectionMap() {
-    return {
-      "address": _address,
-      "port": _port != null ? _port : "22",
-      "username": _username,
-      "passwordOrKey": _passwordOrKey,
-      "path": _path != null ? _path : "./",
-      "name": _name
-    };
   }
 
   @override
@@ -107,17 +79,17 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         elevation: 4.0,
         child: Icon(Icons.done),
         onPressed: () {
-          if (_address != null) {
+          if (NewConnectionPage._values["address"] != null) {
             if (_addToFavorites) {
               setState(() {
                 FavoritesPage.favorites.insert(0, {});
-                FavoritesPage.favorites[0].addAll(_getConnectionMap());
+                FavoritesPage.favorites[0].addAll(NewConnectionPage._values);
                 MyHomePage().writeFavoriteStorageList();
               });
             }
             RecentlyAddedPage.recentlyAdded.insert(0, {});
-            RecentlyAddedPage.recentlyAdded[0].addAll(_getConnectionMap());
-            ConnectionPage().connectToSftpMap(_getConnectionMap());
+            RecentlyAddedPage.recentlyAdded[0].addAll(NewConnectionPage._values);
+            ConnectionPage().connectToSftpMap(NewConnectionPage._values);
             Navigator.pop(context);
           } else {
             setState(() {
@@ -132,15 +104,16 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
             physics: BouncingScrollPhysics(),
             children: <Widget>[
               Container(
-                  margin: EdgeInsets.all(20.0),
-                  child: Column(children: <Widget>[
-                    _buildTextField(label: "Name", onChangedText: "name"),
-                    _buildTextField(label: "Address*", onChangedText: "address"),
-                    _buildTextField(label: "Port", hint: "22", onChangedText: "port"),
-                    _buildTextField(label: "Username", onChangedText: "username"),
-                    _buildTextField(label: "Password or Key", onChangedText: "passwordOrKey", isPassword: true),
-                    _buildTextField(label: "Path", onChangedText: "path"),
-                  ])),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 10.0),
+                child: Column(children: <Widget>[
+                  _buildTextField(label: "Name", valueText: "name", index: 0),
+                  _buildTextField(label: "Address*", valueText: "address", index: 1),
+                  _buildTextField(label: "Port", hint: "22", valueText: "port", index: 2),
+                  _buildTextField(label: "Username", valueText: "username", index: 3),
+                  _buildTextField(label: "Password or Key", valueText: "passwordOrKey", isPassword: true, index: 4),
+                  _buildTextField(label: "Path", valueText: "path", index: 5),
+                ]),
+              ),
               CheckboxListTile(
                 secondary: Padding(
                   padding: EdgeInsets.only(left: 6.0),
