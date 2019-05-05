@@ -191,7 +191,11 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
 
   double _tableFontSize = 16.2;
 
-  _showFileBottomSheet(int index, BuildContext context) {
+  _showFileBottomSheet(int index, BuildContext context) async {
+    String user = await _client.execute("id -nu " + _fileInfos[index]["ownerUserID"]);
+    user = user.substring(0, user.length - 2);
+    String group = await _client.execute("id -nu " + _fileInfos[index]["ownerGroupID"]);
+    group = group.substring(0, group.length - 2);
     bool isDirectory = _fileInfos[index]["isDirectory"] == "true";
     String filePath = ConnectionPage.currentConnection["path"];
     if (ConnectionPage.currentConnection["path"].substring(ConnectionPage.currentConnection["path"].length - 2) != "/") {
