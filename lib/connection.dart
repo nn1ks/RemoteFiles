@@ -717,7 +717,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 60.0),
                                   child: Center(
-                                    child: Text("No files found", style: TextStyle(fontSize: 16.0)),
+                                    child: CircularProgressIndicator(),
                                   ),
                                 ),
                               )
