@@ -3,6 +3,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info/package_info.dart';
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
@@ -194,9 +195,7 @@ class MyHomePage extends StatefulWidget {
             actions: <Widget>[
               hasSecondaryButton ? secondaryButton : Container(),
               primaryButton,
-              SizedBox(
-                width: .0,
-              ),
+              SizedBox(width: .0),
             ],
           );
         });
@@ -250,39 +249,39 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(18.0),
           child: TabBar(
-                indicator: MD2Indicator(
-                  indicatorSize: MD2IndicatorSize.normal,
-                  indicatorHeight: 3.4,
-                  indicatorColor: Theme.of(context).accentColor,
-                ),
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorWeight: 2.0,
-                labelColor: Theme.of(context).accentColor,
-                unselectedLabelColor: Theme.of(context).brightness == Brightness.light ? Colors.grey[600] : Colors.grey[400],
-                labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w700, fontSize: 14.0),
-                controller: _tabController,
-                tabs: <Widget>[
-                  Tab(
+            indicator: MD2Indicator(
+              indicatorSize: MD2IndicatorSize.normal,
+              indicatorHeight: 3.4,
+              indicatorColor: Theme.of(context).accentColor,
+            ),
+            indicatorSize: TabBarIndicatorSize.label,
+            indicatorWeight: 2.0,
+            labelColor: Theme.of(context).accentColor,
+            unselectedLabelColor: Theme.of(context).brightness == Brightness.light ? Colors.grey[600] : Colors.grey[400],
+            labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w700, fontSize: 14.0),
+            controller: _tabController,
+            tabs: <Widget>[
+              Tab(
                 icon: RotationTransition(
                   turns: Tween(begin: .0, end: .2).animate(_rotationController1),
                   child: Icon(Icons.star_border),
-                        ),
+                ),
                 text: "Favorites",
-                    ),
-                  Tab(
+              ),
+              Tab(
                 icon: RotationTransition(
                   turns: Tween(begin: .0, end: -1.0).animate(_rotationController2),
                   child: Padding(
                     padding: EdgeInsets.only(right: 2.0),
                     child: Icon(Icons.restore),
-                        ),
-                    ),
-                text: "Recently added",
                   ),
-                ],
+                ),
+                text: "Recently added",
               ),
+            ],
           ),
         ),
+      ),
       bottomNavigationBar: BottomAppBar(
         notchMargin: 6.0,
         shape: CircularNotchedRectangle(),
@@ -309,7 +308,95 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 message: "About RemoteFiles",
                 child: IconButton(
                   icon: Icon(Icons.info_outline),
-                  onPressed: () {},
+                  onPressed: () async {
+                    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                    String version = packageInfo.version;
+                    String buildNumber = packageInfo.buildNumber;
+                    customShowDialog(
+                      context: context,
+                      builder: (context) {
+                        return CustomAlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[100],
+                                  boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, .14), blurRadius: 2.0, offset: Offset(.0, .8))],
+                                ),
+                                width: 90.0,
+                                height: 90.0,
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    "assets/app_icon.png",
+                                    height: 120.0,
+                                    width: 120.0,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 22.0, bottom: .0),
+                                child: Text(
+                                  "RemoteFiles",
+                                  style: TextStyle(fontWeight: FontWeight.w500, fontFamily: "GoogleSans", fontSize: 19.0),
+                                ),
+                              ),
+                              Divider(height: 30.0),
+                              Text(
+                                "Version: $version",
+                                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Colors.grey[700]),
+                              ),
+                              Text(
+                                "Build Number: $buildNumber",
+                                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Colors.grey[700]),
+                              ),
+                              Divider(height: 30.0),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: OutlineButton(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: .8),
+                                        child: Text(
+                                          "GitHub",
+                                          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
+                                        ),
+                                      ),
+                                      highlightedBorderColor: Color.fromRGBO(41, 98, 255, .7),
+                                      highlightColor: Color.fromRGBO(41, 98, 255, .04),
+                                      splashColor: Color.fromRGBO(41, 98, 255, .06),
+                                      highlightElevation: 4.0,
+                                      onPressed: () {},
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 14.0,
+                                  ),
+                                  Expanded(
+                                    child: OutlineButton(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: .8),
+                                        child: Text(
+                                          "PlayStore",
+                                          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
+                                        ),
+                                      ),
+                                      highlightedBorderColor: Color.fromRGBO(41, 98, 255, .7),
+                                      highlightColor: Color.fromRGBO(41, 98, 255, .04),
+                                      splashColor: Color.fromRGBO(41, 98, 255, .06),
+                                      highlightElevation: 4.0,
+                                      onPressed: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
