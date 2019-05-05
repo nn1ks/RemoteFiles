@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'connection.dart';
+import 'edit_connection.dart';
 import 'main.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -86,7 +87,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                           padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
                           elevation: .0,
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditConnectionPage(FavoritesPage.favorites[index], index),
+                              ),
+                            );
+                          },
                         ),
                         hasSecondaryButton: true,
                         secondaryButton: FlatButton(
