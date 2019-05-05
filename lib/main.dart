@@ -16,21 +16,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    Color accentColor = Colors.blueAccent[700];
     return DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => ThemeData(
             scaffoldBackgroundColor: Colors.white,
-            accentColor: Colors.blueAccent[700],
+            accentColor: accentColor,
             primaryColor: Colors.white,
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
-              buttonColor: Theme.of(context).accentColor,
+              buttonColor: accentColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             ),
             inputDecorationTheme: InputDecorationTheme(
-              focusedBorder:
-                  OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0), borderRadius: BorderRadius.circular(4.0)),
+              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: accentColor, width: 2.0), borderRadius: BorderRadius.circular(4.0)),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
               labelStyle: TextStyle(fontSize: 16.0, color: Theme.of(context).hintColor),
               contentPadding: EdgeInsets.all(14.0),
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'RemoteFiles',
           theme: theme,
-          debugShowCheckedModeBanner: false,
+          //debugShowCheckedModeBanner: false,
           home: MyHomePage(title: 'RemoteFiles'),
         );
       },
