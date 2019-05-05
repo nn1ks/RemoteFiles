@@ -209,9 +209,29 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   TabController _tabController;
 
+  AnimationController _rotationController1;
+  AnimationController _rotationController2;
+  int _tabIndex = 0;
+
+  _tabOnChange() {
+    if (_tabIndex != _tabController.index) {
+      if (_tabController.index == 0) {
+        _rotationController1.forward(from: .0);
+      } else if (_tabController.index == 1) {
+        _rotationController2.forward(from: .0);
+      }
+      setState(() {
+        _tabIndex = _tabController.index;
+      });
+    }
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_tabOnChange);
+    _rotationController1 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
+    _rotationController2 = AnimationController(duration: Duration(milliseconds: 280), vsync: this);
     super.initState();
   }
 
