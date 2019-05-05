@@ -618,21 +618,70 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                   ),
                 ),
                 CustomTooltip(
-                  message: "Reload",
+                  message: "Sort",
                   child: IconButton(
-                    icon: Icon(Icons.refresh),
+                    icon: Icon(Icons.sort),
                     onPressed: () {
-                      _connectToSftpMap(ConnectionPage.currentConnection);
+                      customShowDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(left: 24.0, right: 16.0, top: 4.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "Sort",
+                                        style: TextStyle(fontFamily: "GoogleSans", fontSize: 20.0, fontWeight: FontWeight.w500),
+                                      ),
+                                      Switch(
+                                        activeThumbImage: AssetImage("assets/arrow_drop_down.png"),
+                                        activeColor: Colors.grey[50],
+                                        activeTrackColor: Colors.grey[300],
+                                        inactiveThumbImage: AssetImage("assets/arrow_drop_up.png"),
+                                        inactiveTrackColor: Colors.grey[300],
+                                        inactiveThumbColor: Colors.grey[50],
+                                        value: true,
+                                        onChanged: (bool value) {},
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                RadioListTile(
+                                  title: Text("Name"),
+                                  value: _radioValues[0],
+                                  groupValue: 0,
+                                  onChanged: (int value) {
+                                    setState(() {
+                                      _radioValues[1] = value;
+                                    });
+                                    Navigator.pop(context);
                     },
                   ),
+                                RadioListTile(
+                                  title: Text("Modification Date"),
+                                  value: 1,
+                                  groupValue: 0,
+                                  onChanged: (int value) {},
+                                ),
+                                RadioListTile(
+                                  title: Text("Last Access"),
+                                  value: 1,
+                                  groupValue: 0,
+                                  onChanged: (int value) {},
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
                 ),
-                _isLoading
-                    ? Container(
-                        margin: EdgeInsets.only(left: 6.0),
-                        height: 24.0,
-                        width: 24.0,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3.0,
                         ),
                       )
                     : Container(),
