@@ -225,13 +225,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 1.8,
+        elevation: .4,
         backgroundColor: Colors.white,
-        flexibleSpace: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              TabBar(
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(18.0),
+          child: TabBar(
                 indicator: MD2Indicator(
                   indicatorSize: MD2IndicatorSize.normal,
                   indicatorHeight: 3.4,
@@ -245,37 +243,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 controller: _tabController,
                 tabs: <Widget>[
                   Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.star_border),
-                        SizedBox(width: 8.0),
-                        Padding(
-                          padding: EdgeInsets.only(top: 1.0),
-                          child: Text("Favorites"),
+                icon: RotationTransition(
+                  turns: Tween(begin: .0, end: .2).animate(_rotationController1),
+                  child: Icon(Icons.star_border),
                         ),
-                      ],
+                text: "Favorites",
                     ),
-                  ),
                   Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(Icons.restore),
-                        SizedBox(width: 8.0),
-                        Padding(
-                          padding: EdgeInsets.only(top: 1.0),
-                          child: Text("Recently added"),
+                icon: RotationTransition(
+                  turns: Tween(begin: .0, end: -1.0).animate(_rotationController2),
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 2.0),
+                    child: Icon(Icons.restore),
                         ),
-                      ],
                     ),
+                text: "Recently added",
                   ),
                 ],
               ),
-            ],
           ),
         ),
-      ),
       bottomNavigationBar: BottomAppBar(
         notchMargin: 6.0,
         shape: CircularNotchedRectangle(),
