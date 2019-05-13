@@ -92,7 +92,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditConnectionPage(FavoritesPage.favorites[index], index),
+                                builder: (context) => EditConnectionPage(index),
                               ),
                             );
                           },

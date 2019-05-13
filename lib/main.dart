@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:package_info/package_info.dart';
-import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
-import 'connection.dart';
+import 'sftp_connection.dart';
 import 'favorites_page.dart';
 import 'recently_added_page.dart';
 
@@ -56,21 +54,23 @@ class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
 
-  static List<FlutterSecureStorage> favoriteStorageList = List.filled(FavoritesPage.favorites.length, FlutterSecureStorage());
-  static List<FlutterSecureStorage> recentlyAddedStorageList = List.filled(RecentlyAddedPage.recentlyAdded.length, FlutterSecureStorage());
-
-  writeFavoriteStorageList() async {
-    for (int i = 0; i < FavoritesPage.favorites.length; i++) {
-      List<String> keys = [];
-      List<String> values = [];
-      FavoritesPage.favorites[i].forEach((k, v) {
-        keys.add(k);
-        values.add(v);
-      });
-      for (int x = 0; x < FavoritesPage.favorites[i].length; x++) {
-        await favoriteStorageList[i].write(key: keys[x], value: values[x]);
-      }
+  Row _buildPasswordRow(int passwordLength) {
+    if (passwordLength == 0) passwordLength = 1;
+    List<Widget> widgets = [];
+    for (int i = 0; i < passwordLength; i++) {
+      widgets.add(
+        Container(
+          margin: EdgeInsets.only(top: 8.0, right: 4.0),
+          width: 4.0,
+          height: 4.0,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            shape: BoxShape.circle,
+          ),
+        ),
+      );
     }
+    return Row(children: widgets);
   }
 
   showConnectionDialog({
@@ -90,115 +90,75 @@ class MyHomePage extends StatefulWidget {
       "path": "-",
     };
     if (page == "favorites") {
-      if (FavoritesPage.favorites[index]["name"] != "") values["name"] = FavoritesPage.favorites[index]["name"];
-      if (FavoritesPage.favorites[index]["address"] != "") values["address"] = FavoritesPage.favorites[index]["address"];
-      if (FavoritesPage.favorites[index]["port"] != "") values["port"] = FavoritesPage.favorites[index]["port"];
-      if (FavoritesPage.favorites[index]["username"] != "") values["username"] = FavoritesPage.favorites[index]["username"];
-      if (FavoritesPage.favorites[index]["passwordOrKey"] != "") values["passwordOrKey"] = FavoritesPage.favorites[index]["passwordOrKey"];
-      if (FavoritesPage.favorites[index]["path"] != "") values["path"] = FavoritesPage.favorites[index]["path"];
+      FavoritesPage.favorites[index].forEach((k, v) {
+        if (FavoritesPage.favorites[index][k] != "") values[k] = FavoritesPage.favorites[index][k];
+      });
     } else if (page == "recentlyAdded") {
-      if (RecentlyAddedPage.recentlyAdded[index]["name"] != "") values["name"] = RecentlyAddedPage.recentlyAdded[index]["name"];
-      if (RecentlyAddedPage.recentlyAdded[index]["address"] != "") values["address"] = RecentlyAddedPage.recentlyAdded[index]["address"];
-      if (RecentlyAddedPage.recentlyAdded[index]["port"] != "") values["port"] = RecentlyAddedPage.recentlyAdded[index]["port"];
-      if (RecentlyAddedPage.recentlyAdded[index]["username"] != "") values["username"] = RecentlyAddedPage.recentlyAdded[index]["username"];
-      if (RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"] != "") values["passwordOrKey"] = RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"];
-      if (RecentlyAddedPage.recentlyAdded[index]["path"] != "") values["path"] = RecentlyAddedPage.recentlyAdded[index]["path"];
+      RecentlyAddedPage.recentlyAdded[index].forEach((k, v) {
+        if (RecentlyAddedPage.recentlyAdded[index][k] != "") values[k] = RecentlyAddedPage.recentlyAdded[index][k];
+      });
     } else if (page == "connection") {
-      if (ConnectionPage.currentConnection["name"] != null) values["name"] = ConnectionPage.currentConnection["name"];
-      if (ConnectionPage.currentConnection["address"] != null) values["address"] = ConnectionPage.currentConnection["address"];
-      if (ConnectionPage.currentConnection["port"] != null) values["port"] = ConnectionPage.currentConnection["port"];
-      if (ConnectionPage.currentConnection["username"] != null) values["username"] = ConnectionPage.currentConnection["username"];
-      if (ConnectionPage.currentConnection["passwordOrKey"] != null) values["passwordOrKey"] = ConnectionPage.currentConnection["passwordOrKey"];
-      if (ConnectionPage.currentConnection["path"] != null) values["path"] = ConnectionPage.currentConnection["path"];
+      SftpConnection.currentConnection.forEach((k, v) {
+        if (SftpConnection.currentConnection[k] != null) values[k] = SftpConnection.currentConnection[k];
+      });
     }
     customShowDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            title: Text(
-              page == "connection" ? "Current connection" : values["name"] != "-" ? values["name"] : values["address"],
-              style: TextStyle(
-                fontFamily: "GoogleSans",
-              ),
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Text(
+            page == "connection" ? "Current connection" : values["name"] != "-" ? values["name"] : values["address"],
+            style: TextStyle(
+              fontFamily: "GoogleSans",
             ),
-            content: Container(
-              width: 400.0,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Opacity(
-                    opacity: .8,
-                    child: Table(
-                      columnWidths: {0: FixedColumnWidth(120.0)},
-                      children: [
-                        TableRow(children: [Text("Name:"), Text(values["name"])]),
-                        TableRow(children: [Text("Address:"), Text(values["address"])]),
-                        TableRow(children: [
-                          Text("Port:"),
-                          Text(values["port"]),
-                        ]),
-                        TableRow(children: [
-                          Text("Username:"),
-                          Text(
-                            values["username"],
-                            style: TextStyle(),
-                          )
-                        ]),
-                        TableRow(
-                          children: [
-                            Text("Password/Key:"),
-                            values["passwordOrKey"] != "-"
-                                ? Row(
-                                    children: <Widget>[
-                                      Container(
-                                        margin: EdgeInsets.only(top: 8.0, right: 4.0),
-                                        width: 4.0,
-                                        height: 4.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 8.0, right: 4.0),
-                                        width: 4.0,
-                                        height: 4.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(top: 8.0),
-                                        width: 4.0,
-                                        height: 4.0,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                : Text("-"),
-                          ],
-                        ),
-                        TableRow(children: [
-                          Text("Path:"),
-                          Text(values["path"]),
-                        ]),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+          ),
+          content: Container(
+            width: 400.0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Opacity(
+                  opacity: .8,
+                  child: Table(
+                    columnWidths: {0: FixedColumnWidth(120.0)},
+                    children: [
+                      page == "connection" ? TableRow(children: [Container(), Container()]) : TableRow(children: [Text("Name:"), Text(values["name"])]),
+                      TableRow(children: [Text("Address:"), Text(values["address"])]),
+                      TableRow(children: [
+                        Text("Port:"),
+                        Text(values["port"]),
+                      ]),
+                      TableRow(children: [
+                        Text("Username:"),
+                        Text(
+                          values["username"],
+                          style: TextStyle(),
+                        )
+                      ]),
+                      TableRow(
+                        children: [
+                          Text("Password/Key:"),
+                          values["passwordOrKey"] != "-" ? _buildPasswordRow(values["passwordOrKey"].length) : Text("-"),
+                        ],
+                      ),
+                      TableRow(children: [
+                        Text("Path:"),
+                        Text(values["path"]),
+                      ]),
+                    ],
+                  ),
+                )
+              ],
             ),
-            actions: <Widget>[
-              hasSecondaryButton ? secondaryButton : Container(),
-              primaryButton,
-              SizedBox(width: .0),
-            ],
-          );
-        });
+          ),
+          actions: <Widget>[
+            hasSecondaryButton ? secondaryButton : Container(),
+            primaryButton,
+            SizedBox(width: .0),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -244,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: .4,
+        elevation: 2.8,
         backgroundColor: Colors.white,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(18.0),
@@ -290,114 +250,105 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           height: 55.0,
           child: Row(
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 18.0, right: 10.0),
-                child: Text(
-                  "RemoteFiles",
-                  style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 17.0),
+              SizedBox(width: 6.0),
+              InkWell(
+                borderRadius: BorderRadius.circular(40.0),
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: Image.asset("assets/app_icon.png", width: 44.0),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 6.0, right: 21.0),
+                      child: Text(
+                        "RemoteFiles",
+                        style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 17.0),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              CustomTooltip(
-                message: "Search",
-                child: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {},
-                ),
-              ),
-              CustomTooltip(
-                message: "About RemoteFiles",
-                child: IconButton(
-                  icon: Icon(Icons.info_outline),
-                  onPressed: () async {
-                    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-                    String version = packageInfo.version;
-                    String buildNumber = packageInfo.buildNumber;
-                    customShowDialog(
-                      context: context,
-                      builder: (context) {
-                        return CustomAlertDialog(
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey[100],
-                                  boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, .14), blurRadius: 2.0, offset: Offset(.0, .8))],
-                                ),
-                                width: 90.0,
-                                height: 90.0,
-                                child: ClipOval(
-                                  child: Image.asset(
-                                    "assets/app_icon.png",
-                                    height: 120.0,
-                                    width: 120.0,
-                                  ),
-                                ),
+                onTap: () async {
+                  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+                  String version = packageInfo.version;
+                  customShowDialog(
+                    context: context,
+                    builder: (context) {
+                      return CustomAlertDialog(
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(top: 6.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18.0),
+                                color: Colors.white,
+                                boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, .2), blurRadius: 2.0, offset: Offset(.0, .8))],
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 22.0, bottom: .0),
-                                child: Text(
-                                  "RemoteFiles",
-                                  style: TextStyle(fontWeight: FontWeight.w500, fontFamily: "GoogleSans", fontSize: 19.0),
-                                ),
+                              width: 90.0,
+                              height: 90.0,
+                              child: Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Image.asset("assets/app_icon.png"),
                               ),
-                              Divider(height: 30.0),
-                              Text(
-                                "Version: $version",
-                                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Colors.grey[700]),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 18.0, bottom: 6.0),
+                              child: Text(
+                                "RemoteFiles",
+                                style: TextStyle(fontWeight: FontWeight.w500, fontFamily: "GoogleSans", fontSize: 19.0),
                               ),
-                              Text(
-                                "Build Number: $buildNumber",
-                                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Colors.grey[700]),
-                              ),
-                              Divider(height: 30.0),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: OutlineButton(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(top: .8),
-                                        child: Text(
-                                          "GitHub",
-                                          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
-                                        ),
+                            ),
+                            Text(
+                              "Version: $version",
+                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Colors.grey[700]),
+                            ),
+                            Divider(height: 30.0),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: RaisedButton(
+                                    color: Color.fromRGBO(235, 240, 255, 1.0),
+                                    splashColor: Color.fromRGBO(215, 225, 250, 1.0),
+                                    elevation: .0,
+                                    highlightElevation: 2.8,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: .8),
+                                      child: Text(
+                                        "GitHub",
+                                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
                                       ),
-                                      highlightedBorderColor: Color.fromRGBO(41, 98, 255, .7),
-                                      highlightColor: Color.fromRGBO(41, 98, 255, .04),
-                                      splashColor: Color.fromRGBO(41, 98, 255, .06),
-                                      highlightElevation: 4.0,
-                                      onPressed: () {},
                                     ),
+                                    onPressed: () {},
                                   ),
-                                  SizedBox(
-                                    width: 14.0,
-                                  ),
-                                  Expanded(
-                                    child: OutlineButton(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(top: .8),
-                                        child: Text(
-                                          "PlayStore",
-                                          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
-                                        ),
+                                ),
+                                SizedBox(
+                                  width: 14.0,
+                                ),
+                                Expanded(
+                                  child: RaisedButton(
+                                    color: Color.fromRGBO(235, 240, 255, 1.0),
+                                    splashColor: Color.fromRGBO(215, 225, 250, 1.0),
+                                    elevation: .0,
+                                    highlightElevation: 2.8,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: .8),
+                                      child: Text(
+                                        "PlayStore",
+                                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
                                       ),
-                                      highlightedBorderColor: Color.fromRGBO(41, 98, 255, .7),
-                                      highlightColor: Color.fromRGBO(41, 98, 255, .04),
-                                      splashColor: Color.fromRGBO(41, 98, 255, .06),
-                                      highlightElevation: 4.0,
-                                      onPressed: () {},
                                     ),
+                                    onPressed: () {},
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

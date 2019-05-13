@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'favorites_page.dart';
 
 class EditConnectionPage extends StatefulWidget {
+  EditConnectionPage(int favoritesIndex) {
+    _EditConnectionPageState._textEditingController.forEach((k, v) {
+      _EditConnectionPageState._textEditingController[k].text = FavoritesPage.favorites[favoritesIndex][k];
+    });
+    _EditConnectionPageState._favoritesIndex = favoritesIndex;
+    _EditConnectionPageState._values = FavoritesPage.favorites[favoritesIndex];
+  }
+  @override
+  _EditConnectionPageState createState() => _EditConnectionPageState();
+}
+
+class _EditConnectionPageState extends State<EditConnectionPage> {
   static Map<String, TextEditingController> _textEditingController = {
     "name": TextEditingController(),
     "address": TextEditingController(),
@@ -21,19 +33,8 @@ class EditConnectionPage extends StatefulWidget {
     "path": "~/",
   };
 
-  EditConnectionPage(Map<String, String> map, int favoritesIndex) {
-    _textEditingController.forEach((k, v) {
-      _textEditingController[k].text = map[k];
-    });
-    EditConnectionPage._favoritesIndex = favoritesIndex;
-    EditConnectionPage._values = map;
-  }
-  @override
-  _EditConnectionPageState createState() => _EditConnectionPageState();
-}
-
-class _EditConnectionPageState extends State<EditConnectionPage> {
   bool _addressIsEntered = true;
+  bool _passwordWasChanged = false;
 
   List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode()];
 
@@ -42,18 +43,31 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
         focusNode: focusNodes[index],
-        controller: EditConnectionPage._textEditingController[valueText],
+        controller: _textEditingController[valueText],
         cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword,
         textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         decoration: InputDecoration(
+          suffixIcon: valueText == "passwordOrKey" && !_passwordWasChanged && _textEditingController[valueText].text != ""
+              ? IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    _textEditingController[valueText].text = "";
+                    _values[valueText] = "";
+                    setState(() => _passwordWasChanged = true);
+                  },
+                )
+              : null,
           focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
           labelText: label,
           hintText: hint,
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         onChanged: (String value) {
-          setState(() => EditConnectionPage._values[valueText] = value);
+          _values[valueText] = value;
+          if (valueText == "passwordOrKey") {
+            setState(() => _passwordWasChanged = true);
+          }
         },
         onSubmitted: (String value) {
           if (index < focusNodes.length - 1) FocusScope.of(context).requestFocus(focusNodes[index + 1]);
@@ -93,8 +107,8 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         elevation: 4.0,
         child: Icon(Icons.done),
         onPressed: () {
-          if (EditConnectionPage._values["address"] != null && EditConnectionPage._values["address"] != "") {
-            FavoritesPage.favorites[EditConnectionPage._favoritesIndex] = EditConnectionPage._values;
+          if (_values["address"] != null && _values["address"] != "") {
+            FavoritesPage.favorites[_favoritesIndex] = _values;
             Navigator.pop(context);
           } else {
             setState(() {

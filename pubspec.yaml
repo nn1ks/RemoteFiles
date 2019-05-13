@@ -11,10 +11,10 @@ description: not yet available
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.0.1+1
+version: 0.0.1+2
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -30,7 +30,6 @@ dependencies:
   flutter_speed_dial: ^1.1.1
   md2_tab_indicator: ^1.0.2
   path_provider: ^0.5.0+1
-  flutter_secure_storage: ^3.2.1+1
   package_info: ^0.4.0+3
   permission_handler: '^2.2.0'
   flutter_document_picker: ^3.0.0
