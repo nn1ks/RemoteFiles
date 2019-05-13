@@ -39,7 +39,7 @@ android {
 
     defaultConfig {
         applicationId "com.niklas8.remote_files"
-        minSdkVersion 18
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

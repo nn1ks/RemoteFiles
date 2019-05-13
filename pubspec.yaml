@@ -32,7 +32,8 @@ dependencies:
   path_provider: ^0.5.0+1
   flutter_secure_storage: ^3.2.1+1
   package_info: ^0.4.0+3
-  #permission_handler: '^2.2.0'
+  permission_handler: '^2.2.0'
+  flutter_document_picker: ^3.0.0
 
 dev_dependencies:
   flutter_test:

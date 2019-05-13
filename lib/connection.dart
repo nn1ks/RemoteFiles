@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io' as Io;
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
-import 'favorites_page.dart';
+import 'load_file.dart';
 import 'main.dart';
 
 class ConnectionPage extends StatefulWidget {
