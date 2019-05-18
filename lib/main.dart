@@ -167,6 +167,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
 
   AnimationController _rotationController1;
@@ -204,6 +205,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 2.8,
         backgroundColor: Colors.white,
