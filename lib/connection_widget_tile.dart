@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'custom_icon_button.dart';
 
 class ConnectionWidgetTile extends StatefulWidget {
   final int index;
@@ -33,6 +34,9 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                 child: ListTile(
                   leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
                   title: Text(widget.fileInfos[widget.index]["filename"]),
+                  trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
+                      ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onLongPress)
+                      : null,
                   onTap: widget.onTap,
                   onLongPress: widget.onLongPress,
                 ),
