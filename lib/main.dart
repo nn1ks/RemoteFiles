@@ -3,6 +3,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
 import 'sftp_connection.dart';
@@ -319,7 +320,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
                                       ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      const url = "https://github.com/niklas-8/RemoteFiles";
+                                      if (await canLaunch(url)) {
+                                        await launch(url);
+                                      } else {
+                                        Navigator.pop(context);
+                                        _scaffoldKey.currentState.showSnackBar(
+                                          SnackBar(
+                                            content: Text("Could not launch $url"),
+                                          ),
+                                        );
+                                      }
+                                    },
                                   ),
                                 ),
                                 SizedBox(
