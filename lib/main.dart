@@ -351,7 +351,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                         style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
                                       ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      _scaffoldKey.currentState.showSnackBar(
+                                        SnackBar(
+                                          content: Text("App is not yet available in the Google PlayStore"),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
