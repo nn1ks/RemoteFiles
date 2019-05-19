@@ -127,6 +127,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConnectionPage(
+                                Connection(
                               address: RecentlyAddedPage.recentlyAdded[index]["address"],
                               port: RecentlyAddedPage.recentlyAdded[index]["port"],
                               username: RecentlyAddedPage.recentlyAdded[index]["username"],
@@ -134,6 +135,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                               path: RecentlyAddedPage.recentlyAdded[index]["path"],
                             ),
                       ),
+                        ),
                     );
                   },
                 )

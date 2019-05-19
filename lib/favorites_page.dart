@@ -129,6 +129,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConnectionPage(
+                                Connection(
                               address: FavoritesPage.favorites[index]["address"],
                               port: FavoritesPage.favorites[index]["port"],
                               username: FavoritesPage.favorites[index]["username"],
@@ -136,6 +137,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               path: FavoritesPage.favorites[index]["path"],
                             ),
                       ),
+                        ),
                     );
                   },
                 )

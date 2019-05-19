@@ -15,17 +15,6 @@ import 'connection.dart';
 import 'main.dart';
 
 class ConnectionPage extends StatefulWidget {
-  /*final String address;
-  final String port;
-  final String username;
-  final String passwordOrKey;
-  final String path;
-  final Map<String, String> map;
-
-  ConnectionPage({Key key, this.address, this.port, this.username, this.passwordOrKey, this.path, this.map}) : super(key: key);*/
-
-  //final Connection connection;
-
   ConnectionPage(Connection c) {
     _ConnectionPageState._connection = c;
   }
