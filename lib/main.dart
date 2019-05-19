@@ -91,18 +91,12 @@ class MyHomePage extends StatefulWidget {
     } else if (page == "connection") {
       values = ConnectionPage.currentConnection;
     }
-    if (values.name == "") values.name = "-";
-    if (values.address == "") values.address = "-";
-    if (values.port == "") values.port = "-";
-    if (values.username == "") values.username = "-";
-    if (values.passwordOrKey == "") values.passwordOrKey = "-";
-    if (values.path == "") values.path = "-";
     customShowDialog(
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
           title: Text(
-            page == "connection" ? "Current connection" : (values.name != "-" ? values.name : values.address),
+            page == "connection" ? "Current connection" : (values.name != "" ? values.name : values.address),
             style: TextStyle(
               fontFamily: "GoogleSans",
             ),
@@ -117,8 +111,19 @@ class MyHomePage extends StatefulWidget {
                   child: Table(
                     columnWidths: {0: FixedColumnWidth(120.0)},
                     children: [
-                      page == "connection" ? TableRow(children: [Container(), Container()]) : TableRow(children: [Text("Name:"), Text(values.name)]),
-                      TableRow(children: [Text("Address:"), Text(values.address)]),
+                      page == "connection"
+                          ? TableRow(children: [
+                              Container(),
+                              Container(),
+                            ])
+                          : TableRow(children: [
+                              Text("Name:"),
+                              Text(values.name != "" ? values.name : "-"),
+                            ]),
+                      TableRow(children: [
+                        Text("Address:"),
+                        Text(values.address),
+                      ]),
                       TableRow(children: [
                         Text("Port:"),
                         Text(values.port),
@@ -126,14 +131,14 @@ class MyHomePage extends StatefulWidget {
                       TableRow(children: [
                         Text("Username:"),
                         Text(
-                          values.username,
+                          values.username != "" ? values.username : "-",
                           style: TextStyle(),
                         )
                       ]),
                       TableRow(
                         children: [
                           Text("Password/Key:"),
-                          values.passwordOrKey != "-" ? _buildPasswordRow(values.passwordOrKey.length) : Text("-"),
+                          values.passwordOrKey != "" ? _buildPasswordRow(values.passwordOrKey.length) : Text("-"),
                         ],
                       ),
                       TableRow(children: [
@@ -188,9 +193,8 @@ class MyHomePage extends StatefulWidget {
 
   /// insert a new connection at a given index
   static void insertToJson(int index, Connection connection, bool isFavorites) {
-    if (isFavorites
-        ? (jsonFileExistsFavorites && jsonFileFavorites.readAsStringSync() != "")
-        : (jsonFileExistsRecentlyAdded && jsonFileRecentlyAdded.readAsStringSync() != "")) {
+    if ((isFavorites ? jsonFileExistsFavorites : jsonFileExistsRecentlyAdded) &&
+        (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).readAsStringSync() != "") {
       List<Connection> list = [];
       list.addAll(getConnections(isFavorites));
       list.insert(index, connection);

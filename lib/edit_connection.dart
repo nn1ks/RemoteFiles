@@ -103,8 +103,9 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         child: Icon(Icons.done),
         onPressed: () {
           if (_connection.address != null && _connection.address != "") {
-            FavoritesPage.connections[_favoritesIndex] = _connection;
-            MyHomePage.addToJson(_connection, true);
+            MyHomePage.insertToJson(_favoritesIndex, _connection, true);
+            MyHomePage.removeFromJsonAt(_favoritesIndex + 1, true);
+            FavoritesPage.connections = MyHomePage.getConnections(true);
             Navigator.pop(context);
           } else {
             setState(() {

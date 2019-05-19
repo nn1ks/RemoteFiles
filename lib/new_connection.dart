@@ -32,7 +32,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         onChanged: (String value) {
-          setState(() => NewConnectionPage._connection.setter(valueText, value));
+          NewConnectionPage._connection.setter(valueText, value);
         },
         onSubmitted: (String value) {
           if (index < focusNodes.length - 1) FocusScope.of(context).requestFocus(focusNodes[index + 1]);
@@ -73,14 +73,12 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         child: Icon(Icons.done),
         onPressed: () {
           if (NewConnectionPage._connection.address != null) {
-            setState(() {
-              if (_addToFavorites) {
-                FavoritesPage.connections.insert(0, NewConnectionPage._connection);
-                MyHomePage.addToJson(NewConnectionPage._connection, true);
-              }
-              RecentlyAddedPage.connections.insert(0, NewConnectionPage._connection);
-              MyHomePage.addToJson(NewConnectionPage._connection, false);
-            });
+            if (_addToFavorites) {
+              MyHomePage.addToJson(NewConnectionPage._connection, true);
+              FavoritesPage.connections = MyHomePage.getConnections(true);
+            }
+            MyHomePage.addToJson(NewConnectionPage._connection, false);
+            RecentlyAddedPage.connections = MyHomePage.getConnections(false);
             Navigator.pop(context);
           } else {
             setState(() {
