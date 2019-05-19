@@ -1,5 +1,7 @@
 # RemoteFiles
 
+<img src="assets/app_icon.png" width="90px">
+
 RemoteFiles is a SFTP client for Android and iOS and was developed with [Flutter](https://flutter.dev).
 
 The [ssh package](https://pub.dev/packages/ssh) is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
