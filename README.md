@@ -12,3 +12,8 @@ Downloaded files are saved to external storage, which needs 'WRITE_EXTERNAL_STOR
 
 - [APK file](https://github.com/niklas-8/RemoteFiles/releases)
 - Google PlayStore (not yet available)
+
+## Screenshots
+
+<img src="screenshots/1.jpg" width="280px"> <img src="screenshots/2.jpg" width="280px"> <img src="screenshots/3.jpg" width="280px">
+<img src="screenshots/4.jpg" width="280px"> <img src="screenshots/5.jpg" width="280px"> <img src="screenshots/6.jpg" width="280px">
