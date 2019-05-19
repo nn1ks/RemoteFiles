@@ -79,14 +79,14 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         child: Icon(Icons.done),
         onPressed: () {
           if (NewConnectionPage._values["address"] != null) {
-              setState(() {
+            setState(() {
               if (_addToFavorites) {
                 FavoritesPage.favorites.insert(0, {});
                 FavoritesPage.favorites[0].addAll(NewConnectionPage._values);
                 MyHomePage.writeToFile(NewConnectionPage._values, true);
-            }
-            RecentlyAddedPage.recentlyAdded.insert(0, {});
-            RecentlyAddedPage.recentlyAdded[0].addAll(NewConnectionPage._values);
+              }
+              RecentlyAddedPage.recentlyAdded.insert(0, {});
+              RecentlyAddedPage.recentlyAdded[0].addAll(NewConnectionPage._values);
               MyHomePage.writeToFile(NewConnectionPage._values, false);
             });
             Navigator.pop(context);
@@ -103,7 +103,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
             physics: BouncingScrollPhysics(),
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 10.0),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 4.0),
                 child: Column(children: <Widget>[
                   _buildTextField(label: "Name", valueText: "name", index: 0),
                   _buildTextField(label: "Address*", valueText: "address", index: 1),
@@ -114,10 +114,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
                 ]),
               ),
               CheckboxListTile(
-                secondary: Padding(
-                  padding: EdgeInsets.only(left: 6.0),
-                  child: Icon(Icons.star_border),
-                ),
+                secondary: Icon(Icons.star_border),
                 title: Padding(
                   padding: EdgeInsets.only(top: 2.0),
                   child: Text(
@@ -130,38 +127,6 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
                   setState(() {
                     _addToFavorites = value;
                   });
-                },
-              ),
-              ListTile(
-                leading: Padding(
-                  padding: EdgeInsets.only(left: 6.0),
-                  child: Icon(Icons.add_circle_outline),
-                ),
-                title: Padding(
-                  padding: EdgeInsets.only(top: 2.0),
-                  child: Text("Add template"),
-                ),
-                onTap: () {
-                  FavoritesPage.favorites.insert(0, {});
-                  FavoritesPage.favorites[0].addAll({
-                    "address": "192.168.2.2",
-                    "port": "22",
-                    "username": "niklas",
-                    "passwordOrKey": "esse850ni",
-                    "path": "/mnt/server-hdd/niklas",
-                    "name": "fileserver local"
-                  });
-                  //MyHomePage().writeFavoriteStorageList();
-                  RecentlyAddedPage.recentlyAdded.insert(0, {});
-                  RecentlyAddedPage.recentlyAdded[0].addAll({
-                    "address": "192.168.2.2",
-                    "port": "22",
-                    "username": "niklas",
-                    "passwordOrKey": "esse850ni",
-                    "path": "/mnt/server-hdd/niklas",
-                    "name": "fileserver local"
-                  });
-                  Navigator.pop(context);
                 },
               ),
               SizedBox(
