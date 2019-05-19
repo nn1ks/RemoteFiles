@@ -117,6 +117,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             setState(() {
                               FavoritesPage.favorites.removeAt(index);
                             });
+                              MyHomePage.removeConnection(index, true);
                             Navigator.pop(context);
                           },
                         ),

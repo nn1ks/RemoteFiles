@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'favorites_page.dart';
+import 'main.dart';
 
 class EditConnectionPage extends StatefulWidget {
   EditConnectionPage(int favoritesIndex) {
@@ -109,6 +110,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         onPressed: () {
           if (_values["address"] != null && _values["address"] != "") {
             FavoritesPage.favorites[_favoritesIndex] = _values;
+            MyHomePage.writeToFile(_values, true);
             Navigator.pop(context);
           } else {
             setState(() {

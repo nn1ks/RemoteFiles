@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'favorites_page.dart';
 import 'recently_added_page.dart';
-import 'sftp_connection.dart';
+import 'main.dart';
 
 class NewConnectionPage extends StatefulWidget {
   static Map<String, String> _values = {
@@ -79,15 +79,16 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         child: Icon(Icons.done),
         onPressed: () {
           if (NewConnectionPage._values["address"] != null) {
-            if (_addToFavorites) {
               setState(() {
+              if (_addToFavorites) {
                 FavoritesPage.favorites.insert(0, {});
                 FavoritesPage.favorites[0].addAll(NewConnectionPage._values);
-              });
+                MyHomePage.writeToFile(NewConnectionPage._values, true);
             }
             RecentlyAddedPage.recentlyAdded.insert(0, {});
             RecentlyAddedPage.recentlyAdded[0].addAll(NewConnectionPage._values);
-            SftpConnection.connectMap(NewConnectionPage._values);
+              MyHomePage.writeToFile(NewConnectionPage._values, false);
+            });
             Navigator.pop(context);
           } else {
             setState(() {

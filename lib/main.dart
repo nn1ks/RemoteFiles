@@ -3,12 +3,15 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:io';
+import 'dart:convert';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
-import 'sftp_connection.dart';
 import 'favorites_page.dart';
 import 'recently_added_page.dart';
+import 'connection_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,7 +47,7 @@ class MyApp extends StatelessWidget {
           title: 'RemoteFiles',
           theme: theme,
           //debugShowCheckedModeBanner: false,
-          home: MyHomePage(title: 'RemoteFiles'),
+          home: MyHomePage(),
         );
       },
     );
@@ -52,9 +55,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
   Row _buildPasswordRow(int passwordLength) {
     if (passwordLength == 0) passwordLength = 1;
     List<Widget> widgets = [];
@@ -99,8 +99,8 @@ class MyHomePage extends StatefulWidget {
         if (RecentlyAddedPage.recentlyAdded[index][k] != "") values[k] = RecentlyAddedPage.recentlyAdded[index][k];
       });
     } else if (page == "connection") {
-      SftpConnection.currentConnection.forEach((k, v) {
-        if (SftpConnection.currentConnection[k] != null) values[k] = SftpConnection.currentConnection[k];
+      ConnectionPage.currentConnection.forEach((k, v) {
+        if (ConnectionPage.currentConnection[k] != null) values[k] = ConnectionPage.currentConnection[k];
       });
     }
     customShowDialog(
@@ -162,6 +162,72 @@ class MyHomePage extends StatefulWidget {
     );
   }
 
+  static Directory dir;
+  static File jsonFileFavorites;
+  static String jsonFileNameFavorites = "favorites.json";
+  static bool jsonFileExistsFavorites = false;
+  static File jsonFileRecentlyAdded;
+  static String jsonFileNameRecentlyAdded = "recently_added.json";
+  static bool jsonFileExistsRecentlyAdded = false;
+
+  static Map<String, String> makeFullConnectionMap(Map<String, dynamic> connection) {
+    Map<String, String> newConnection = {
+      "name": "",
+      "address": null,
+      "port": "",
+      "username": "",
+      "passwordOrKey": "",
+      "path": "~/",
+    };
+    connection.forEach((k, v) {
+      newConnection[k] = v;
+    });
+    return newConnection;
+  }
+
+  static List<Map<String, String>> getConnections(bool isFavorites) {
+    List<dynamic> jsonContent = json.decode((isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).readAsStringSync());
+    var jsonContent1 = List<Map<String, dynamic>>.from(jsonContent);
+    var list = List<Map<String, String>>(jsonContent1.length);
+    for (int i = 0; i < jsonContent.length; i++) {
+      list[i] = makeFullConnectionMap(jsonContent1[i]);
+    }
+    return list;
+  }
+
+  static File createFile(Map<String, String> content, bool isFavorites) {
+    print(content);
+    File file;
+    file = isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded;
+    file.createSync();
+    if (isFavorites)
+      jsonFileExistsFavorites = true;
+    else
+      jsonFileExistsRecentlyAdded = true;
+    file.writeAsStringSync(json.encode([content]));
+    return file;
+  }
+
+  static void writeToFile(Map<String, String> content, bool isFavorites) {
+    if (isFavorites
+        ? (jsonFileExistsFavorites && jsonFileFavorites.readAsStringSync() != "")
+        : (jsonFileExistsRecentlyAdded && jsonFileRecentlyAdded.readAsStringSync() != "")) {
+      List<Map<String, String>> list = [];
+      list.addAll(getConnections(isFavorites));
+      list.insert(0, makeFullConnectionMap(content));
+      (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(list));
+    } else {
+      createFile(content, isFavorites);
+    }
+  }
+
+  static void removeConnection(int index, bool isFavorites) {
+    List<Map<String, String>> list = [];
+    list.addAll(getConnections(isFavorites));
+    list.removeAt(index);
+    (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(list));
+  }
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -193,6 +259,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _tabController.addListener(_tabOnChange);
     _rotationController1 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     _rotationController2 = AnimationController(duration: Duration(milliseconds: 280), vsync: this);
+    getApplicationDocumentsDirectory().then((Directory dir) {
+      setState(() {
+        MyHomePage.dir = dir;
+        MyHomePage.jsonFileFavorites = File(MyHomePage.dir.path + "/" + MyHomePage.jsonFileNameFavorites);
+        MyHomePage.jsonFileRecentlyAdded = File(MyHomePage.dir.path + "/" + MyHomePage.jsonFileNameRecentlyAdded);
+        MyHomePage.jsonFileExistsFavorites = MyHomePage.jsonFileFavorites.existsSync();
+        print(MyHomePage.jsonFileExistsFavorites);
+        MyHomePage.jsonFileExistsRecentlyAdded = MyHomePage.jsonFileRecentlyAdded.existsSync();
+        print(MyHomePage.jsonFileExistsRecentlyAdded);
+        if (MyHomePage.jsonFileExistsFavorites) {
+          FavoritesPage.favorites = [];
+          FavoritesPage.favorites.addAll(MyHomePage.getConnections(true));
+        }
+        if (MyHomePage.jsonFileExistsRecentlyAdded) {
+          RecentlyAddedPage.recentlyAdded = [];
+          RecentlyAddedPage.recentlyAdded.addAll(MyHomePage.getConnections(true));
+        }
+      });
+    });
     super.initState();
   }
 

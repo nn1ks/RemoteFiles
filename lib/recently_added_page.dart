@@ -91,6 +91,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                             setState(() {
                               FavoritesPage.favorites.insert(0, RecentlyAddedPage.recentlyAdded[index]);
                             });
+                              MyHomePage.writeToFile(RecentlyAddedPage.recentlyAdded[index], true);
                             Navigator.pop(context);
                           },
                         ),
@@ -114,6 +115,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                             setState(() {
                               RecentlyAddedPage.recentlyAdded.removeAt(index);
                             });
+                              MyHomePage.removeConnection(index, false);
                             Navigator.pop(context);
                           },
                         ),
