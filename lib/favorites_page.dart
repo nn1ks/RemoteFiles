@@ -42,14 +42,25 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return _output;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      child: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
+  List<GlobalKey> _reorderableKeys;
+
+  void _addKeys() {
+    setState(() => _reorderableKeys = []);
+    int itemCount = FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1;
+    for (int i = 0; i < itemCount; i++) {
+      setState(() => _reorderableKeys.add(GlobalKey()));
+    }
+  }
+
+  List<Widget> _getWidgetList() {
+    _addKeys();
+    List<Widget> widgets = [];
+    int itemCount = FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1;
+    for (int index = 0; index < itemCount; index++) {
+      widgets.add(
+        Container(
+          key: _reorderableKeys[index],
+          child: Padding(
             padding: EdgeInsets.only(top: index == 0 ? 10.0 : index == (FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1) ? 30.0 : .0),
             child: FavoritesPage.favorites.length > 0
                 ? ListTile(
@@ -120,7 +131,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               setState(() {
                                 FavoritesPage.favorites.removeAt(index);
                               });
-                              MyHomePage.removeConnection(index, true);
+                              MyHomePage.removeFromJsonAt(index, true);
                               Navigator.pop(context);
                             },
                           ),
@@ -145,7 +156,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     },
                   )
                 : Padding(
-                    padding: EdgeInsets.only(top: 20.0, left: 20.0),
+                    padding: EdgeInsets.only(top: 20.0),
                     child: Opacity(
                       opacity: .7,
                       child: Text(
@@ -154,7 +165,26 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       ),
                     ),
                   ),
-          );
+          ),
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+      child: ReorderableListView(
+        children: _getWidgetList(),
+        onReorder: (int a, int b) {
+          var temp = FavoritesPage.favorites[a];
+          setState(() {
+            FavoritesPage.favorites.removeAt(a);
+            FavoritesPage.favorites.insert(b - (a > b ? 0 : 1), temp);
+            MyHomePage.removeFromJsonAt(a, true);
+            MyHomePage.insertToJson(b - (a > b ? 0 : 1), temp, true);
+          });
         },
       ),
     );

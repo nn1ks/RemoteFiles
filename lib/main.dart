@@ -12,6 +12,7 @@ import 'new_connection.dart';
 import 'favorites_page.dart';
 import 'recently_added_page.dart';
 import 'connection_page.dart';
+import 'connection.dart';
 
 void main() => runApp(MyApp());
 
@@ -196,7 +197,6 @@ class MyHomePage extends StatefulWidget {
   }
 
   static File createFile(Map<String, String> content, bool isFavorites) {
-    print(content);
     File file;
     file = isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded;
     file.createSync();
@@ -208,20 +208,26 @@ class MyHomePage extends StatefulWidget {
     return file;
   }
 
-  static void writeToFile(Map<String, String> content, bool isFavorites) {
+  /// insert a new connection at a given index
+  static void insertToJson(int index, Map<String, String> connection, bool isFavorites) {
     if (isFavorites
         ? (jsonFileExistsFavorites && jsonFileFavorites.readAsStringSync() != "")
         : (jsonFileExistsRecentlyAdded && jsonFileRecentlyAdded.readAsStringSync() != "")) {
       List<Map<String, String>> list = [];
       list.addAll(getConnections(isFavorites));
-      list.insert(0, makeFullConnectionMap(content));
+      list.insert(index, makeFullConnectionMap(connection));
       (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(list));
     } else {
-      createFile(content, isFavorites);
+      createFile(connection, isFavorites);
     }
   }
 
-  static void removeConnection(int index, bool isFavorites) {
+  /// insert a new connection at index 0
+  static void addToJson(Map<String, String> connection, bool isFavorites) {
+    insertToJson(0, connection, isFavorites);
+  }
+
+  static void removeFromJsonAt(int index, bool isFavorites) {
     List<Map<String, String>> list = [];
     list.addAll(getConnections(isFavorites));
     list.removeAt(index);
@@ -265,16 +271,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         MyHomePage.jsonFileFavorites = File(MyHomePage.dir.path + "/" + MyHomePage.jsonFileNameFavorites);
         MyHomePage.jsonFileRecentlyAdded = File(MyHomePage.dir.path + "/" + MyHomePage.jsonFileNameRecentlyAdded);
         MyHomePage.jsonFileExistsFavorites = MyHomePage.jsonFileFavorites.existsSync();
-        print(MyHomePage.jsonFileExistsFavorites);
         MyHomePage.jsonFileExistsRecentlyAdded = MyHomePage.jsonFileRecentlyAdded.existsSync();
-        print(MyHomePage.jsonFileExistsRecentlyAdded);
         if (MyHomePage.jsonFileExistsFavorites) {
           FavoritesPage.favorites = [];
           FavoritesPage.favorites.addAll(MyHomePage.getConnections(true));
         }
         if (MyHomePage.jsonFileExistsRecentlyAdded) {
           RecentlyAddedPage.recentlyAdded = [];
-          RecentlyAddedPage.recentlyAdded.addAll(MyHomePage.getConnections(true));
+          RecentlyAddedPage.recentlyAdded.addAll(MyHomePage.getConnections(false));
         }
       });
     });

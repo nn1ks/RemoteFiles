@@ -110,7 +110,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         onPressed: () {
           if (_values["address"] != null && _values["address"] != "") {
             FavoritesPage.favorites[_favoritesIndex] = _values;
-            MyHomePage.writeToFile(_values, true);
+            MyHomePage.addToJson(_values, true);
             Navigator.pop(context);
           } else {
             setState(() {

@@ -42,15 +42,27 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
     return _output;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scrollbar(
-      child: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: EdgeInsets.only(top: index == 0 ? 10.0 : index == (FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1) ? 30.0 : .0),
+  List<GlobalKey> _reorderableKeys;
+
+  void _addKeys() {
+    setState(() => _reorderableKeys = []);
+    int itemCount = RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1;
+    for (int i = 0; i < itemCount; i++) {
+      setState(() => _reorderableKeys.add(GlobalKey()));
+    }
+  }
+
+  List<Widget> _getWidgetList() {
+    _addKeys();
+    List<Widget> widgets = [];
+    int itemCount = RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1;
+    for (int index = 0; index < itemCount; index++) {
+      widgets.add(
+        Container(
+          key: _reorderableKeys[index],
+          child: Padding(
+            padding: EdgeInsets.only(
+                top: index == 0 ? 10.0 : index == (RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1) ? 30.0 : .0),
             child: RecentlyAddedPage.recentlyAdded.length > 0
                 ? ListTile(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
@@ -94,7 +106,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                               setState(() {
                                 FavoritesPage.favorites.insert(0, RecentlyAddedPage.recentlyAdded[index]);
                               });
-                              MyHomePage.writeToFile(RecentlyAddedPage.recentlyAdded[index], true);
+                              MyHomePage.addToJson(RecentlyAddedPage.recentlyAdded[index], true);
                               Navigator.pop(context);
                             },
                           ),
@@ -118,7 +130,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                               setState(() {
                                 RecentlyAddedPage.recentlyAdded.removeAt(index);
                               });
-                              MyHomePage.removeConnection(index, false);
+                              MyHomePage.removeFromJsonAt(index, false);
                               Navigator.pop(context);
                             },
                           ),
@@ -143,7 +155,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                     },
                   )
                 : Padding(
-                    padding: EdgeInsets.only(top: 20.0, left: 20.0),
+                    padding: EdgeInsets.only(top: 20.0),
                     child: Opacity(
                       opacity: .7,
                       child: Text(
@@ -152,7 +164,26 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                       ),
                     ),
                   ),
-          );
+          ),
+        ),
+      );
+    }
+    return widgets;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scrollbar(
+      child: ReorderableListView(
+        children: _getWidgetList(),
+        onReorder: (int a, int b) {
+          var temp = RecentlyAddedPage.recentlyAdded[a];
+          setState(() {
+            RecentlyAddedPage.recentlyAdded.removeAt(a);
+            RecentlyAddedPage.recentlyAdded.insert(b - (a > b ? 0 : 1), temp);
+            MyHomePage.removeFromJsonAt(a, false);
+            MyHomePage.insertToJson(b - (a > b ? 0 : 1), temp, false);
+          });
         },
       ),
     );

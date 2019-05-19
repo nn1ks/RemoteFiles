@@ -83,11 +83,11 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
               if (_addToFavorites) {
                 FavoritesPage.favorites.insert(0, {});
                 FavoritesPage.favorites[0].addAll(NewConnectionPage._values);
-                MyHomePage.writeToFile(NewConnectionPage._values, true);
+                MyHomePage.addToJson(NewConnectionPage._values, true);
               }
               RecentlyAddedPage.recentlyAdded.insert(0, {});
               RecentlyAddedPage.recentlyAdded[0].addAll(NewConnectionPage._values);
-              MyHomePage.writeToFile(NewConnectionPage._values, false);
+              MyHomePage.addToJson(NewConnectionPage._values, false);
             });
             Navigator.pop(context);
           } else {
