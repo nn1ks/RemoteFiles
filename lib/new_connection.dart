@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'favorites_page.dart';
 import 'recently_added_page.dart';
+import 'connection.dart';
 import 'main.dart';
 
 class NewConnectionPage extends StatefulWidget {
-  static Map<String, String> _values = {
-    "name": "",
-    "address": null,
-    "port": "",
-    "username": "",
-    "passwordOrKey": "",
-    "path": "~/",
-  };
+  static Connection _connection = Connection();
 
   @override
   _NewConnectionPageState createState() => _NewConnectionPageState();
@@ -38,7 +32,7 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         onChanged: (String value) {
-          setState(() => NewConnectionPage._values[valueText] = value);
+          setState(() => NewConnectionPage._connection.setter(valueText, value));
         },
         onSubmitted: (String value) {
           if (index < focusNodes.length - 1) FocusScope.of(context).requestFocus(focusNodes[index + 1]);
@@ -78,16 +72,14 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         elevation: 4.0,
         child: Icon(Icons.done),
         onPressed: () {
-          if (NewConnectionPage._values["address"] != null) {
+          if (NewConnectionPage._connection.address != null) {
             setState(() {
               if (_addToFavorites) {
-                FavoritesPage.favorites.insert(0, {});
-                FavoritesPage.favorites[0].addAll(NewConnectionPage._values);
-                MyHomePage.addToJson(NewConnectionPage._values, true);
+                FavoritesPage.connections.insert(0, NewConnectionPage._connection);
+                MyHomePage.addToJson(NewConnectionPage._connection, true);
               }
-              RecentlyAddedPage.recentlyAdded.insert(0, {});
-              RecentlyAddedPage.recentlyAdded[0].addAll(NewConnectionPage._values);
-              MyHomePage.addToJson(NewConnectionPage._values, false);
+              RecentlyAddedPage.connections.insert(0, NewConnectionPage._connection);
+              MyHomePage.addToJson(NewConnectionPage._connection, false);
             });
             Navigator.pop(context);
           } else {

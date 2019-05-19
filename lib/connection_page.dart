@@ -23,9 +23,9 @@ class ConnectionPage extends StatefulWidget {
 
   List<Map<String, String>> get fileInfos => _ConnectionPageState()._fileInfos;
 
-  static Map<String, String> get currentConnection => _ConnectionPageState._currentConnection;
+  static Connection get currentConnection => _ConnectionPageState._currentConnection;
   static SSHClient get client => _ConnectionPageState._client;
-  static connectMap(Map<String, String> map) => _ConnectionPageState()._connectMap(map);
+  static connect(Connection connection) => _ConnectionPageState()._connect(connection);
   static refresh() => _ConnectionPageState()._refresh();
   static Future<bool> download(String filePath) async => await _ConnectionPageState()._download(filePath);
 
@@ -40,10 +40,10 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   bool _showHiddenFiles = false;
   bool _isListView = true;
 
-  static Map<String, String> _currentConnection;
+  static Connection _currentConnection;
   List<Map<String, String>> _fileInfos = [];
   static SSHClient _client;
-  int _itemNum = FavoritesPage.favorites.length > 0 ? FavoritesPage.favorites.length : 1;
+  int _itemNum = FavoritesPage.connections.length > 0 ? FavoritesPage.connections.length : 1;
   bool _isLoading = false;
   String _directoryBefore;
 
@@ -52,7 +52,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
 
   _showFileBottomSheet(int index) {
     Map<String, String> fileInfo = _fileInfos[index];
-    String currentPath = _currentConnection["path"];
+    String currentPath = _currentConnection.path;
     String filePath = currentPath;
     if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
     filePath += _fileInfos[index]["filename"];
@@ -337,7 +337,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     ];
     String temp = "";
     String path = "";
-    if (_currentConnection != null) path = _currentConnection["path"] != null ? _currentConnection["path"] + "/" : "";
+    if (_currentConnection != null) path = _currentConnection.path != null ? _currentConnection.path + "/" : "";
     for (int i = 1; i < path.length; i++) {
       if (path[i] == "/") {
         widgets.add(InkWell(
@@ -390,16 +390,16 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             onTap: () {
               if (_fileInfos[i]["isDirectory"] == "true") {
                 setState(() {
-                  _directoryBefore = _currentConnection["path"];
+                  _directoryBefore = _currentConnection.path;
                 });
-                _goToDirectory(_currentConnection["path"] + "/" + _fileInfos[i]["filename"]);
+                _goToDirectory(_currentConnection.path + "/" + _fileInfos[i]["filename"]);
               } else {
-                //showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(_fileInfos[i], _currentConnection["path"]));
+                //showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(_fileInfos[i], _currentConnection.path));
                 _showFileBottomSheet(i);
               }
             },
             onLongPress: () {
-              //showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(_fileInfos[i], _currentConnection["path"]));
+              //showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(_fileInfos[i], _currentConnection.path));
               _showFileBottomSheet(i);
             },
           ));
@@ -410,7 +410,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     return list;
   }
 
-  _connect({@required String address, String port, String username, String passwordOrKey, String path, bool setIsLoading = true}) async {
+  _connectIndividually({@required String address, String port, String username, String passwordOrKey, String path, bool setIsLoading = true}) async {
     _client = SSHClient(
       host: address,
       port: port != null && port != "" ? int.parse(port) : 22,
@@ -454,13 +454,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         );
       }
       if (pathIsValid) {
-        _currentConnection = {
-          "address": address,
-          "port": port != null && port != "" ? port : "22",
-          "username": username != null ? username : "",
-          "passwordOrKey": passwordOrKey != null ? passwordOrKey : "",
-          "path": path != null ? _removeTrailingSlash(path) : "",
-        };
+        _currentConnection = Connection(address: address, port: port, username: username, passwordOrKey: passwordOrKey, path: path);
         _fileInfos = [];
         _fileInfos.length = list.length;
         for (int i = 0; i < list.length; i++) {
@@ -479,29 +473,29 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     _sortItemList();
   }
 
-  _connectMap(Map<String, String> map, {bool setIsLoading = true}) {
-    _connect(
-      address: map["address"],
-      port: map["port"],
-      username: map["username"],
-      passwordOrKey: map["passwordOrKey"],
-      path: map["path"],
+  _connect(Connection connection, {bool setIsLoading = true}) {
+    _connectIndividually(
+      address: connection.address,
+      port: connection.port,
+      username: connection.username,
+      passwordOrKey: connection.passwordOrKey,
+      path: connection.path,
       setIsLoading: setIsLoading,
     );
   }
 
   _goToDirectory(String value) {
-    _connect(
-      address: _currentConnection["address"],
-      port: _currentConnection["port"],
-      username: _currentConnection["username"],
-      passwordOrKey: _currentConnection["passwordOrKey"],
+    _connectIndividually(
+      address: _currentConnection.address,
+      port: _currentConnection.port,
+      username: _currentConnection.username,
+      passwordOrKey: _currentConnection.passwordOrKey,
       path: value,
     );
   }
 
   _goToDirectoryBefore() async {
-    String current = _currentConnection["path"];
+    String current = _currentConnection.path;
     int lastSlashIndex;
     for (int i = 0; i < current.length - 1; i++) {
       if (current[i] == "/") {
@@ -514,7 +508,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   }
 
   _refresh() async {
-    await _connectMap(_currentConnection);
+    await _connect(_currentConnection);
   }
 
   String _removeTrailingSlash(String path) {
@@ -665,7 +659,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       }
     }
     bool fileNameExisting = false;
-    var ls = await _client.sftpLs(_currentConnection["path"]);
+    var ls = await _client.sftpLs(_currentConnection.path);
     for (int i = 0; i < ls.length; i++) {
       if (filename == ls[i]["filename"]) fileNameExisting = true;
     }
@@ -673,7 +667,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       try {
         _client.sftpUpload(
           path: path,
-          toPath: _currentConnection["path"],
+          toPath: _currentConnection.path,
           callback: (progress) {
             setState(() => _progress = progress);
             if (progress == 5) {
@@ -755,7 +749,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         ),
       );
       _showUploadProgress = false;
-      _connectMap(_currentConnection);
+      _refresh();
     }
   }
 
@@ -767,14 +761,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   @override
   void initState() {
     _rotationController = AnimationController(duration: Duration(milliseconds: 100), vsync: this);
-    if (_currentConnection != null) _currentConnection["path"] = "";
-    _connect(
-      address: _connection.address,
-      port: _connection.port,
-      username: _connection.username,
-      passwordOrKey: _connection.passwordOrKey,
-      path: _connection.path,
-    );
+    _connect(_connection);
     super.initState();
   }
 
@@ -955,7 +942,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                           if (value[0] == "/") {
                                             _goToDirectory(value);
                                           } else {
-                                            _goToDirectory(_currentConnection["path"] + "/" + value);
+                                            _goToDirectory(_currentConnection.path + "/" + value);
                                           }
                                           Navigator.pop(context);
                                         },
@@ -1168,9 +1155,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                       autofocus: true,
                       autocorrect: false,
                       onSubmitted: (String value) async {
-                        await _client.sftpMkdir(_currentConnection["path"] + "/" + value);
+                        await _client.sftpMkdir(_currentConnection.path + "/" + value);
                         Navigator.pop(context);
-                        _connectMap(_currentConnection);
+                        _connect(_currentConnection);
                       },
                     ),
                   );
@@ -1185,7 +1172,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           child: RefreshIndicator(
             key: _refreshKey,
             onRefresh: () async {
-              await _connectMap(_currentConnection, setIsLoading: true);
+              await _connect(_currentConnection, setIsLoading: true);
             },
             child: _isLoading
                 ? Container(

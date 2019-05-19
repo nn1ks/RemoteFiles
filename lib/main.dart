@@ -83,33 +83,26 @@ class MyHomePage extends StatefulWidget {
     bool hasSecondaryButton = false,
     Widget secondaryButton,
   }) {
-    Map<String, String> values = {
-      "name": "-",
-      "address": "-",
-      "port": "22",
-      "username": "-",
-      "passwordOrKey": "-",
-      "path": "-",
-    };
+    Connection values = Connection();
     if (page == "favorites") {
-      FavoritesPage.favorites[index].forEach((k, v) {
-        if (FavoritesPage.favorites[index][k] != "") values[k] = FavoritesPage.favorites[index][k];
-      });
+      values = FavoritesPage.connections[index];
     } else if (page == "recentlyAdded") {
-      RecentlyAddedPage.recentlyAdded[index].forEach((k, v) {
-        if (RecentlyAddedPage.recentlyAdded[index][k] != "") values[k] = RecentlyAddedPage.recentlyAdded[index][k];
-      });
+      values = RecentlyAddedPage.connections[index];
     } else if (page == "connection") {
-      ConnectionPage.currentConnection.forEach((k, v) {
-        if (ConnectionPage.currentConnection[k] != null) values[k] = ConnectionPage.currentConnection[k];
-      });
+      values = ConnectionPage.currentConnection;
     }
+    if (values.name == "") values.name = "-";
+    if (values.address == "") values.address = "-";
+    if (values.port == "") values.port = "-";
+    if (values.username == "") values.username = "-";
+    if (values.passwordOrKey == "") values.passwordOrKey = "-";
+    if (values.path == "") values.path = "-";
     customShowDialog(
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
           title: Text(
-            page == "connection" ? "Current connection" : values["name"] != "-" ? values["name"] : values["address"],
+            page == "connection" ? "Current connection" : (values.name != "-" ? values.name : values.address),
             style: TextStyle(
               fontFamily: "GoogleSans",
             ),
@@ -124,28 +117,28 @@ class MyHomePage extends StatefulWidget {
                   child: Table(
                     columnWidths: {0: FixedColumnWidth(120.0)},
                     children: [
-                      page == "connection" ? TableRow(children: [Container(), Container()]) : TableRow(children: [Text("Name:"), Text(values["name"])]),
-                      TableRow(children: [Text("Address:"), Text(values["address"])]),
+                      page == "connection" ? TableRow(children: [Container(), Container()]) : TableRow(children: [Text("Name:"), Text(values.name)]),
+                      TableRow(children: [Text("Address:"), Text(values.address)]),
                       TableRow(children: [
                         Text("Port:"),
-                        Text(values["port"]),
+                        Text(values.port),
                       ]),
                       TableRow(children: [
                         Text("Username:"),
                         Text(
-                          values["username"],
+                          values.username,
                           style: TextStyle(),
                         )
                       ]),
                       TableRow(
                         children: [
                           Text("Password/Key:"),
-                          values["passwordOrKey"] != "-" ? _buildPasswordRow(values["passwordOrKey"].length) : Text("-"),
+                          values.passwordOrKey != "-" ? _buildPasswordRow(values.passwordOrKey.length) : Text("-"),
                         ],
                       ),
                       TableRow(children: [
                         Text("Path:"),
-                        Text(values["path"]),
+                        Text(values.path),
                       ]),
                     ],
                   ),
@@ -171,32 +164,17 @@ class MyHomePage extends StatefulWidget {
   static String jsonFileNameRecentlyAdded = "recently_added.json";
   static bool jsonFileExistsRecentlyAdded = false;
 
-  static Map<String, String> makeFullConnectionMap(Map<String, dynamic> connection) {
-    Map<String, String> newConnection = {
-      "name": "",
-      "address": null,
-      "port": "",
-      "username": "",
-      "passwordOrKey": "",
-      "path": "~/",
-    };
-    connection.forEach((k, v) {
-      newConnection[k] = v;
-    });
-    return newConnection;
-  }
-
-  static List<Map<String, String>> getConnections(bool isFavorites) {
+  static List<Connection> getConnections(bool isFavorites) {
     List<dynamic> jsonContent = json.decode((isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).readAsStringSync());
     var jsonContent1 = List<Map<String, dynamic>>.from(jsonContent);
-    var list = List<Map<String, String>>(jsonContent1.length);
+    var connections = List<Connection>(jsonContent.length);
     for (int i = 0; i < jsonContent.length; i++) {
-      list[i] = makeFullConnectionMap(jsonContent1[i]);
+      connections[i] = Connection.fromMap(jsonContent1[i]);
     }
-    return list;
+    return connections;
   }
 
-  static File createFile(Map<String, String> content, bool isFavorites) {
+  static File createJsonFile(Connection connection, bool isFavorites) {
     File file;
     file = isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded;
     file.createSync();
@@ -204,34 +182,42 @@ class MyHomePage extends StatefulWidget {
       jsonFileExistsFavorites = true;
     else
       jsonFileExistsRecentlyAdded = true;
-    file.writeAsStringSync(json.encode([content]));
+    file.writeAsStringSync(json.encode([connection.toMap()]));
     return file;
   }
 
   /// insert a new connection at a given index
-  static void insertToJson(int index, Map<String, String> connection, bool isFavorites) {
+  static void insertToJson(int index, Connection connection, bool isFavorites) {
     if (isFavorites
         ? (jsonFileExistsFavorites && jsonFileFavorites.readAsStringSync() != "")
         : (jsonFileExistsRecentlyAdded && jsonFileRecentlyAdded.readAsStringSync() != "")) {
-      List<Map<String, String>> list = [];
+      List<Connection> list = [];
       list.addAll(getConnections(isFavorites));
-      list.insert(index, makeFullConnectionMap(connection));
-      (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(list));
+      list.insert(index, connection);
+      List<Map<String, String>> mapList = [];
+      list.forEach((v) {
+        mapList.add(v.toMap());
+      });
+      (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(mapList));
     } else {
-      createFile(connection, isFavorites);
+      createJsonFile(connection, isFavorites);
     }
   }
 
   /// insert a new connection at index 0
-  static void addToJson(Map<String, String> connection, bool isFavorites) {
+  static void addToJson(Connection connection, bool isFavorites) {
     insertToJson(0, connection, isFavorites);
   }
 
   static void removeFromJsonAt(int index, bool isFavorites) {
-    List<Map<String, String>> list = [];
+    List<Connection> list = [];
     list.addAll(getConnections(isFavorites));
     list.removeAt(index);
-    (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(list));
+    List<Map<String, String>> mapList = [];
+    list.forEach((v) {
+      mapList.add(v.toMap());
+    });
+    (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(mapList));
   }
 
   @override
@@ -273,12 +259,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         MyHomePage.jsonFileExistsFavorites = MyHomePage.jsonFileFavorites.existsSync();
         MyHomePage.jsonFileExistsRecentlyAdded = MyHomePage.jsonFileRecentlyAdded.existsSync();
         if (MyHomePage.jsonFileExistsFavorites) {
-          FavoritesPage.favorites = [];
-          FavoritesPage.favorites.addAll(MyHomePage.getConnections(true));
+          FavoritesPage.connections = [];
+          FavoritesPage.connections.addAll(MyHomePage.getConnections(true));
         }
         if (MyHomePage.jsonFileExistsRecentlyAdded) {
-          RecentlyAddedPage.recentlyAdded = [];
-          RecentlyAddedPage.recentlyAdded.addAll(MyHomePage.getConnections(false));
+          RecentlyAddedPage.connections = [];
+          RecentlyAddedPage.connections.addAll(MyHomePage.getConnections(false));
         }
       });
     });

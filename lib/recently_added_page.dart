@@ -6,7 +6,7 @@ import 'connection.dart';
 import 'main.dart';
 
 class RecentlyAddedPage extends StatefulWidget {
-  static List<Map<String, String>> recentlyAdded = [];
+  static List<Connection> connections = [];
 
   @override
   _RecentlyAddedPageState createState() => _RecentlyAddedPageState();
@@ -16,27 +16,27 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
   String _getSubtitle(int index) {
     String _output = "";
     bool _addressIsInOutput = false;
-    if (index < RecentlyAddedPage.recentlyAdded.length) {
-      if (RecentlyAddedPage.recentlyAdded[index]["name"] != null) {
-        _output += "Address: " + RecentlyAddedPage.recentlyAdded[index]["address"];
+    if (index < RecentlyAddedPage.connections.length) {
+      if (RecentlyAddedPage.connections[index].name != null) {
+        _output += "Address: " + RecentlyAddedPage.connections[index].name;
         _addressIsInOutput = true;
       }
-      if (RecentlyAddedPage.recentlyAdded[index]["port"] != "") {
+      if (RecentlyAddedPage.connections[index].port != "") {
         if (_addressIsInOutput) {
           _output += ", ";
         }
-        _output += "Port: " + RecentlyAddedPage.recentlyAdded[index]["port"];
+        _output += "Port: " + RecentlyAddedPage.connections[index].port;
       } else {
         if (_addressIsInOutput) {
           _output += ", ";
         }
         _output += "Port: 22";
       }
-      if (RecentlyAddedPage.recentlyAdded[index]["username"] != "") {
-        _output += ", Username: " + RecentlyAddedPage.recentlyAdded[index]["username"];
+      if (RecentlyAddedPage.connections[index].username != "") {
+        _output += ", Username: " + RecentlyAddedPage.connections[index].username;
       }
-      if (RecentlyAddedPage.recentlyAdded[index]["path"] != "") {
-        _output += ", Path: " + RecentlyAddedPage.recentlyAdded[index]["path"];
+      if (RecentlyAddedPage.connections[index].path != "") {
+        _output += ", Path: " + RecentlyAddedPage.connections[index].path;
       }
     }
     return _output;
@@ -46,7 +46,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
 
   void _addKeys() {
     setState(() => _reorderableKeys = []);
-    int itemCount = RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1;
+    int itemCount = RecentlyAddedPage.connections.length > 0 ? RecentlyAddedPage.connections.length : 1;
     for (int i = 0; i < itemCount; i++) {
       setState(() => _reorderableKeys.add(GlobalKey()));
     }
@@ -55,20 +55,20 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
   List<Widget> _getWidgetList() {
     _addKeys();
     List<Widget> widgets = [];
-    int itemCount = RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1;
+    int itemCount = RecentlyAddedPage.connections.length > 0 ? RecentlyAddedPage.connections.length : 1;
     for (int index = 0; index < itemCount; index++) {
       widgets.add(
         Container(
           key: _reorderableKeys[index],
           child: Padding(
             padding: EdgeInsets.only(
-                top: index == 0 ? 10.0 : index == (RecentlyAddedPage.recentlyAdded.length > 0 ? RecentlyAddedPage.recentlyAdded.length : 1) ? 30.0 : .0),
-            child: RecentlyAddedPage.recentlyAdded.length > 0
+                top: index == 0 ? 10.0 : index == (RecentlyAddedPage.connections.length > 0 ? RecentlyAddedPage.connections.length : 1) ? 30.0 : .0),
+            child: RecentlyAddedPage.connections.length > 0
                 ? ListTile(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                    title: RecentlyAddedPage.recentlyAdded[index]["name"] != ""
-                        ? Text(RecentlyAddedPage.recentlyAdded[index]["name"])
-                        : Text(RecentlyAddedPage.recentlyAdded[index]["address"]),
+                    title: RecentlyAddedPage.connections[index].name != ""
+                        ? Text(RecentlyAddedPage.connections[index].name)
+                        : Text(RecentlyAddedPage.connections[index].address),
                     subtitle: Text(_getSubtitle(index)),
                     trailing: IconButton(
                       icon: Icon(
@@ -104,9 +104,9 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                             elevation: .0,
                             onPressed: () {
                               setState(() {
-                                FavoritesPage.favorites.insert(0, RecentlyAddedPage.recentlyAdded[index]);
+                                FavoritesPage.connections.insert(0, RecentlyAddedPage.connections[index]);
                               });
-                              MyHomePage.addToJson(RecentlyAddedPage.recentlyAdded[index], true);
+                              MyHomePage.addToJson(RecentlyAddedPage.connections[index], true);
                               Navigator.pop(context);
                             },
                           ),
@@ -128,7 +128,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                             padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
                             onPressed: () {
                               setState(() {
-                                RecentlyAddedPage.recentlyAdded.removeAt(index);
+                                RecentlyAddedPage.connections.removeAt(index);
                               });
                               MyHomePage.removeFromJsonAt(index, false);
                               Navigator.pop(context);
@@ -143,11 +143,11 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                         MaterialPageRoute(
                           builder: (context) => ConnectionPage(
                                 Connection(
-                                  address: RecentlyAddedPage.recentlyAdded[index]["address"],
-                                  port: RecentlyAddedPage.recentlyAdded[index]["port"],
-                                  username: RecentlyAddedPage.recentlyAdded[index]["username"],
-                                  passwordOrKey: RecentlyAddedPage.recentlyAdded[index]["passwordOrKey"],
-                                  path: RecentlyAddedPage.recentlyAdded[index]["path"],
+                                  address: RecentlyAddedPage.connections[index].address,
+                                  port: RecentlyAddedPage.connections[index].port,
+                                  username: RecentlyAddedPage.connections[index].username,
+                                  passwordOrKey: RecentlyAddedPage.connections[index].passwordOrKey,
+                                  path: RecentlyAddedPage.connections[index].path,
                                 ),
                               ),
                         ),
@@ -177,10 +177,10 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
       child: ReorderableListView(
         children: _getWidgetList(),
         onReorder: (int a, int b) {
-          var temp = RecentlyAddedPage.recentlyAdded[a];
+          var temp = RecentlyAddedPage.connections[a];
           setState(() {
-            RecentlyAddedPage.recentlyAdded.removeAt(a);
-            RecentlyAddedPage.recentlyAdded.insert(b - (a > b ? 0 : 1), temp);
+            RecentlyAddedPage.connections.removeAt(a);
+            RecentlyAddedPage.connections.insert(b - (a > b ? 0 : 1), temp);
             MyHomePage.removeFromJsonAt(a, false);
             MyHomePage.insertToJson(b - (a > b ? 0 : 1), temp, false);
           });

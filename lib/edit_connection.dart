@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'favorites_page.dart';
+import 'connection.dart';
 import 'main.dart';
 
 class EditConnectionPage extends StatefulWidget {
   EditConnectionPage(int favoritesIndex) {
     _EditConnectionPageState._textEditingController.forEach((k, v) {
-      _EditConnectionPageState._textEditingController[k].text = FavoritesPage.favorites[favoritesIndex][k];
+      _EditConnectionPageState._textEditingController[k].text = FavoritesPage.connections[favoritesIndex].toMap()[k];
     });
     _EditConnectionPageState._favoritesIndex = favoritesIndex;
-    _EditConnectionPageState._values = FavoritesPage.favorites[favoritesIndex];
+    _EditConnectionPageState._connection = FavoritesPage.connections[favoritesIndex];
   }
   @override
   _EditConnectionPageState createState() => _EditConnectionPageState();
@@ -25,14 +26,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
   };
   static int _favoritesIndex;
 
-  static Map<String, String> _values = {
-    "name": "",
-    "address": null,
-    "port": "",
-    "username": "",
-    "passwordOrKey": "",
-    "path": "~/",
-  };
+  static Connection _connection = Connection();
 
   bool _addressIsEntered = true;
   bool _passwordWasChanged = false;
@@ -54,7 +48,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                   icon: Icon(Icons.clear),
                   onPressed: () {
                     _textEditingController[valueText].text = "";
-                    _values[valueText] = "";
+                    _connection.setter(valueText, "");
                     setState(() => _passwordWasChanged = true);
                   },
                 )
@@ -65,7 +59,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         onChanged: (String value) {
-          _values[valueText] = value;
+          _connection.setter(valueText, value);
           if (valueText == "passwordOrKey") {
             setState(() => _passwordWasChanged = true);
           }
@@ -108,9 +102,9 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         elevation: 4.0,
         child: Icon(Icons.done),
         onPressed: () {
-          if (_values["address"] != null && _values["address"] != "") {
-            FavoritesPage.favorites[_favoritesIndex] = _values;
-            MyHomePage.addToJson(_values, true);
+          if (_connection.address != null && _connection.address != "") {
+            FavoritesPage.connections[_favoritesIndex] = _connection;
+            MyHomePage.addToJson(_connection, true);
             Navigator.pop(context);
           } else {
             setState(() {
