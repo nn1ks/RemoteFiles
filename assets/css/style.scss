@@ -4,24 +4,18 @@
 @import "{{ site.theme }}";
 body {
   background-color: #181818;
-  color: #c2d1e4;
+  color: #dadee2;
 }
 .page-header {
-  background-image: linear-gradient(120deg, #1e6dad, #3a2bbb);
+  background-image: linear-gradient(120deg, #2b80b9, #3427b1);
 }
-.app-icon-container {
-  width: 100px;
-  height: 100px;
-  margin-left: calc(50% - 50px);
+.page-header .app-icon {
+  width: 110px;
+  height: 110px;
   margin-bottom: 10px;
-  background-color: #eee;
-  border-radius: 18px;
-  box-shadow: 0 1px 7px rgba(0, 0, 0, .3);
-  padding: 5px;
 }
-.app-icon {
-  width: 90px;
-  height: 90px;
+.page-header .project-tagline.first {
+  margin-bottom: .4rem;
 }
 .main-content {
   max-width: 66rem;
@@ -31,4 +25,27 @@ a {
 }
 .main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5, .main-content h6 {
   color: #cbdff8;
+}
+.info-container {
+  margin-bottom: 10px;
+}
+.screenshot-container {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+.screenshot-container div {
+  display: inline-block;
+}
+.screenshot-container::-webkit-scrollbar {
+  height: 8px;
+}
+.screenshot-container::-webkit-scrollbar-track {
+  background: #444;
+}
+.screenshot-container::-webkit-scrollbar-thumb {
+  background: #777;
+}
+.screenshot-container::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
