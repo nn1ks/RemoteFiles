@@ -64,7 +64,9 @@ flutter:
           style: italic
 
   assets:
-    - assets/
+    - assets/app_icon.png
+    - assets/arrow_drop_down.png
+    - assets/arrow_drop_up.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
