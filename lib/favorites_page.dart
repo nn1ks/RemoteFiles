@@ -126,10 +126,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                           padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
                           onPressed: () {
-                            setState(() {
-                              FavoritesPage.connections.removeAt(index);
-                            });
                             MyHomePage.removeFromJsonAt(index, true);
+                            FavoritesPage.connections = MyHomePage.getConnections(true);
                             Navigator.pop(context);
                           },
                         ),
@@ -178,10 +176,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
         onReorder: (int a, int b) {
           var temp = FavoritesPage.connections[a];
           setState(() {
-            FavoritesPage.connections.removeAt(a);
-            FavoritesPage.connections.insert(b - (a > b ? 0 : 1), temp);
             MyHomePage.removeFromJsonAt(a, true);
             MyHomePage.insertToJson(b - (a > b ? 0 : 1), temp, true);
+            FavoritesPage.connections = MyHomePage.getConnections(true);
           });
         },
       ),

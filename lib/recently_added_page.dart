@@ -18,7 +18,7 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
     bool _addressIsInOutput = false;
     if (index < RecentlyAddedPage.connections.length) {
       if (RecentlyAddedPage.connections[index].name != null) {
-        _output += "Address: " + RecentlyAddedPage.connections[index].name;
+        _output += "Address: " + RecentlyAddedPage.connections[index].address;
         _addressIsInOutput = true;
       }
       if (RecentlyAddedPage.connections[index].port != "") {
@@ -100,10 +100,8 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                           padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
                           elevation: .0,
                           onPressed: () {
-                            setState(() {
-                              FavoritesPage.connections.insert(0, RecentlyAddedPage.connections[index]);
-                            });
                             MyHomePage.addToJson(RecentlyAddedPage.connections[index], true);
+                            FavoritesPage.connections = MyHomePage.getConnections(true);
                             Navigator.pop(context);
                           },
                         ),
@@ -124,10 +122,8 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                           padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
                           onPressed: () {
-                            setState(() {
-                              RecentlyAddedPage.connections.removeAt(index);
-                            });
                             MyHomePage.removeFromJsonAt(index, false);
+                            RecentlyAddedPage.connections = MyHomePage.getConnections(false);
                             Navigator.pop(context);
                           },
                         ),
@@ -174,14 +170,11 @@ class _RecentlyAddedPageState extends State<RecentlyAddedPage> {
         padding: EdgeInsets.only(top: 10.0),
         children: _getWidgetList(),
         onReorder: (int a, int b) {
-          print(RecentlyAddedPage.connections);
-          print(a);
           var temp = RecentlyAddedPage.connections[a];
           setState(() {
-            RecentlyAddedPage.connections.removeAt(a);
-            RecentlyAddedPage.connections.insert(b - (a > b ? 0 : 1), temp);
             MyHomePage.removeFromJsonAt(a, false);
             MyHomePage.insertToJson(b - (a > b ? 0 : 1), temp, false);
+            RecentlyAddedPage.connections = MyHomePage.getConnections(false);
           });
         },
       ),
