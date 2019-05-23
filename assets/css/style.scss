@@ -3,22 +3,25 @@
 
 @import "{{ site.theme }}";
 body {
-  background-color: #181818;
+  background-color: #1b1b1b;
   color: #dadee2;
 }
 .page-header {
-  background-image: linear-gradient(120deg, #2b80b9, #3427b1);
+  background-image: linear-gradient(120deg, #256b99, #2c2192);
 }
 .page-header .app-icon {
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   margin-bottom: 10px;
 }
 .page-header .project-tagline.first {
   margin-bottom: .4rem;
 }
+.btn.not-available {
+  cursor: not-allowed;
+}
 .main-content {
-  max-width: 66rem;
+  max-width: 68rem;
 }
 a {
   color: #559df0;
@@ -48,4 +51,7 @@ a {
 }
 .screenshot-container::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+.screenshot-container::-webkit-scrollbar-thumb:active {
+  background: #bbb;
 }
