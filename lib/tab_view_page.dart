@@ -17,9 +17,6 @@ class TabViewPage extends StatefulWidget {
   bool jsonFileExists = false;
 
   TabViewPage(this.jsonFileName);
-  TabViewPage.fromConnections(List<Connection> connections, this.jsonFileName) {
-    this.connections = connections;
-  }
 
   List<Connection> getConnectionsFromJson() {
     if (!jsonFileExists) return null;
