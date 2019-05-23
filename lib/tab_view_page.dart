@@ -139,7 +139,7 @@ class _TabViewPageState extends State<TabViewPage> {
                       color: Theme.of(context).accentColor,
                     ),
                     onPressed: () {
-                      MyHomePage().showConnectionDialog(
+                      MyHomePage.showConnectionDialog(
                         context: context,
                         index: index,
                         page: "favorites",

@@ -55,7 +55,7 @@ class MyHomePage extends StatefulWidget {
   static TabViewPage favoritesPage = TabViewPage("favorites.json");
   static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json");
 
-  Row _buildPasswordRow(int passwordLength) {
+  static Row _buildPasswordRow(int passwordLength) {
     if (passwordLength == 0) passwordLength = 1;
     List<Widget> widgets = [];
     for (int i = 0; i < passwordLength; i++) {
@@ -74,7 +74,7 @@ class MyHomePage extends StatefulWidget {
     return Row(children: widgets);
   }
 
-  showConnectionDialog({
+  static showConnectionDialog({
     @required BuildContext context,
     int index,
     @required String page,

@@ -863,7 +863,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               child: Icon(OMIcons.flashOn),
                             ),
                             onPressed: () {
-                              MyHomePage().showConnectionDialog(
+                              MyHomePage.showConnectionDialog(
                                 context: context,
                                 page: "connection",
                                 primaryButton: RaisedButton(
