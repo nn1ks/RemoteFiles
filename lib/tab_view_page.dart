@@ -11,12 +11,13 @@ import 'main.dart';
 class TabViewPage extends StatefulWidget {
   List<Connection> connections = [];
   final String jsonFileName;
+  final bool isFavorites;
 
   Directory dir;
   File jsonFile;
   bool jsonFileExists = false;
 
-  TabViewPage(this.jsonFileName);
+  TabViewPage(this.jsonFileName, this.isFavorites);
 
   List<Connection> getConnectionsFromJson() {
     if (!jsonFileExists) return null;

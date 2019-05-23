@@ -52,8 +52,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  static TabViewPage favoritesPage = TabViewPage("favorites.json");
-  static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json");
+  static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
+  static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json", false);
 
   static Row _buildPasswordRow(int passwordLength) {
     if (passwordLength == 0) passwordLength = 1;
