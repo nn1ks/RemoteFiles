@@ -73,10 +73,10 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
           if (NewConnectionPage._connection.address != null) {
             if (_addToFavorites) {
               MyHomePage.favoritesPage.addToJson(NewConnectionPage._connection);
-              MyHomePage.favoritesPage.connections = MyHomePage.favoritesPage.getConnectionsFromJson();
+              MyHomePage.favoritesPage.setConnectionsFromJson();
             }
             MyHomePage.recentlyAddedPage.addToJson(NewConnectionPage._connection);
-            MyHomePage.recentlyAddedPage.connections = MyHomePage.recentlyAddedPage.getConnectionsFromJson();
+            MyHomePage.favoritesPage.setConnectionsFromJson();
             Navigator.pop(context);
           } else {
             setState(() {

@@ -104,7 +104,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           if (_connection.address != null && _connection.address != "") {
             MyHomePage.favoritesPage.insertToJson(_favoritesIndex, _connection);
             MyHomePage.favoritesPage.removeFromJsonAt(_favoritesIndex + 1);
-            MyHomePage.favoritesPage.connections = MyHomePage.favoritesPage.getConnectionsFromJson();
+            MyHomePage.favoritesPage.setConnectionsFromJson();
             Navigator.pop(context);
           } else {
             setState(() {

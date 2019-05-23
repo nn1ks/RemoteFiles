@@ -30,6 +30,10 @@ class TabViewPage extends StatefulWidget {
     return connections;
   }
 
+  void setConnectionsFromJson() {
+    connections = getConnectionsFromJson();
+  }
+
   File createJsonFile(Connection connection) {
     File file;
     file = jsonFile;
@@ -157,17 +161,17 @@ class _TabViewPageState extends State<TabViewPage> {
                             MyHomePage.favoritesPage.setConnectionsFromJson();
                             Navigator.pop(context);
                           }
-                          },
+                        },
                         hasSecondaryButton: true,
                         secondaryButtonIconData: OMIcons.delete,
                         secondaryButtonLabel: "Delete",
                         secondaryButtonOnPressed: () {
-                            widget.removeFromJsonAt(index);
-                            setState(() {
-                              widget.connections = widget.getConnectionsFromJson();
-                            });
-                            Navigator.pop(context);
-                          },
+                          widget.removeFromJsonAt(index);
+                          setState(() {
+                            widget.setConnectionsFromJson();
+                          });
+                          Navigator.pop(context);
+                        },
                       );
                     },
                   ),
@@ -231,7 +235,7 @@ class _TabViewPageState extends State<TabViewPage> {
           setState(() {
             widget.removeFromJsonAt(a);
             widget.insertToJson(b - (a > b ? 0 : 1), temp);
-            widget.connections = widget.getConnectionsFromJson();
+            widget.setConnectionsFromJson();
           });
         },
       ),

@@ -869,11 +869,11 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                 primaryButtonIconData: Icons.remove_circle_outline,
                                 primaryButtonLabel: "Disconnect",
                                 primaryButtonOnPressed: () {
-                                    _client.disconnectSFTP();
-                                    _client.disconnect();
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  },
+                                  _client.disconnectSFTP();
+                                  _client.disconnect();
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
                               );
                             },
                           ),
