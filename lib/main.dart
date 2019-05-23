@@ -3,14 +3,10 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:package_info/package_info.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:io';
-import 'dart:convert';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
-import 'favorites_page.dart';
-import 'recently_added_page.dart';
+import 'tab_view_page.dart';
 import 'connection_page.dart';
 import 'connection.dart';
 
@@ -56,6 +52,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  static TabViewPage favoritesPage = TabViewPage("favorites.json");
+  static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json");
+
   Row _buildPasswordRow(int passwordLength) {
     if (passwordLength == 0) passwordLength = 1;
     List<Widget> widgets = [];
@@ -85,9 +84,9 @@ class MyHomePage extends StatefulWidget {
   }) {
     Connection values = Connection();
     if (page == "favorites") {
-      values = FavoritesPage.connections[index];
+      values = MyHomePage.favoritesPage.connections[index];
     } else if (page == "recentlyAdded") {
-      values = RecentlyAddedPage.connections[index];
+      values = MyHomePage.recentlyAddedPage.connections[index];
     } else if (page == "connection") {
       values = ConnectionPage.currentConnection;
     }
@@ -161,69 +160,6 @@ class MyHomePage extends StatefulWidget {
     );
   }
 
-  static Directory dir;
-  static File jsonFileFavorites;
-  static String jsonFileNameFavorites = "favorites.json";
-  static bool jsonFileExistsFavorites = false;
-  static File jsonFileRecentlyAdded;
-  static String jsonFileNameRecentlyAdded = "recently_added.json";
-  static bool jsonFileExistsRecentlyAdded = false;
-
-  static List<Connection> getConnections(bool isFavorites) {
-    List<dynamic> jsonContent = json.decode((isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).readAsStringSync());
-    var jsonContent1 = List<Map<String, dynamic>>.from(jsonContent);
-    var connections = List<Connection>(jsonContent.length);
-    for (int i = 0; i < jsonContent.length; i++) {
-      connections[i] = Connection.fromMap(jsonContent1[i]);
-    }
-    return connections;
-  }
-
-  static File createJsonFile(Connection connection, bool isFavorites) {
-    File file;
-    file = isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded;
-    file.createSync();
-    if (isFavorites)
-      jsonFileExistsFavorites = true;
-    else
-      jsonFileExistsRecentlyAdded = true;
-    file.writeAsStringSync(json.encode([connection.toMap()]));
-    return file;
-  }
-
-  /// insert a new connection at a given index
-  static void insertToJson(int index, Connection connection, bool isFavorites) {
-    if ((isFavorites ? jsonFileExistsFavorites : jsonFileExistsRecentlyAdded) &&
-        (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).readAsStringSync() != "") {
-      List<Connection> list = [];
-      list.addAll(getConnections(isFavorites));
-      list.insert(index, connection);
-      List<Map<String, String>> mapList = [];
-      list.forEach((v) {
-        mapList.add(v.toMap());
-      });
-      (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(mapList));
-    } else {
-      createJsonFile(connection, isFavorites);
-    }
-  }
-
-  /// insert a new connection at index 0
-  static void addToJson(Connection connection, bool isFavorites) {
-    insertToJson(0, connection, isFavorites);
-  }
-
-  static void removeFromJsonAt(int index, bool isFavorites) {
-    List<Connection> list = [];
-    list.addAll(getConnections(isFavorites));
-    list.removeAt(index);
-    List<Map<String, String>> mapList = [];
-    list.forEach((v) {
-      mapList.add(v.toMap());
-    });
-    (isFavorites ? jsonFileFavorites : jsonFileRecentlyAdded).writeAsStringSync(json.encode(mapList));
-  }
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -255,23 +191,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _tabController.addListener(_tabOnChange);
     _rotationController1 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     _rotationController2 = AnimationController(duration: Duration(milliseconds: 280), vsync: this);
-    getApplicationDocumentsDirectory().then((Directory dir) {
-      setState(() {
-        MyHomePage.dir = dir;
-        MyHomePage.jsonFileFavorites = File(MyHomePage.dir.path + "/" + MyHomePage.jsonFileNameFavorites);
-        MyHomePage.jsonFileRecentlyAdded = File(MyHomePage.dir.path + "/" + MyHomePage.jsonFileNameRecentlyAdded);
-        MyHomePage.jsonFileExistsFavorites = MyHomePage.jsonFileFavorites.existsSync();
-        MyHomePage.jsonFileExistsRecentlyAdded = MyHomePage.jsonFileRecentlyAdded.existsSync();
-        if (MyHomePage.jsonFileExistsFavorites) {
-          FavoritesPage.connections = [];
-          FavoritesPage.connections.addAll(MyHomePage.getConnections(true));
-        }
-        if (MyHomePage.jsonFileExistsRecentlyAdded) {
-          RecentlyAddedPage.connections = [];
-          RecentlyAddedPage.connections.addAll(MyHomePage.getConnections(false));
-        }
-      });
-    });
     super.initState();
   }
 
@@ -468,8 +387,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            FavoritesPage(),
-            RecentlyAddedPage(),
+            MyHomePage.favoritesPage,
+            MyHomePage.recentlyAddedPage,
           ],
         ),
       ),

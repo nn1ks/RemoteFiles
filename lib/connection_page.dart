@@ -10,7 +10,6 @@ import 'package:ssh/ssh.dart';
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'connection_widget_tile.dart';
-import 'favorites_page.dart';
 import 'connection.dart';
 import 'main.dart';
 
@@ -43,7 +42,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   static Connection _currentConnection;
   List<Map<String, String>> _fileInfos = [];
   static SSHClient _client;
-  int _itemNum = FavoritesPage.connections.length > 0 ? FavoritesPage.connections.length : 1;
+  int _itemNum = MyHomePage.favoritesPage.connections.length > 0 ? MyHomePage.favoritesPage.connections.length : 1;
   bool _isLoading = false;
   String _directoryBefore;
 

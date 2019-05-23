@@ -1,42 +1,108 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:path_provider/path_provider.dart';
 import 'connection_page.dart';
 import 'edit_connection.dart';
 import 'connection.dart';
 import 'main.dart';
 
-class FavoritesPage extends StatefulWidget {
-  static List<Connection> connections = [];
+class TabViewPage extends StatefulWidget {
+  List<Connection> connections = [];
+  final String jsonFileName;
+
+  Directory dir;
+  File jsonFile;
+  bool jsonFileExists = false;
+
+  TabViewPage(this.jsonFileName);
+  TabViewPage.fromConnections(List<Connection> connections, this.jsonFileName) {
+    this.connections = connections;
+  }
+
+  List<Connection> getConnectionsFromJson() {
+    if (!jsonFileExists) return null;
+    List<dynamic> jsonContent = json.decode(jsonFile.readAsStringSync());
+    var jsonContent1 = List<Map<String, dynamic>>.from(jsonContent);
+    var connections = List<Connection>(jsonContent.length);
+    for (int i = 0; i < jsonContent.length; i++) {
+      connections[i] = Connection.fromMap(jsonContent1[i]);
+    }
+    return connections;
+  }
+
+  File createJsonFile(Connection connection) {
+    File file;
+    file = jsonFile;
+    file.createSync();
+    jsonFileExists = true;
+    file.writeAsStringSync(json.encode([connection.toMap()]));
+    return file;
+  }
+
+  /// insert a new connection at a given index
+  void insertToJson(int index, Connection connection) {
+    if (jsonFileExists && jsonFile.readAsStringSync() != "") {
+      List<Connection> list = [];
+      list.addAll(getConnectionsFromJson());
+      list.insert(index, connection);
+      List<Map<String, String>> mapList = [];
+      list.forEach((v) {
+        mapList.add(v.toMap());
+      });
+      jsonFile.writeAsStringSync(json.encode(mapList));
+    } else {
+      createJsonFile(connection);
+    }
+  }
+
+  /// insert a new connection at index 0
+  void addToJson(Connection connection) {
+    insertToJson(0, connection);
+  }
+
+  /// remove a connection at a given index
+  void removeFromJsonAt(int index) {
+    List<Connection> list = [];
+    list.addAll(getConnectionsFromJson());
+    list.removeAt(index);
+    List<Map<String, String>> mapList = [];
+    list.forEach((v) {
+      mapList.add(v.toMap());
+    });
+    jsonFile.writeAsStringSync(json.encode(mapList));
+  }
 
   @override
-  _FavoritesPageState createState() => _FavoritesPageState();
+  _TabViewPageState createState() => _TabViewPageState();
 }
 
-class _FavoritesPageState extends State<FavoritesPage> {
+class _TabViewPageState extends State<TabViewPage> {
   String _getSubtitle(int index) {
     String _output = "";
     bool _addressIsInOutput = false;
-    if (index < FavoritesPage.connections.length) {
-      if (FavoritesPage.connections[index].name != null) {
-        _output += "Address: " + FavoritesPage.connections[index].address;
+    if (index < widget.connections.length) {
+      if (widget.connections[index].name != null) {
+        _output += "Address: " + widget.connections[index].address;
         _addressIsInOutput = true;
       }
-      if (FavoritesPage.connections[index].port != "") {
+      if (widget.connections[index].port != "") {
         if (_addressIsInOutput) {
           _output += ", ";
         }
-        _output += "Port: " + FavoritesPage.connections[index].port;
+        _output += "Port: " + widget.connections[index].port;
       } else {
         if (_addressIsInOutput) {
           _output += ", ";
         }
         _output += "Port: 22";
       }
-      if (FavoritesPage.connections[index].username != "") {
-        _output += ", Username: " + FavoritesPage.connections[index].username;
+      if (widget.connections[index].username != "") {
+        _output += ", Username: " + widget.connections[index].username;
       }
-      if (FavoritesPage.connections[index].path != "") {
-        _output += ", Path: " + FavoritesPage.connections[index].path;
+      if (widget.connections[index].path != "") {
+        _output += ", Path: " + widget.connections[index].path;
       }
     }
     return _output;
@@ -46,7 +112,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   void _addKeys() {
     setState(() => _reorderableKeys = []);
-    int itemCount = FavoritesPage.connections.length > 0 ? FavoritesPage.connections.length : 1;
+    int itemCount = widget.connections.length > 0 ? widget.connections.length : 1;
     for (int i = 0; i < itemCount; i++) {
       setState(() => _reorderableKeys.add(GlobalKey()));
     }
@@ -55,17 +121,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
   List<Widget> _getWidgetList() {
     _addKeys();
     List<Widget> widgets = [];
-    int itemCount = FavoritesPage.connections.length > 0 ? FavoritesPage.connections.length : 1;
+    int itemCount = widget.connections.length > 0 ? widget.connections.length : 1;
     for (int index = 0; index < itemCount; index++) {
       widgets.add(
         Container(
           key: _reorderableKeys[index],
-          child: FavoritesPage.connections.length > 0
+          child: widget.connections.length > 0
               ? ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                  title: FavoritesPage.connections[index].name != "" && FavoritesPage.connections[index].name != "-"
-                      ? Text(FavoritesPage.connections[index].name)
-                      : Text(FavoritesPage.connections[index].address),
+                  title: widget.connections[index].name != "" && widget.connections[index].name != "-"
+                      ? Text(widget.connections[index].name)
+                      : Text(widget.connections[index].address),
                   subtitle: Text(_getSubtitle(index)),
                   trailing: IconButton(
                     icon: Icon(
@@ -126,8 +192,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
                           padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
                           onPressed: () {
-                            MyHomePage.removeFromJsonAt(index, true);
-                            FavoritesPage.connections = MyHomePage.getConnections(true);
+                            widget.removeFromJsonAt(index);
+                            setState(() {
+                              widget.connections = widget.getConnectionsFromJson();
+                            });
                             Navigator.pop(context);
                           },
                         ),
@@ -140,11 +208,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       MaterialPageRoute(
                         builder: (context) => ConnectionPage(
                               Connection(
-                                address: FavoritesPage.connections[index].address,
-                                port: FavoritesPage.connections[index].port,
-                                username: FavoritesPage.connections[index].username,
-                                passwordOrKey: FavoritesPage.connections[index].passwordOrKey,
-                                path: FavoritesPage.connections[index].path,
+                                address: widget.connections[index].address,
+                                port: widget.connections[index].port,
+                                username: widget.connections[index].username,
+                                passwordOrKey: widget.connections[index].passwordOrKey,
+                                path: widget.connections[index].path,
                               ),
                             ),
                       ),
@@ -168,17 +236,33 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   @override
+  void initState() {
+    getApplicationDocumentsDirectory().then((Directory dir) {
+      setState(() {
+        widget.dir = dir;
+        widget.jsonFile = File(widget.dir.path + "/" + widget.jsonFileName);
+        widget.jsonFileExists = widget.jsonFile.existsSync();
+        if (widget.jsonFileExists) {
+          widget.connections = [];
+          widget.connections.addAll(widget.getConnectionsFromJson());
+        }
+      });
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scrollbar(
       child: ReorderableListView(
         padding: EdgeInsets.only(top: 10.0),
         children: _getWidgetList(),
         onReorder: (int a, int b) {
-          var temp = FavoritesPage.connections[a];
+          var temp = widget.connections[a];
           setState(() {
-            MyHomePage.removeFromJsonAt(a, true);
-            MyHomePage.insertToJson(b - (a > b ? 0 : 1), temp, true);
-            FavoritesPage.connections = MyHomePage.getConnections(true);
+            widget.removeFromJsonAt(a);
+            widget.insertToJson(b - (a > b ? 0 : 1), temp);
+            widget.connections = widget.getConnectionsFromJson();
           });
         },
       ),

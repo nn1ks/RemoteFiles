@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'favorites_page.dart';
-import 'recently_added_page.dart';
 import 'connection.dart';
 import 'main.dart';
 
@@ -74,11 +72,11 @@ class _NewConnectionPageState extends State<NewConnectionPage> {
         onPressed: () {
           if (NewConnectionPage._connection.address != null) {
             if (_addToFavorites) {
-              MyHomePage.addToJson(NewConnectionPage._connection, true);
-              FavoritesPage.connections = MyHomePage.getConnections(true);
+              MyHomePage.favoritesPage.addToJson(NewConnectionPage._connection);
+              MyHomePage.favoritesPage.connections = MyHomePage.favoritesPage.getConnectionsFromJson();
             }
-            MyHomePage.addToJson(NewConnectionPage._connection, false);
-            RecentlyAddedPage.connections = MyHomePage.getConnections(false);
+            MyHomePage.recentlyAddedPage.addToJson(NewConnectionPage._connection);
+            MyHomePage.recentlyAddedPage.connections = MyHomePage.recentlyAddedPage.getConnectionsFromJson();
             Navigator.pop(context);
           } else {
             setState(() {

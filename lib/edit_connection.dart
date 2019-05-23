@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'favorites_page.dart';
 import 'connection.dart';
 import 'main.dart';
 
 class EditConnectionPage extends StatefulWidget {
   EditConnectionPage(int favoritesIndex) {
     _EditConnectionPageState._textEditingController.forEach((k, v) {
-      _EditConnectionPageState._textEditingController[k].text = FavoritesPage.connections[favoritesIndex].toMap()[k];
+      _EditConnectionPageState._textEditingController[k].text = MyHomePage.favoritesPage.connections[favoritesIndex].toMap()[k];
     });
     _EditConnectionPageState._favoritesIndex = favoritesIndex;
-    _EditConnectionPageState._connection = FavoritesPage.connections[favoritesIndex];
+    _EditConnectionPageState._connection = MyHomePage.favoritesPage.connections[favoritesIndex];
   }
   @override
   _EditConnectionPageState createState() => _EditConnectionPageState();
@@ -103,9 +102,9 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         child: Icon(Icons.done),
         onPressed: () {
           if (_connection.address != null && _connection.address != "") {
-            MyHomePage.insertToJson(_favoritesIndex, _connection, true);
-            MyHomePage.removeFromJsonAt(_favoritesIndex + 1, true);
-            FavoritesPage.connections = MyHomePage.getConnections(true);
+            MyHomePage.favoritesPage.insertToJson(_favoritesIndex, _connection);
+            MyHomePage.favoritesPage.removeFromJsonAt(_favoritesIndex + 1);
+            MyHomePage.favoritesPage.connections = MyHomePage.favoritesPage.getConnectionsFromJson();
             Navigator.pop(context);
           } else {
             setState(() {
