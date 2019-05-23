@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
@@ -235,6 +237,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _tabController.addListener(_tabOnChange);
     _rotationController1 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     _rotationController2 = AnimationController(duration: Duration(milliseconds: 280), vsync: this);
+    getApplicationDocumentsDirectory().then((Directory dir) {
+      setState(() {
+        MyHomePage.favoritesPage.dir = dir;
+        MyHomePage.recentlyAddedPage.dir = dir;
+        MyHomePage.favoritesPage.jsonFile = File(MyHomePage.favoritesPage.dir.path + "/" + MyHomePage.favoritesPage.jsonFileName);
+        MyHomePage.recentlyAddedPage.jsonFile = File(MyHomePage.recentlyAddedPage.dir.path + "/" + MyHomePage.recentlyAddedPage.jsonFileName);
+        MyHomePage.favoritesPage.jsonFileExists = MyHomePage.favoritesPage.jsonFile.existsSync();
+        MyHomePage.recentlyAddedPage.jsonFileExists = MyHomePage.recentlyAddedPage.jsonFile.existsSync();
+        if (MyHomePage.favoritesPage.jsonFileExists) {
+          MyHomePage.favoritesPage.connections = [];
+          MyHomePage.favoritesPage.connections.addAll(MyHomePage.favoritesPage.getConnectionsFromJson());
+        }
+        if (MyHomePage.recentlyAddedPage.jsonFileExists) {
+          MyHomePage.recentlyAddedPage.connections = [];
+          MyHomePage.recentlyAddedPage.connections.addAll(MyHomePage.recentlyAddedPage.getConnectionsFromJson());
+        }
+      });
+    });
     super.initState();
   }
 
