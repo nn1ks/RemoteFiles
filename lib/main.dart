@@ -78,9 +78,13 @@ class MyHomePage extends StatefulWidget {
     @required BuildContext context,
     int index,
     @required String page,
-    @required Widget primaryButton,
+    @required IconData primaryButtonIconData,
+    @required String primaryButtonLabel,
+    @required GestureTapCallback primaryButtonOnPressed,
     bool hasSecondaryButton = false,
-    Widget secondaryButton,
+    IconData secondaryButtonIconData,
+    String secondaryButtonLabel,
+    GestureTapCallback secondaryButtonOnPressed,
   }) {
     Connection values = Connection();
     if (page == "favorites") {
@@ -151,8 +155,48 @@ class MyHomePage extends StatefulWidget {
             ),
           ),
           actions: <Widget>[
-            hasSecondaryButton ? secondaryButton : Container(),
-            primaryButton,
+            hasSecondaryButton
+                ? FlatButton(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
+                          child: Icon(
+                            secondaryButtonIconData,
+                            size: 19.0,
+                          ),
+                        ),
+                        Text(secondaryButtonLabel),
+                      ],
+                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                    padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
+                    onPressed: secondaryButtonOnPressed)
+                : null,
+            RaisedButton(
+              color: Theme.of(context).accentColor,
+              splashColor: Colors.black12,
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
+                    child: Icon(
+                      primaryButtonIconData,
+                      size: 19.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    primaryButtonLabel,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+              padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
+              elevation: .0,
+              onPressed: primaryButtonOnPressed,
+            ),
             SizedBox(width: .0),
           ],
         );

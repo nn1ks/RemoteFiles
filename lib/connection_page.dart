@@ -866,36 +866,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               MyHomePage.showConnectionDialog(
                                 context: context,
                                 page: "connection",
-                                primaryButton: RaisedButton(
-                                  color: Theme.of(context).accentColor,
-                                  splashColor: Colors.black12,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
-                                        child: Icon(
-                                          Icons.remove_circle_outline,
-                                          size: 19.0,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      Text(
-                                        "Disconnect",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                                  padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
-                                  elevation: .0,
-                                  onPressed: () {
+                                primaryButtonIconData: Icons.remove_circle_outline,
+                                primaryButtonLabel: "Disconnect",
+                                primaryButtonOnPressed: () {
                                     _client.disconnectSFTP();
                                     _client.disconnect();
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                   },
-                                ),
-                                hasSecondaryButton: false,
                               );
                             },
                           ),

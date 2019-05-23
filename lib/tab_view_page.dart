@@ -139,30 +139,11 @@ class _TabViewPageState extends State<TabViewPage> {
                       MyHomePage.showConnectionDialog(
                         context: context,
                         index: index,
-                        page: "favorites",
-                        primaryButton: RaisedButton(
-                          color: Theme.of(context).accentColor,
-                          splashColor: Colors.black12,
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
-                                child: Icon(
-                                  OMIcons.edit,
-                                  size: 19.0,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Text(
-                                "Edit",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                          padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
-                          elevation: .0,
-                          onPressed: () {
+                        page: widget.isFavorites ? "favorites" : "recentlyAdded",
+                        primaryButtonIconData: widget.isFavorites ? OMIcons.edit : Icons.star_border,
+                        primaryButtonLabel: widget.isFavorites ? "Edit" : "Add to favorites",
+                        primaryButtonOnPressed: () {
+                          if (widget.isFavorites) {
                             Navigator.pop(context);
                             Navigator.push(
                               context,
@@ -170,32 +151,22 @@ class _TabViewPageState extends State<TabViewPage> {
                                 builder: (context) => EditConnectionPage(index),
                               ),
                             );
+                          } else {
+                            MyHomePage.favoritesPage.addToJson(widget.connections[index]);
+                            MyHomePage.favoritesPage.setConnectionsFromJson();
+                            Navigator.pop(context);
+                          }
                           },
-                        ),
                         hasSecondaryButton: true,
-                        secondaryButton: FlatButton(
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
-                                child: Icon(
-                                  OMIcons.delete,
-                                  size: 19.0,
-                                ),
-                              ),
-                              Text("Delete"),
-                            ],
-                          ),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                          padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
-                          onPressed: () {
+                        secondaryButtonIconData: OMIcons.delete,
+                        secondaryButtonLabel: "Delete",
+                        secondaryButtonOnPressed: () {
                             widget.removeFromJsonAt(index);
                             setState(() {
                               widget.connections = widget.getConnectionsFromJson();
                             });
                             Navigator.pop(context);
                           },
-                        ),
                       );
                     },
                   ),
