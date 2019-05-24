@@ -318,20 +318,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               SizedBox(width: 6.0),
               InkWell(
                 borderRadius: BorderRadius.circular(40.0),
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Image.asset("assets/app_icon.png", width: 44.0),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 6.0, right: 21.0),
-                      child: Text(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 14.0, right: 20.0, top: 7.0, bottom: 7.0),
+                  child: Row(
+                    children: <Widget>[
+                      Image.asset("assets/app_icon.png", width: 30.0),
+                      SizedBox(width: 8.0),
+                      Text(
                         "RemoteFiles",
-                        style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 17.0),
+                        style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 18.0),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -353,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               width: 90.0,
                               height: 90.0,
                               child: Padding(
-                                padding: EdgeInsets.all(4.0),
+                                padding: EdgeInsets.all(12.0),
                                 child: Image.asset("assets/app_icon.png"),
                               ),
                             ),
