@@ -38,7 +38,6 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
       child: TextField(
         focusNode: focusNodes[index],
         controller: _textEditingController[valueText],
-        cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword,
         textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         decoration: InputDecoration(
