@@ -39,6 +39,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: ^0.7.1
+
+flutter_icons:
+  image_path: "assets/app_icon_bg.png"
+  android: "ic_launcher"
+  ios: true
+  adaptive_icon_background: "assets/app_icon.png"
+  adaptive_icon_foreground: "assets/white.png"
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
