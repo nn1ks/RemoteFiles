@@ -46,6 +46,8 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   bool _isLoading = false;
   String _directoryBefore;
 
+  bool _showAddress = false;
+
   String _sortValue = "name";
   bool _fileSortDescending = true;
 
@@ -854,34 +856,69 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                     physics: BouncingScrollPhysics(),
                     child: Row(
                       children: <Widget>[
-                        CustomTooltip(
-                          message: "Back",
-                          child: IconButton(
-                            icon: Icon(Icons.chevron_left),
-                            onPressed: () => Navigator.pop(context),
-                          ),
+                        IconButton(
+                          icon: Icon(Icons.chevron_left),
+                          onPressed: () => Navigator.pop(context),
                         ),
-                        CustomTooltip(
-                          message: "Show connection infos",
-                          child: IconButton(
-                            icon: Padding(
-                              padding: EdgeInsets.only(top: 1.0),
-                              child: Icon(OMIcons.flashOn),
-                            ),
-                            onPressed: () {
-                              MyHomePage.showConnectionDialog(
-                                context: context,
-                                page: "connection",
-                                primaryButtonIconData: Icons.remove_circle_outline,
-                                primaryButtonLabel: "Disconnect",
-                                primaryButtonOnPressed: () {
-                                  _client.disconnectSFTP();
-                                  _client.disconnect();
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
+                        GestureDetector(
+                          onTap: () {
+                            MyHomePage.showConnectionDialog(
+                              context: context,
+                              page: "connection",
+                              primaryButtonIconData: Icons.remove_circle_outline,
+                              primaryButtonLabel: "Disconnect",
+                              primaryButtonOnPressed: () {
+                                _client.disconnectSFTP();
+                                _client.disconnect();
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                          onLongPress: () {
+                            setState(() {
+                              _showAddress = !_showAddress;
+                            });
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              IconButton(
+                                icon: Padding(
+                                  padding: EdgeInsets.only(top: 1.0),
+                                  child: Icon(OMIcons.flashOn),
+                                ),
+                                onPressed: () {
+                                  MyHomePage.showConnectionDialog(
+                                    context: context,
+                                    page: "connection",
+                                    primaryButtonIconData: Icons.remove_circle_outline,
+                                    primaryButtonLabel: "Disconnect",
+                                    primaryButtonOnPressed: () {
+                                      if (!Platform.isIOS) _client.disconnectSFTP();
+                                      _client.disconnect();
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                  );
                                 },
-                              );
-                            },
+                              ),
+                              AnimatedSize(
+                                vsync: this,
+                                duration: Duration(milliseconds: 100),
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: _showAddress ? 8.0 : .0),
+                                  child: SizedBox(
+                                    width: !_showAddress ? .0 : null,
+                                    child: Text(
+                                      _connection.address,
+                                      style: TextStyle(fontFamily: "GoogleSans", fontSize: 17.6, fontWeight: FontWeight.w500),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Container(
