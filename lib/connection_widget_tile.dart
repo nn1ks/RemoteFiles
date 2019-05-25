@@ -89,7 +89,6 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                                 ? CustomIconButton(
                                     icon: Icon(Icons.more_vert, size: 22.0),
                                     size: 26.0,
-                                    padding: null,
                                     onPressed: widget.onSecondaryTap,
                                   )
                                 : Container(),
