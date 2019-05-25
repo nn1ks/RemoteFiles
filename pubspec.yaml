@@ -32,7 +32,7 @@ dependencies:
   path_provider: ^0.5.0+1
   package_info: ^0.4.0+3
   permission_handler: '^2.2.0'
-  flutter_document_picker: ^3.0.0
+  file_picker: ^1.3.4+1
   url_launcher: ^5.0.2
 
 dev_dependencies:

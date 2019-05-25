@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_document_picker/flutter_document_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:path_provider/path_provider.dart';
@@ -643,7 +643,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     String path;
     if (!isReuploading) {
       try {
-        path = await FlutterDocumentPicker.openDocument();
+        path = await FilePicker.getFilePath();
       } catch (e) {
         print("Picking file failed");
       }
