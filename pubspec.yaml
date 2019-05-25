@@ -42,7 +42,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.7.1
 
 flutter_icons:
-  image_path: "assets/app_icon_round.png"
+  image_path_android: "assets/app_icon_round.png"
+  image_path_ios: "assets/app_icon_square.png"
   android: "ic_launcher"
   ios: true
   adaptive_icon_background: "assets/app_icon.png"
