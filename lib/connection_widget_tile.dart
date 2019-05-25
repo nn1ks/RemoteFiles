@@ -8,6 +8,7 @@ class ConnectionWidgetTile extends StatefulWidget {
   final bool isListView;
   final int itemNum;
   final Function onTap;
+  final Function onSecondaryTap;
   final Function onLongPress;
 
   ConnectionWidgetTile({
@@ -17,6 +18,7 @@ class ConnectionWidgetTile extends StatefulWidget {
     @required this.isListView,
     @required this.itemNum,
     @required this.onTap,
+    @required this.onSecondaryTap,
     @required this.onLongPress,
   });
 
@@ -35,7 +37,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                   leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
                   title: Text(widget.fileInfos[widget.index]["filename"]),
                   trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
-                      ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onLongPress)
+                      ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onSecondaryTap)
                       : null,
                   onTap: widget.onTap,
                   onLongPress: widget.onLongPress,
@@ -43,31 +45,57 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
               )
             : Container(
                 margin: EdgeInsets.all(6.0),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(0, 0, 0, .07),
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(4.0),
+                  borderRadius: BorderRadius.circular(6.0),
                   onTap: widget.onTap,
                   onLongPress: widget.onLongPress,
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          SizedBox(height: 4.0),
-                          Icon(
-                            widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
-                            size: 32.0,
-                            color: Colors.grey[600],
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              borderRadius: BorderRadius.circular(3.0),
+                            ),
+                            child: Icon(
+                              widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
+                              size: 32.0,
+                              color: Colors.grey[600],
+                            ),
                           ),
-                          SizedBox(height: 6.0),
-                          Text(
-                            widget.fileInfos[widget.index]["filename"],
-                            style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.4),
-                            maxLines: 2,
-                            overflow: TextOverflow.fade,
-                          ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 6.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Flexible(
+                              child: Text(
+                                widget.fileInfos[widget.index]["filename"],
+                                style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.4),
+                                maxLines: 3,
+                                overflow: TextOverflow.fade,
+                              ),
+                            ),
+                            widget.fileInfos[widget.index]["isDirectory"] == "true"
+                                ? CustomIconButton(
+                                    icon: Icon(Icons.more_vert, size: 22.0),
+                                    size: 26.0,
+                                    padding: null,
+                                    onPressed: widget.onSecondaryTap,
+                                  )
+                                : Container(),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),

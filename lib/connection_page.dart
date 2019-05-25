@@ -393,12 +393,13 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                 });
                 _goToDirectory(_currentConnection.path + "/" + _fileInfos[i]["filename"]);
               } else {
-                //showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(_fileInfos[i], _currentConnection.path));
                 _showFileBottomSheet(i);
               }
             },
+            onSecondaryTap: () {
+              _showFileBottomSheet(i);
+            },
             onLongPress: () {
-              //showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(_fileInfos[i], _currentConnection.path));
               _showFileBottomSheet(i);
             },
           ));
@@ -1170,6 +1171,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         ],
                       )
                     : GridView(
+                        padding: EdgeInsets.all(3.0),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                           maxCrossAxisExtent: 160.0,
                         ),
