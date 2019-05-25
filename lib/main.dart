@@ -356,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               width: 90.0,
                               height: 90.0,
                               child: Padding(
-                                padding: EdgeInsets.all(12.0),
+                                padding: EdgeInsets.all(15.79),
                                 child: Image.asset("assets/app_icon.png"),
                               ),
                             ),

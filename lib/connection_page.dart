@@ -521,9 +521,16 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   double _progressHeight = .0;
   String _loadFile = "";
   bool _showDownloadProgress = false;
-  bool _showUploadProgress = false;
 
   _download(String filePath, {bool isRedownloading = false}) async {
+    if (Platform.isIOS) {
+      ConnectionPage.scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text("This function is not yet implemented in the iOS version."),
+        ),
+      );
+      return;
+    }
     await Future.delayed(Duration(milliseconds: 100));
     try {
       PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
@@ -639,7 +646,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
 
   _upload({bool isReuploading = false, String pathFromReuploading}) async {
     _progress = 0;
-    _showUploadProgress = true;
     String path;
     if (!isReuploading) {
       try {
@@ -650,6 +656,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     } else {
       path = pathFromReuploading;
     }
+    if (path == null) return;
     String filename = "";
     for (int i = 0; i < path.length; i++) {
       filename += path[i];
@@ -673,7 +680,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               setState(() {
                 _progressHeight = 50.0;
                 _loadFile = filename;
-                _showUploadProgress = true;
               });
             } else if (progress == 100) {
               _downOrUploadCompleted(false);
@@ -747,7 +753,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           content: Text("Upload completed"),
         ),
       );
-      _showUploadProgress = false;
       _refresh();
     }
   }
