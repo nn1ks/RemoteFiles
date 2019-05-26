@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'custom_icon_button.dart';
 import 'custom_tooltip.dart';
+import 'main.dart';
 
 class SettingsVariables {
   static SharedPreferences prefs;
@@ -266,6 +267,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Divider(),
                 _buildHeadline("Sort", hasSwitch: true, onChanged: (bool value) async {
                   await SettingsVariables.setSortIsDescending(value);
+                    FileInfos.sort();
                   setState(() {});
                 }),
                 RadioListTile(
@@ -273,7 +275,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   groupValue: SettingsVariables.sort,
                   value: "name",
                   onChanged: (String value) async {
-                    await SettingsVariables.setSort("name");
+                    FileInfos.sort();
                     setState(() {});
                   },
                 ),
@@ -283,6 +285,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: "modificationDate",
                   onChanged: (String value) async {
                     await SettingsVariables.setSort("modificationDate");
+                    FileInfos.sort();
                     setState(() {});
                   },
                 ),
@@ -292,6 +295,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: "lastAccess",
                   onChanged: (String value) async {
                     await SettingsVariables.setSort("lastAccess");
+                    FileInfos.sort();
                     setState(() {});
                   },
                 ),

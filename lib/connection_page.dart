@@ -39,18 +39,17 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   static Connection _currentConnection;
-  List<Map<String, String>> _fileInfos = [];
   static SSHClient _client;
   int _itemNum = MyHomePage.favoritesPage.connections.length > 0 ? MyHomePage.favoritesPage.connections.length : 1;
   bool _isLoading = false;
   String _directoryBefore;
 
   _showFileBottomSheet(int index) {
-    Map<String, String> fileInfo = _fileInfos[index];
+    Map<String, String> fileInfo = FileInfos.values[index];
     String currentPath = _currentConnection.path;
     String filePath = currentPath;
     if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
-    filePath += _fileInfos[index]["filename"];
+    filePath += FileInfos.values[index]["filename"];
     double tableFontSize = 16.0;
 
     showModalBottomSheet(
@@ -286,7 +285,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               ),
               elevation: .0,
               onPressed: () async {
-                if (_fileInfos[index]["isDirectory"] == "true") {
+                if (FileInfos.values[index]["isDirectory"] == "true") {
                   await _client.sftpRmdir(filePath);
                 } else {
                   await _client.sftpRm(filePath);
@@ -373,21 +372,21 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
 
   List<Widget> _getItemList() {
     List<Widget> list = [];
-    if (_fileInfos.length > 0) {
+    if (FileInfos.values.length > 0) {
       for (int i = 0; i < _itemNum; i++) {
-        if (SettingsVariables.showHiddenFiles || _fileInfos[i]["filename"][0] != ".") {
+        if (SettingsVariables.showHiddenFiles || FileInfos.values[i]["filename"][0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
-            fileInfos: _fileInfos,
+            fileInfos: FileInfos.values,
             isLoading: _isLoading,
             view: SettingsVariables.view,
             itemNum: _itemNum,
             onTap: () {
-              if (_fileInfos[i]["isDirectory"] == "true") {
+              if (FileInfos.values[i]["isDirectory"] == "true") {
                 setState(() {
                   _directoryBefore = _currentConnection.path;
                 });
-                _goToDirectory(_currentConnection.path + "/" + _fileInfos[i]["filename"]);
+                _goToDirectory(_currentConnection.path + "/" + FileInfos.values[i]["filename"]);
               } else {
                 _showFileBottomSheet(i);
               }
@@ -451,22 +450,22 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       }
       if (pathIsValid) {
         _currentConnection = Connection(address: address, port: port, username: username, passwordOrKey: passwordOrKey, path: path);
-        _fileInfos = [];
-        _fileInfos.length = list.length;
+        FileInfos.values = [];
+        FileInfos.values.length = list.length;
         for (int i = 0; i < list.length; i++) {
-          _fileInfos[i] = {};
+          FileInfos.values[i] = {};
           list[i].forEach((k, v) {
-            _fileInfos[i].addAll({k.toString(): v.toString()});
+            FileInfos.values[i].addAll({k.toString(): v.toString()});
           });
-          _fileInfos[i]["filename"] = _removeTrailingSlash(_fileInfos[i]["filename"]);
+          FileInfos.values[i]["filename"] = _removeTrailingSlash(FileInfos.values[i]["filename"]);
         }
       }
     }
     setState(() {
       _isLoading = false;
-      _itemNum = _fileInfos.length;
+      _itemNum = FileInfos.values.length;
     });
-    _sortItemList();
+    FileInfos.sort();
   }
 
   _connect(Connection connection, {bool setIsLoading = true}) {
@@ -511,8 +510,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     if (path.length > 1 && path.substring(path.length - 1) == "/") return path.substring(0, path.length - 1);
     return path;
   }
-
-  _sortItemList() {}
 
   int _progress = 0;
   double _progressHeight = .0;

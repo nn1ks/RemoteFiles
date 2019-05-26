@@ -64,6 +64,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class FileInfos {
+  static List<Map<String, String>> values = [];
+
+  static sort() {
+    values.sort((a, b) => a[SettingsVariables.sort].compareTo(b[SettingsVariables.sort]));
+    if (SettingsVariables.sortIsDescending) values = values.reversed.toList();
+    if (SettingsVariables.sort != "filename") values = values.reversed.toList();
+  }
+}
+
 class MyHomePage extends StatefulWidget {
   static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
   static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json", false);
