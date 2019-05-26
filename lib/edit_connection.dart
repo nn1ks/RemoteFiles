@@ -4,19 +4,23 @@ import 'connection.dart';
 import 'main.dart';
 
 class EditConnectionPage extends StatefulWidget {
-  EditConnectionPage(int favoritesIndex) {
-    _EditConnectionPageState._textEditingController.forEach((k, v) {
-      _EditConnectionPageState._textEditingController[k].text = MyHomePage.favoritesPage.connections[favoritesIndex].toMap()[k];
-    });
-    _EditConnectionPageState._favoritesIndex = favoritesIndex;
-    _EditConnectionPageState._connection = MyHomePage.favoritesPage.connections[favoritesIndex];
-  }
+  final bool isNew;
+  final int index;
+
+  EditConnectionPage({this.isNew = false, this.index});
+
   @override
   _EditConnectionPageState createState() => _EditConnectionPageState();
 }
 
 class _EditConnectionPageState extends State<EditConnectionPage> {
-  static Map<String, TextEditingController> _textEditingController = {
+  Connection _connection = Connection();
+
+  bool _addToFavorites = false;
+  bool _addressIsEntered = true;
+  bool _passwordWasChanged = false;
+
+  Map<String, TextEditingController> _textEditingController = {
     "name": TextEditingController(),
     "address": TextEditingController(),
     "port": TextEditingController(),
@@ -24,12 +28,6 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
     "passwordOrKey": TextEditingController(),
     "path": TextEditingController()
   };
-  static int _favoritesIndex;
-
-  static Connection _connection = Connection();
-
-  bool _addressIsEntered = true;
-  bool _passwordWasChanged = false;
 
   List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode()];
 
@@ -37,14 +35,20 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
     return Container(
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
-        focusNode: focusNodes[index],
         controller: _textEditingController[key],
+        focusNode: focusNodes[index],
+        cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword,
         textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
+        keyboardType: key == "port" ? TextInputType.numberWithOptions() : null,
         decoration: InputDecoration(
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
+          labelText: label,
+          hintText: hint,
+          errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
           suffixIcon: key == "passwordOrKey" && !_passwordWasChanged && _textEditingController[key].text != ""
               ? CustomIconButton(
-                  icon: Icon(Icons.clear),
+                  icon: Icon(Icons.clear, color: Colors.black87),
                   onPressed: () {
                     _textEditingController[key].text = "";
                     _connection.setter(key, "");
@@ -52,10 +56,6 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                   },
                 )
               : null,
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
-          labelText: label,
-          hintText: hint,
-          errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         onChanged: (String value) {
           _connection.setter(key, value);
@@ -68,6 +68,19 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         },
       ),
     );
+  }
+
+  @override
+  void initState() {
+    if (!widget.isNew) {
+      Map<String, String> map = {};
+      _textEditingController.forEach((k, v) {
+        map.addAll({k: MyHomePage.favoritesPage.connections[widget.index].toMap()[k]});
+        _textEditingController[k].text = MyHomePage.favoritesPage.connections[widget.index].toMap()[k];
+      });
+      _connection = Connection.fromMap(map);
+    }
+    super.initState();
   }
 
   @override
@@ -88,7 +101,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                 },
               ),
               Text(
-                "Edit SFTP connection",
+                widget.isNew ? "Add a new SFTP connection" : "Edit SFTP connection",
                 style: TextStyle(fontFamily: "GoogleSans", fontSize: 17.0, fontWeight: FontWeight.w600),
               )
             ],
@@ -102,10 +115,20 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         child: Icon(Icons.done),
         onPressed: () {
           if (_connection.address != null && _connection.address != "") {
-            MyHomePage.favoritesPage.insertToJson(_favoritesIndex, _connection);
-            MyHomePage.favoritesPage.removeFromJsonAt(_favoritesIndex + 1);
-            MyHomePage.favoritesPage.setConnectionsFromJson();
-            Navigator.pop(context);
+            if (widget.isNew) {
+              if (_addToFavorites) {
+                MyHomePage.favoritesPage.addToJson(_connection);
+                MyHomePage.favoritesPage.setConnectionsFromJson();
+              }
+              MyHomePage.recentlyAddedPage.addToJson(_connection);
+              MyHomePage.favoritesPage.setConnectionsFromJson();
+              Navigator.pop(context);
+            } else {
+              MyHomePage.favoritesPage.insertToJson(widget.index, _connection);
+              MyHomePage.favoritesPage.removeFromJsonAt(widget.index + 1);
+              MyHomePage.favoritesPage.setConnectionsFromJson();
+              Navigator.pop(context);
+            }
           } else {
             setState(() {
               _addressIsEntered = false;
@@ -119,20 +142,36 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
             physics: BouncingScrollPhysics(),
             children: <Widget>[
               Container(
-                margin: EdgeInsets.all(20.0),
-                child: Column(
-                  children: <Widget>[
-                    _buildTextField(label: "Name", key: "name", index: 0),
-                    _buildTextField(label: "Address*", key: "address", index: 1),
-                    _buildTextField(label: "Port", hint: "22", key: "port", index: 2),
-                    _buildTextField(label: "Username", key: "username", index: 3),
-                    _buildTextField(label: "Password or Key", key: "passwordOrKey", isPassword: true, index: 4),
-                    _buildTextField(label: "Path", key: "path", index: 5),
-                  ],
-                ),
+                margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 4.0),
+                child: Column(children: <Widget>[
+                  _buildTextField(label: "Name", key: "name", index: 0),
+                  _buildTextField(label: "Address*", key: "address", index: 1),
+                  _buildTextField(label: "Port", hint: "22", key: "port", index: 2),
+                  _buildTextField(label: "Username", key: "username", index: 3),
+                  _buildTextField(label: "Password or Key", key: "passwordOrKey", isPassword: true, index: 4),
+                  _buildTextField(label: "Path", key: "path", index: 5),
+                ]),
               ),
+              widget.isNew
+                  ? CheckboxListTile(
+                      secondary: Icon(Icons.star_border),
+                      title: Padding(
+                        padding: EdgeInsets.only(top: 2.0),
+                        child: Text(
+                          "Add to Favorites",
+                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16.4),
+                        ),
+                      ),
+                      value: _addToFavorites,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _addToFavorites = value;
+                        });
+                      },
+                    )
+                  : Container(),
               SizedBox(
-                height: 60.0,
+                height: 76.0,
               )
             ],
           ),
