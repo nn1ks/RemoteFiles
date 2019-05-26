@@ -21,8 +21,6 @@ class ConnectionPage extends StatefulWidget {
 
   static var scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<Map<String, String>> get fileInfos => _ConnectionPageState()._fileInfos;
-
   static Connection get currentConnection => _ConnectionPageState._currentConnection;
   static SSHClient get client => _ConnectionPageState._client;
   static connect(Connection connection) => _ConnectionPageState()._connect(connection);
