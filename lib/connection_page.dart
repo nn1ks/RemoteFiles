@@ -956,6 +956,16 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                           ),
                         ),
                         CustomTooltip(
+                          message: SettingsVariables.showHiddenFiles ? "Dont't show hidden files" : "Show hidden files",
+                          child: IconButton(
+                            icon: Icon(SettingsVariables.showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
+                            onPressed: () async {
+                              await SettingsVariables.setShowHiddenFiles(!SettingsVariables.showHiddenFiles);
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        CustomTooltip(
                           message: "Settings",
                           child: IconButton(
                             icon: Icon(OMIcons.settings),
