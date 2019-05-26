@@ -153,7 +153,7 @@ class _TabViewPageState extends State<TabViewPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditConnectionPage(index),
+                                builder: (context) => EditConnectionPage(index: index),
                               ),
                             );
                           } else {

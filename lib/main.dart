@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'custom_show_dialog.dart';
 import 'custom_icon_button.dart';
-import 'new_connection.dart';
+import 'edit_connection.dart';
 import 'settings.dart';
 import 'tab_view_page.dart';
 import 'connection_page.dart';
@@ -338,7 +338,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           child: Row(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(left: 10.0),
+                padding: EdgeInsets.only(left: 8.0),
                 child: CustomIconButton(
                   icon: Icon(OMIcons.settings),
                   onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage())),
@@ -476,7 +476,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         elevation: 4.0,
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => NewConnectionPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditConnectionPage(isNew: true)));
         },
       ),
       body: SafeArea(

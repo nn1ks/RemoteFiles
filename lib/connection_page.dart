@@ -890,14 +890,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               ),
                               AnimatedSize(
                                 vsync: this,
-                                duration: Duration(milliseconds: 100),
+                                duration: Duration(milliseconds: 200),
                                 child: Padding(
                                   padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
                                   child: SizedBox(
                                     width: !SettingsVariables.showAddressInAppBar ? .0 : null,
                                     child: Text(
                                       _connection.address,
-                                      style: TextStyle(fontFamily: "GoogleSans", fontSize: 17.6, fontWeight: FontWeight.w500),
+                                      style: TextStyle(fontFamily: "GoogleSans", fontSize: 16.0, fontWeight: FontWeight.w500),
                                       maxLines: 1,
                                       overflow: TextOverflow.fade,
                                     ),
@@ -961,7 +961,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                           ),
                         ),
                         CustomTooltip(
-                          message: "View & Sort",
+                          message: "Settings",
                           child: IconButton(
                             icon: Icon(OMIcons.settings),
                             onPressed: () {
