@@ -7,6 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ssh/ssh.dart';
+import 'package:open_file/open_file.dart';
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
 import 'settings.dart';
@@ -157,6 +158,22 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                             margin: EdgeInsets.only(bottom: 8.0),
                             color: Theme.of(context).dividerColor,
                           ),
+                          fileInfo["isDirectory"] == "true"
+                              ? Container()
+                              : ListTile(
+                                  leading: Icon(Icons.open_in_new, color: Theme.of(context).accentColor),
+                                  title: Padding(
+                                    padding: EdgeInsets.only(top: 2.0),
+                                    child: Text(
+                                      "Open",
+                                      style: TextStyle(fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    Navigator.pop(context);
+                                    OpenFile.open(await _saveInCache(_currentConnection.path + "/" + fileInfo["filename"]));
+                                  },
+                                ),
                           fileInfo["isDirectory"] == "true"
                               ? Container()
                               : Column(
@@ -750,6 +767,36 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       );
       _refresh();
     }
+  }
+
+  Future<String> _saveInCache(String filePath) async {
+    Directory cacheDir = await getTemporaryDirectory();
+    String filename = "";
+    for (int i = 0; i < filePath.length; i++) {
+      filename += filePath[i];
+      if (filePath[i] == "/") {
+        filename = "";
+      }
+    }
+    await _client.sftpDownload(
+      path: filePath,
+      toPath: cacheDir.path,
+      callback: (progress) {
+        setState(() => _progress = progress);
+        if (progress == 5) {
+          setState(() {
+            _progressHeight = 50.0;
+            _loadFile = filename;
+            _showDownloadProgress = true;
+          });
+        } else if (progress == 100) {
+          setState(() {
+            _progressHeight = .0;
+          });
+        }
+      },
+    );
+    return cacheDir.path + "/" + filename;
   }
 
   AnimationController _rotationController;
