@@ -55,7 +55,7 @@ class SettingsVariables {
     await prefs.setString("view", value);
   }
 
-  static String sort = "name";
+  static String sort = "filename";
   static String getSort() {
     String sortPrefs;
     if (prefs != null) sortPrefs = prefs.getString("sort");
@@ -273,8 +273,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 RadioListTile(
                   title: Text("Name"),
                   groupValue: SettingsVariables.sort,
-                  value: "name",
+                  value: "filename",
                   onChanged: (String value) async {
+                    await SettingsVariables.setSort("filename");
                     FileInfos.sort();
                     setState(() {});
                   },
