@@ -19,6 +19,8 @@ class SettingsVariables {
     if (!Platform.isIOS) {
       dirDefault = await getExternalStorageDirectory();
       dirDefault = Directory(dirDefault.path + "/RemoteFiles");
+    } else {
+      return Directory("");
     }
     Directory dirPrefs;
     if (prefs != null) {
@@ -253,9 +255,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   "Sort",
                   hasSwitch: true,
                   onChanged: (bool value) async {
-                  await SettingsVariables.setSortIsDescending(value);
+                    await SettingsVariables.setSortIsDescending(value);
                     FileInfos.sort();
-                  setState(() {});
+                    setState(() {});
                   },
                 ),
                 RadioListTile(
