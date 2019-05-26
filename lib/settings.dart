@@ -234,10 +234,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: Text("Detailed"),
                   groupValue: SettingsVariables.view,
                   value: "detailed",
-                  onChanged: (String value) async {
+                  /*onChanged: (String value) async {
                     await SettingsVariables.setView("detailed");
                     setState(() {});
-                  },
+                  },*/
                 ),
                 RadioListTile(
                   title: Text("Grid"),
