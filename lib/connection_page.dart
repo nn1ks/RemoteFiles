@@ -330,6 +330,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     String temp = "";
     String path = "";
     if (_currentConnection != null) path = _currentConnection.path != null ? _currentConnection.path + "/" : "";
+    if (path.length > 1) {
+      if (path[0] == "/" && path[1] == "/") path = path.substring(1, path.length);
+    }
     for (int i = 1; i < path.length; i++) {
       if (path[i] == "/") {
         widgets.add(InkWell(
@@ -431,7 +434,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       bool pathIsGiven = path.length != 0;
       if (!pathIsGiven || path[0] != "/") {
         path = await _client.execute("pwd");
-        path = path.substring(0, path.length - 2);
+        path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
       }
       bool pathIsValid = true;
       var list;
