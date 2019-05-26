@@ -249,11 +249,15 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
                 Divider(),
-                _buildHeadline("Sort", hasSwitch: true, onChanged: (bool value) async {
+                _buildHeadline(
+                  "Sort",
+                  hasSwitch: true,
+                  onChanged: (bool value) async {
                   await SettingsVariables.setSortIsDescending(value);
                     FileInfos.sort();
                   setState(() {});
-                }),
+                  },
+                ),
                 RadioListTile(
                   title: Text("Name"),
                   groupValue: SettingsVariables.sort,
