@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'custom_icon_button.dart';
 import 'connection.dart';
 import 'main.dart';
 
@@ -32,21 +33,21 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
 
   List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode()];
 
-  Container _buildTextField({String label, String hint, String valueText, bool isPassword = false, FocusNode focusNode, int index}) {
+  Container _buildTextField({String label, String hint, String key, bool isPassword = false, FocusNode focusNode, int index}) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
         focusNode: focusNodes[index],
-        controller: _textEditingController[valueText],
+        controller: _textEditingController[key],
         obscureText: isPassword,
         textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         decoration: InputDecoration(
-          suffixIcon: valueText == "passwordOrKey" && !_passwordWasChanged && _textEditingController[valueText].text != ""
-              ? IconButton(
+          suffixIcon: key == "passwordOrKey" && !_passwordWasChanged && _textEditingController[key].text != ""
+              ? CustomIconButton(
                   icon: Icon(Icons.clear),
                   onPressed: () {
-                    _textEditingController[valueText].text = "";
-                    _connection.setter(valueText, "");
+                    _textEditingController[key].text = "";
+                    _connection.setter(key, "");
                     setState(() => _passwordWasChanged = true);
                   },
                 )
@@ -57,8 +58,8 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
         ),
         onChanged: (String value) {
-          _connection.setter(valueText, value);
-          if (valueText == "passwordOrKey") {
+          _connection.setter(key, value);
+          if (key == "passwordOrKey") {
             setState(() => _passwordWasChanged = true);
           }
         },
@@ -121,12 +122,12 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                 margin: EdgeInsets.all(20.0),
                 child: Column(
                   children: <Widget>[
-                    _buildTextField(label: "Name", valueText: "name", index: 0),
-                    _buildTextField(label: "Address*", valueText: "address", index: 1),
-                    _buildTextField(label: "Port", hint: "22", valueText: "port", index: 2),
-                    _buildTextField(label: "Username", valueText: "username", index: 3),
-                    _buildTextField(label: "Password or Key", valueText: "passwordOrKey", isPassword: true, index: 4),
-                    _buildTextField(label: "Path", valueText: "path", index: 5),
+                    _buildTextField(label: "Name", key: "name", index: 0),
+                    _buildTextField(label: "Address*", key: "address", index: 1),
+                    _buildTextField(label: "Port", hint: "22", key: "port", index: 2),
+                    _buildTextField(label: "Username", key: "username", index: 3),
+                    _buildTextField(label: "Password or Key", key: "passwordOrKey", isPassword: true, index: 4),
+                    _buildTextField(label: "Path", key: "path", index: 5),
                   ],
                 ),
               ),

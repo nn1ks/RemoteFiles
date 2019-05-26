@@ -754,9 +754,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     }
   }
 
-  set _isListViewSetter(bool value) => setState(() => _isListView = value);
-  set _showHiddenFilesSetter(bool value) => setState(() => _showHiddenFiles = value);
-
   AnimationController _rotationController;
 
   @override
@@ -765,10 +762,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     _connect(_connection);
     super.initState();
   }
-
-  int _radioGroupValue0 = 0;
-  int _radioGroupValue1 = 0;
-  bool _showHiddenFilesValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -973,9 +966,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                             icon: Icon(OMIcons.settings),
                             onPressed: () {
                               Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-                                                      },
-                                                ),
-                                              ),
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),

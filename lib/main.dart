@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'custom_show_dialog.dart';
+import 'custom_icon_button.dart';
 import 'new_connection.dart';
 import 'settings.dart';
 import 'tab_view_page.dart';
@@ -43,6 +45,9 @@ class MyApp extends StatelessWidget {
             dialogBackgroundColor: Colors.white,
             indicatorColor: accentColor,
             textSelectionHandleColor: accentColor,
+            bottomAppBarTheme: BottomAppBarTheme(
+              elevation: 8.0,
+            ),
             textTheme: TextTheme(
               button: TextStyle(fontFamily: "GoogleSans"),
             ),
@@ -223,6 +228,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   AnimationController _rotationController1;
   AnimationController _rotationController2;
   int _tabIndex = 0;
+  bool _tabBarWasAnimated = false;
 
   _tabOnChange() {
     if (_tabIndex != _tabController.index) {
@@ -233,6 +239,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       }
       setState(() {
         _tabIndex = _tabController.index;
+        _tabBarWasAnimated = true;
       });
     }
   }
@@ -242,7 +249,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_tabOnChange);
     _rotationController1 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
-    _rotationController2 = AnimationController(duration: Duration(milliseconds: 280), vsync: this);
+    _rotationController2 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     getApplicationDocumentsDirectory().then((Directory dir) {
       setState(() {
         MyHomePage.favoritesPage.dir = dir;
@@ -309,7 +316,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ),
               Tab(
                 icon: RotationTransition(
-                  turns: Tween(begin: .0, end: -1.0).animate(_rotationController2),
+                  turns: _tabBarWasAnimated
+                      ? Tween(begin: -.5, end: -1.0).animate(_rotationController2)
+                      : Tween(begin: .0, end: -1.0).animate(_rotationController2),
                   child: Padding(
                     padding: EdgeInsets.only(right: 2.0),
                     child: Icon(Icons.restore),
@@ -324,7 +333,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       bottomNavigationBar: BottomAppBar(
         notchMargin: 6.0,
         shape: CircularNotchedRectangle(),
-        elevation: 8.0,
         child: Container(
           height: 55.0,
           child: Row(
