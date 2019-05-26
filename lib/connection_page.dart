@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:ssh/ssh.dart';
 import 'custom_tooltip.dart';
 import 'custom_show_dialog.dart';
+import 'settings.dart';
 import 'connection_widget_tile.dart';
 import 'connection.dart';
 import 'main.dart';
@@ -36,8 +37,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   static Connection _connection;
 
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
-  bool _showHiddenFiles = false;
-  bool _isListView = true;
 
   static Connection _currentConnection;
   List<Map<String, String>> _fileInfos = [];
@@ -45,11 +44,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   int _itemNum = MyHomePage.favoritesPage.connections.length > 0 ? MyHomePage.favoritesPage.connections.length : 1;
   bool _isLoading = false;
   String _directoryBefore;
-
-  bool _showAddress = false;
-
-  String _sortValue = "name";
-  bool _fileSortDescending = true;
 
   _showFileBottomSheet(int index) {
     Map<String, String> fileInfo = _fileInfos[index];
@@ -381,12 +375,12 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     List<Widget> list = [];
     if (_fileInfos.length > 0) {
       for (int i = 0; i < _itemNum; i++) {
-        if (_showHiddenFiles || _fileInfos[i]["filename"][0] != ".") {
+        if (SettingsVariables.showHiddenFiles || _fileInfos[i]["filename"][0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
             fileInfos: _fileInfos,
             isLoading: _isLoading,
-            isListView: _isListView,
+            view: SettingsVariables.view,
             itemNum: _itemNum,
             onTap: () {
               if (_fileInfos[i]["isDirectory"] == "true") {
@@ -875,10 +869,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               },
                             );
                           },
-                          onLongPress: () {
-                            setState(() {
-                              _showAddress = !_showAddress;
-                            });
+                          onLongPress: () async {
+                            await SettingsVariables.setShowAddressInAppBar(!SettingsVariables.showAddressInAppBar);
+                            setState(() {});
                           },
                           child: Row(
                             children: <Widget>[
@@ -906,9 +899,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                 vsync: this,
                                 duration: Duration(milliseconds: 100),
                                 child: Padding(
-                                  padding: EdgeInsets.only(right: _showAddress ? 8.0 : .0),
+                                  padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
                                   child: SizedBox(
-                                    width: !_showAddress ? .0 : null,
+                                    width: !SettingsVariables.showAddressInAppBar ? .0 : null,
                                     child: Text(
                                       _connection.address,
                                       style: TextStyle(fontFamily: "GoogleSans", fontSize: 17.6, fontWeight: FontWeight.w500),
@@ -977,146 +970,12 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         CustomTooltip(
                           message: "View & Sort",
                           child: IconButton(
-                            icon: Icon(Icons.sort),
+                            icon: Icon(OMIcons.settings),
                             onPressed: () {
-                              customShowDialog(
-                                context: context,
-                                builder: (context) {
-                                  return CustomAlertDialog(
-                                    contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                                    content: StatefulBuilder(builder: (context, setState) {
-                                      return SingleChildScrollView(
-                                        physics: BouncingScrollPhysics(),
-                                        child: ConstrainedBox(
-                                          constraints: BoxConstraints(minWidth: 320.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 14.0),
-                                                child: Text(
-                                                  "View",
-                                                  style: TextStyle(fontFamily: "GoogleSans", fontSize: 20.0, fontWeight: FontWeight.w500),
-                                                ),
-                                              ),
-                                              RadioListTile(
-                                                title: Text("List"),
-                                                groupValue: _radioGroupValue0,
-                                                value: 0,
-                                                onChanged: (int value) {
-                                                  setState(() {
-                                                    _radioGroupValue0 = 0;
-                                                  });
-                                                  _isListViewSetter = true;
-                                                },
-                                              ),
-                                              RadioListTile(
-                                                title: Text("Grid"),
-                                                groupValue: _radioGroupValue0,
-                                                value: 1,
-                                                onChanged: (int value) {
-                                                  setState(() {
-                                                    _radioGroupValue0 = 1;
-                                                  });
-                                                  _isListViewSetter = false;
-                                                },
-                                              ),
-                                              Container(
-                                                height: 1.0,
-                                                color: Theme.of(context).dividerColor,
-                                                margin: EdgeInsets.symmetric(horizontal: 22.0, vertical: 10.0),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(left: 24.0, right: 20.0),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.max,
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      "Sort",
-                                                      style: TextStyle(fontFamily: "GoogleSans", fontSize: 20.0, fontWeight: FontWeight.w500),
-                                                    ),
-                                                    Switch(
-                                                      activeThumbImage: AssetImage("assets/arrow_drop_down.png"),
-                                                      activeColor: Colors.grey[50],
-                                                      activeTrackColor: Colors.grey[300],
-                                                      inactiveThumbImage: AssetImage("assets/arrow_drop_up.png"),
-                                                      inactiveTrackColor: Colors.grey[300],
-                                                      inactiveThumbColor: Colors.grey[50],
-                                                      value: _fileSortDescending,
-                                                      onChanged: (bool value) {
-                                                        setState(() => _fileSortDescending = value);
-                                                        _sortItemList();
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
                                                       },
-                                                    )
-                                                  ],
                                                 ),
                                               ),
-                                              RadioListTile(
-                                                title: Text("Name"),
-                                                groupValue: _radioGroupValue1,
-                                                value: 0,
-                                                onChanged: (int value) {
-                                                  setState(() {
-                                                    _radioGroupValue1 = 0;
-                                                    _sortValue = "name";
-                                                  });
-                                                  _sortItemList();
-                                                },
-                                              ),
-                                              RadioListTile(
-                                                title: Text("Modification Date"),
-                                                groupValue: _radioGroupValue1,
-                                                value: 1,
-                                                onChanged: (int value) {
-                                                  setState(() {
-                                                    _radioGroupValue1 = 1;
-                                                    _sortValue = "modificationDate";
-                                                  });
-                                                  _sortItemList();
-                                                },
-                                              ),
-                                              RadioListTile(
-                                                title: Text("Last Access"),
-                                                groupValue: _radioGroupValue1,
-                                                value: 2,
-                                                onChanged: (int value) {
-                                                  setState(() {
-                                                    _radioGroupValue1 = 2;
-                                                    _sortValue = "lastAccess";
-                                                  });
-                                                  _sortItemList();
-                                                },
-                                              ),
-                                              Container(
-                                                height: 1.0,
-                                                color: Theme.of(context).dividerColor,
-                                                margin: EdgeInsets.symmetric(horizontal: 22.0, vertical: 10.0),
-                                              ),
-                                              CheckboxListTile(
-                                                secondary: Padding(
-                                                  padding: EdgeInsets.only(left: 10.0),
-                                                  child: Icon(OMIcons.visibility),
-                                                ),
-                                                title: Text("Show hidden files"),
-                                                value: _showHiddenFilesValue,
-                                                onChanged: (bool value) {
-                                                  _showHiddenFilesSetter = value;
-                                                  setState(() => _showHiddenFilesValue = value);
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -1200,7 +1059,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                       child: CircularProgressIndicator(),
                     ),
                   )
-                : _isListView
+                : SettingsVariables.view == "list" || SettingsVariables.view == "detailed"
                     ? ListView(
                         children: <Widget>[
                           Column(children: _getItemList()),

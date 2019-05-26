@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'custom_show_dialog.dart';
 import 'new_connection.dart';
+import 'settings.dart';
 import 'tab_view_page.dart';
 import 'connection_page.dart';
 import 'connection.dart';
@@ -260,6 +261,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         }
       });
     });
+    SettingsVariables.setSharedPreferences().then((_) {
+      SettingsVariables.getDownloadDirectory().then((Directory dir) => SettingsVariables.downloadDirectory = dir);
+      SettingsVariables.view = SettingsVariables.getView();
+      SettingsVariables.sort = SettingsVariables.getSort();
+      SettingsVariables.sortIsDescending = SettingsVariables.getSortIsDescending();
+      SettingsVariables.showHiddenFiles = SettingsVariables.getShowHiddenFiles();
+      SettingsVariables.showAddressInAppBar = SettingsVariables.getShowAddressInAppBar();
+    });
     super.initState();
   }
 
@@ -320,18 +329,30 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           height: 55.0,
           child: Row(
             children: <Widget>[
-              SizedBox(width: 6.0),
+              Padding(
+                padding: EdgeInsets.only(left: 10.0),
+                child: CustomIconButton(
+                  icon: Icon(OMIcons.settings),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage())),
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: 1.0,
+                margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+                color: Theme.of(context).dividerColor,
+              ),
               InkWell(
                 borderRadius: BorderRadius.circular(40.0),
                 child: Padding(
-                  padding: EdgeInsets.only(left: 14.0, right: 20.0, top: 7.0, bottom: 7.0),
+                  padding: EdgeInsets.only(left: 14.0, right: 16.0, top: 8.0, bottom: 8.0),
                   child: Row(
                     children: <Widget>[
-                      Image.asset("assets/app_icon.png", width: 30.0),
-                      SizedBox(width: 8.0),
+                      Image.asset("assets/app_icon.png", width: 27.0),
+                      SizedBox(width: 6.0),
                       Text(
                         "RemoteFiles",
-                        style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 18.0),
+                        style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 17.0),
                       ),
                     ],
                   ),
