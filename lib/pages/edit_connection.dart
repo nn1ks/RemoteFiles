@@ -75,8 +75,8 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
     if (!widget.isNew) {
       Map<String, String> map = {};
       _textEditingController.forEach((k, v) {
-        map.addAll({k: MyHomePage.favoritesPage.connections[widget.index].toMap()[k]});
-        _textEditingController[k].text = MyHomePage.favoritesPage.connections[widget.index].toMap()[k];
+        map.addAll({k: HomePage.favoritesPage.connections[widget.index].toMap()[k]});
+        _textEditingController[k].text = HomePage.favoritesPage.connections[widget.index].toMap()[k];
       });
       _connection = Connection.fromMap(map);
     }
@@ -117,16 +117,16 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           if (_connection.address != null && _connection.address != "") {
             if (widget.isNew) {
               if (_addToFavorites) {
-                MyHomePage.favoritesPage.addToJson(_connection);
-                MyHomePage.favoritesPage.setConnectionsFromJson();
+                HomePage.favoritesPage.addToJson(_connection);
+                HomePage.favoritesPage.setConnectionsFromJson();
               }
-              MyHomePage.recentlyAddedPage.addToJson(_connection);
-              MyHomePage.favoritesPage.setConnectionsFromJson();
+              HomePage.recentlyAddedPage.addToJson(_connection);
+              HomePage.favoritesPage.setConnectionsFromJson();
               Navigator.pop(context);
             } else {
-              MyHomePage.favoritesPage.insertToJson(widget.index, _connection);
-              MyHomePage.favoritesPage.removeFromJsonAt(widget.index + 1);
-              MyHomePage.favoritesPage.setConnectionsFromJson();
+              HomePage.favoritesPage.insertToJson(widget.index, _connection);
+              HomePage.favoritesPage.removeFromJsonAt(widget.index + 1);
+              HomePage.favoritesPage.setConnectionsFromJson();
               Navigator.pop(context);
             }
           } else {

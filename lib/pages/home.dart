@@ -9,7 +9,7 @@ import '../services/services.dart';
 import '../shared/shared.dart';
 import 'pages.dart';
 
-class MyHomePage extends StatefulWidget {
+class HomePage extends StatefulWidget {
   static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
   static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json", false);
 
@@ -46,11 +46,11 @@ class MyHomePage extends StatefulWidget {
   }) {
     Connection values = Connection();
     if (page == "favorites") {
-      values = MyHomePage.favoritesPage.connections[index];
+      values = HomePage.favoritesPage.connections[index];
     } else if (page == "recentlyAdded") {
-      values = MyHomePage.recentlyAddedPage.connections[index];
+      values = HomePage.recentlyAddedPage.connections[index];
     } else if (page == "connection") {
-      values = ConnectionPage.currentConnection;
+      values = ConnectionPage.connection;
     }
     customShowDialog(
       context: context,
@@ -163,10 +163,10 @@ class MyHomePage extends StatefulWidget {
   }
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   var _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
 
@@ -197,19 +197,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _rotationController2 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     getApplicationDocumentsDirectory().then((Directory dir) {
       setState(() {
-        MyHomePage.favoritesPage.dir = dir;
-        MyHomePage.recentlyAddedPage.dir = dir;
-        MyHomePage.favoritesPage.jsonFile = File(MyHomePage.favoritesPage.dir.path + "/" + MyHomePage.favoritesPage.jsonFileName);
-        MyHomePage.recentlyAddedPage.jsonFile = File(MyHomePage.recentlyAddedPage.dir.path + "/" + MyHomePage.recentlyAddedPage.jsonFileName);
-        MyHomePage.favoritesPage.jsonFileExists = MyHomePage.favoritesPage.jsonFile.existsSync();
-        MyHomePage.recentlyAddedPage.jsonFileExists = MyHomePage.recentlyAddedPage.jsonFile.existsSync();
-        if (MyHomePage.favoritesPage.jsonFileExists) {
-          MyHomePage.favoritesPage.connections = [];
-          MyHomePage.favoritesPage.connections.addAll(MyHomePage.favoritesPage.getConnectionsFromJson());
+        HomePage.favoritesPage.dir = dir;
+        HomePage.recentlyAddedPage.dir = dir;
+        HomePage.favoritesPage.jsonFile = File(HomePage.favoritesPage.dir.path + "/" + HomePage.favoritesPage.jsonFileName);
+        HomePage.recentlyAddedPage.jsonFile = File(HomePage.recentlyAddedPage.dir.path + "/" + HomePage.recentlyAddedPage.jsonFileName);
+        HomePage.favoritesPage.jsonFileExists = HomePage.favoritesPage.jsonFile.existsSync();
+        HomePage.recentlyAddedPage.jsonFileExists = HomePage.recentlyAddedPage.jsonFile.existsSync();
+        if (HomePage.favoritesPage.jsonFileExists) {
+          HomePage.favoritesPage.connections = [];
+          HomePage.favoritesPage.connections.addAll(HomePage.favoritesPage.getConnectionsFromJson());
         }
-        if (MyHomePage.recentlyAddedPage.jsonFileExists) {
-          MyHomePage.recentlyAddedPage.connections = [];
-          MyHomePage.recentlyAddedPage.connections.addAll(MyHomePage.recentlyAddedPage.getConnectionsFromJson());
+        if (HomePage.recentlyAddedPage.jsonFileExists) {
+          HomePage.recentlyAddedPage.connections = [];
+          HomePage.recentlyAddedPage.connections.addAll(HomePage.recentlyAddedPage.getConnectionsFromJson());
         }
       });
     });
@@ -428,8 +428,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            MyHomePage.favoritesPage,
-            MyHomePage.recentlyAddedPage,
+            HomePage.favoritesPage,
+            HomePage.recentlyAddedPage,
           ],
         ),
       ),

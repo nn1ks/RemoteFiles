@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
           title: 'RemoteFiles',
           theme: theme,
           //debugShowCheckedModeBanner: false,
-          home: MyHomePage(),
+          home: HomePage(),
         );
       },
     );

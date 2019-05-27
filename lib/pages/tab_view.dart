@@ -139,7 +139,7 @@ class _TabViewPageState extends State<TabViewPage> {
                       color: Theme.of(context).accentColor,
                     ),
                     onPressed: () {
-                      MyHomePage.showConnectionDialog(
+                      HomePage.showConnectionDialog(
                         context: context,
                         index: index,
                         page: widget.isFavorites ? "favorites" : "recentlyAdded",
@@ -155,8 +155,8 @@ class _TabViewPageState extends State<TabViewPage> {
                               ),
                             );
                           } else {
-                            MyHomePage.favoritesPage.addToJson(widget.connections[index]);
-                            MyHomePage.favoritesPage.setConnectionsFromJson();
+                            HomePage.favoritesPage.addToJson(widget.connections[index]);
+                            HomePage.favoritesPage.setConnectionsFromJson();
                             Navigator.pop(context);
                           }
                         },
