@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
@@ -10,25 +9,18 @@ import '../shared/shared.dart';
 import 'pages.dart';
 
 class ConnectionPage extends StatefulWidget {
-  ConnectionPage(Connection c) {
-    _ConnectionPageState._connection = c;
+  static Connection connection;
+  ConnectionPage(Connection connection) {
+    ConnectionPage.connection = connection;
   }
 
   static var scaffoldKey = GlobalKey<ScaffoldState>();
-
-  static Connection get currentConnection => _ConnectionPageState._currentConnection;
-  static SSHClient get client => _ConnectionPageState._client;
-  static connect(Connection connection) => _ConnectionPageState()._connect(connection);
-  static refresh() => _ConnectionPageState()._refresh();
-  static Future<bool> download(String filePath) async => await _ConnectionPageState()._download(filePath);
 
   @override
   _ConnectionPageState createState() => _ConnectionPageState();
 }
 
 class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStateMixin {
-  static Connection _connection;
-
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   List<Widget> _getCurrentPathWidgets() {
@@ -39,7 +31,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
           child: Text("/", style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500, fontSize: 16.0)),
         ),
-        onTap: () => _goToDirectory("/"),
+        onTap: () => ConnectionMethods.goToDirectory(context, "/"),
       ),
       Container(
         width: .0,
@@ -60,7 +52,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     ];
     String temp = "";
     String path = "";
-    if (_currentConnection != null) path = _currentConnection.path != null ? _currentConnection.path + "/" : "";
+    if (connectionModel.currentConnection != null) path = connectionModel.currentConnection.path != null ? connectionModel.currentConnection.path + "/" : "";
     if (path.length > 1) {
       if (path[0] == "/" && path[1] == "/") path = path.substring(1, path.length);
     }
@@ -73,7 +65,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             child: Text(temp, style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500, fontSize: 16.0)),
           ),
           onTap: () {
-            _goToDirectory(path.substring(0, i));
+            ConnectionMethods.goToDirectory(context, path.substring(0, i));
           },
         ));
         if (path.substring(i + 1, path.length).contains("/")) {
@@ -105,29 +97,29 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   List<Widget> _getItemList() {
     List<Widget> list = [];
     if (FileInfos.values.length > 0) {
-      for (int i = 0; i < _itemNum; i++) {
+      for (int i = 0; i < connectionModel.connectionsNum; i++) {
         if (SettingsVariables.showHiddenFiles || FileInfos.values[i]["filename"][0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
             fileInfos: FileInfos.values,
-            isLoading: _isLoading,
+            isLoading: connectionModel.isLoading,
             view: SettingsVariables.view,
-            itemNum: _itemNum,
+            itemNum: connectionModel.connectionsNum,
             onTap: () {
               if (FileInfos.values[i]["isDirectory"] == "true") {
                 setState(() {
-                  _directoryBefore = _currentConnection.path;
+                  connectionModel.directoryBefore = connectionModel.currentConnection.path;
                 });
-                _goToDirectory(_currentConnection.path + "/" + FileInfos.values[i]["filename"]);
+                ConnectionMethods.goToDirectory(context, connectionModel.currentConnection.path + "/" + FileInfos.values[i]["filename"]);
               } else {
-                _showFileBottomSheet(i);
+                showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
               }
             },
             onSecondaryTap: () {
-              _showFileBottomSheet(i);
+              showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
             },
             onLongPress: () {
-              _showFileBottomSheet(i);
+              showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
             },
           ));
         }
@@ -142,7 +134,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   @override
   void initState() {
     _rotationController = AnimationController(duration: Duration(milliseconds: 100), vsync: this);
-    _connect(_connection);
+    ConnectionMethods.connect(context, ConnectionPage.connection);
     super.initState();
   }
 
@@ -175,13 +167,13 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         child: BottomAppBar(
           child: AnimatedContainer(
             duration: Duration(milliseconds: 200),
-            height: _progressHeight + 55.0,
+            height: (connectionModel.showProgress ? 50.0 : 0) + 55.0,
             child: Stack(
               alignment: Alignment.topLeft,
               children: <Widget>[
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
-                  height: _progressHeight,
+                  height: connectionModel.showProgress ? 50.0 : 0,
                   alignment: Alignment.topLeft,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -193,7 +185,11 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                             child: Padding(
                               padding: EdgeInsets.only(left: 18.0, bottom: 12.0),
                               child: Text(
-                                _showDownloadProgress ? "Downloading $_loadFile" : "Uploading $_loadFile",
+                                connectionModel.progressType == "download"
+                                    ? "Downloading ${connectionModel.loadFilename}"
+                                    : (connectionModel.progressType == "uploading"
+                                        ? "Uploading ${connectionModel.loadFilename}"
+                                        : "Caching ${connectionModel.loadFilename}"),
                                 style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic),
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
@@ -202,7 +198,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 18.0, right: 18.0, bottom: 12.0),
-                            child: Text("$_progress%",
+                            child: Text("${connectionModel.progressValue}%",
                                 style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic)),
                           ),
                         ],
@@ -211,7 +207,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         height: 3.0,
                         child: LinearProgressIndicator(
                           backgroundColor: Colors.grey[300],
-                          value: _progress.toDouble() * .01,
+                          value: connectionModel.progressValue.toDouble() * .01,
                         ),
                       ),
                     ],
@@ -220,7 +216,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                 AnimatedContainer(
                   duration: Duration(milliseconds: 200),
                   height: 55.0,
-                  margin: EdgeInsets.only(top: _progressHeight),
+                  margin: EdgeInsets.only(top: connectionModel.showProgress ? 50.0 : 0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: BouncingScrollPhysics(),
@@ -232,14 +228,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         ),
                         GestureDetector(
                           onTap: () {
-                            MyHomePage.showConnectionDialog(
+                            HomePage.showConnectionDialog(
                               context: context,
                               page: "connection",
                               primaryButtonIconData: Icons.remove_circle_outline,
                               primaryButtonLabel: "Disconnect",
                               primaryButtonOnPressed: () {
-                                _client.disconnectSFTP();
-                                _client.disconnect();
+                                if (!Platform.isIOS) connectionModel.client.disconnectSFTP();
+                                connectionModel.client.disconnect();
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
@@ -257,14 +253,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                   child: Icon(OMIcons.flashOn),
                                 ),
                                 onPressed: () {
-                                  MyHomePage.showConnectionDialog(
+                                  HomePage.showConnectionDialog(
                                     context: context,
                                     page: "connection",
                                     primaryButtonIconData: Icons.remove_circle_outline,
                                     primaryButtonLabel: "Disconnect",
                                     primaryButtonOnPressed: () {
-                                      if (!Platform.isIOS) _client.disconnectSFTP();
-                                      _client.disconnect();
+                                      if (!Platform.isIOS) connectionModel.client.disconnectSFTP();
+                                      connectionModel.client.disconnect();
                                       Navigator.pop(context);
                                       Navigator.pop(context);
                                     },
@@ -279,7 +275,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                   child: SizedBox(
                                     width: !SettingsVariables.showAddressInAppBar ? .0 : null,
                                     child: Text(
-                                      _connection.address,
+                                      ConnectionPage.connection.address,
                                       style: TextStyle(fontFamily: "GoogleSans", fontSize: 16.0, fontWeight: FontWeight.w500),
                                       maxLines: 1,
                                       overflow: TextOverflow.fade,
@@ -301,7 +297,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                           child: IconButton(
                             icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
                             onPressed: () {
-                              _goToDirectoryBefore();
+                              ConnectionMethods.goToDirectoryBefore(context);
                             },
                           ),
                         ),
@@ -329,9 +325,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                         autocorrect: false,
                                         onSubmitted: (String value) {
                                           if (value[0] == "/") {
-                                            _goToDirectory(value);
+                                            ConnectionMethods.goToDirectory(context, value);
                                           } else {
-                                            _goToDirectory(_currentConnection.path + "/" + value);
+                                            ConnectionMethods.goToDirectory(context, connectionModel.currentConnection.path + "/" + value);
                                           }
                                           Navigator.pop(context);
                                         },
@@ -392,7 +388,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             backgroundColor: Colors.white,
             foregroundColor: Theme.of(context).accentColor,
             elevation: 3.0,
-            onTap: () async => _upload(),
+            onTap: () async => LoadFile.upload(context),
           ),
           SpeedDialChild(
             label: "Create Folder",
@@ -420,9 +416,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                       autofocus: true,
                       autocorrect: false,
                       onSubmitted: (String value) async {
-                        await _client.sftpMkdir(_currentConnection.path + "/" + value);
+                        await connectionModel.client.sftpMkdir(connectionModel.currentConnection.path + "/" + value);
                         Navigator.pop(context);
-                        _connect(_currentConnection);
+                        ConnectionMethods.connect(context, connectionModel.currentConnection);
                       },
                     ),
                   );
@@ -434,31 +430,35 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       ),
       body: SafeArea(
         child: Scrollbar(
-          child: RefreshIndicator(
-            key: _refreshKey,
-            onRefresh: () async {
-              await _connect(_currentConnection, setIsLoading: true);
-            },
-            child: _isLoading
-                ? Container(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : SettingsVariables.view == "list" || SettingsVariables.view == "detailed"
-                    ? ListView(
-                        children: <Widget>[
-                          Column(children: _getItemList()),
-                          SizedBox(height: 84.0),
-                        ],
-                      )
-                    : GridView(
-                        padding: EdgeInsets.all(3.0),
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 160.0,
+          child: Consumer<ConnectionModel>(
+            builder: (context, connection, child) {
+              return RefreshIndicator(
+                key: _refreshKey,
+                onRefresh: () async {
+                  await ConnectionMethods.connect(context, connectionModel.currentConnection, setIsLoading: true);
+                },
+                child: connectionModel.isLoading
+                    ? Container(
+                        child: Center(
+                          child: CircularProgressIndicator(),
                         ),
-                        children: _getItemList(),
-                      ),
+                      )
+                    : SettingsVariables.view == "list" || SettingsVariables.view == "detailed"
+                        ? ListView(
+                            children: <Widget>[
+                              Column(children: _getItemList()),
+                              SizedBox(height: 84.0),
+                            ],
+                          )
+                        : GridView(
+                            padding: EdgeInsets.all(3.0),
+                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 160.0,
+                            ),
+                            children: _getItemList(),
+                          ),
+              );
+            },
           ),
         ),
       ),
