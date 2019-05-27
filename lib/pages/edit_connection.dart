@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'custom_icon_button.dart';
-import 'connection.dart';
-import 'main.dart';
+import '../services/services.dart';
+import '../shared/shared.dart';
+import 'pages.dart';
 
 class EditConnectionPage extends StatefulWidget {
   final bool isNew;

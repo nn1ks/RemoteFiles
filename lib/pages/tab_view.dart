@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:path_provider/path_provider.dart';
-import 'connection_page.dart';
-import 'edit_connection.dart';
-import 'connection.dart';
-import 'main.dart';
+import '../services/services.dart';
+import 'pages.dart';
 
 class TabViewPage extends StatefulWidget {
   List<Connection> connections = [];

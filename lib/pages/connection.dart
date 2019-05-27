@@ -8,12 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:ssh/ssh.dart';
 import 'package:open_file/open_file.dart';
-import 'custom_tooltip.dart';
-import 'custom_show_dialog.dart';
-import 'settings.dart';
-import 'connection_widget_tile.dart';
-import 'connection.dart';
-import 'main.dart';
+import '../services/services.dart';
+import '../shared/shared.dart';
+import 'pages.dart';
 
 class ConnectionPage extends StatefulWidget {
   ConnectionPage(Connection c) {
