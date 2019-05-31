@@ -234,7 +234,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                             ),
                             GestureDetector(
                               onTap: () {
-                                HomePage.showConnectionDialog(
+                                ConnectionDialog(
                                   context: context,
                                   page: "connection",
                                   primaryButtonIconData: Icons.remove_circle_outline,
@@ -245,7 +245,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                   },
-                                );
+                                ).show();
                               },
                               onLongPress: () async {
                                 await SettingsVariables.setShowAddressInAppBar(!SettingsVariables.showAddressInAppBar);
@@ -259,7 +259,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                       child: Icon(OMIcons.flashOn),
                                     ),
                                     onPressed: () {
-                                      HomePage.showConnectionDialog(
+                                      ConnectionDialog(
                                         context: context,
                                         page: "connection",
                                         primaryButtonIconData: Icons.remove_circle_outline,
@@ -270,7 +270,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                           Navigator.pop(context);
                                           Navigator.pop(context);
                                         },
-                                      );
+                                      ).show();
                                     },
                                   ),
                                   AnimatedSize(
