@@ -75,6 +75,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
     if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
     filePath += connectionModel.fileInfos[widget.index]["filename"];
     double tableFontSize = 16.0;
+    var renameController = TextEditingController(text: fileInfo["filename"]);
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -235,6 +236,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                 style: TextStyle(fontFamily: SettingsVariables.accentFont),
                               ),
                               content: TextField(
+                                controller: renameController,
                                 decoration: InputDecoration(
                                   labelText: "New name",
                                   focusedBorder: OutlineInputBorder(
