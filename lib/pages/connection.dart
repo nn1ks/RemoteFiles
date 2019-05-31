@@ -96,17 +96,17 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
 
   List<Widget> _getItemList() {
     List<Widget> list = [];
-    if (FileInfos.values.length > 0) {
+    if (connectionModel.fileInfos.length > 0) {
       for (int i = 0; i < connectionModel.connectionsNum; i++) {
-        if (SettingsVariables.showHiddenFiles || FileInfos.values[i]["filename"][0] != ".") {
+        if (SettingsVariables.showHiddenFiles || connectionModel.fileInfos[i]["filename"][0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
-            fileInfos: FileInfos.values,
+            fileInfos: connectionModel.fileInfos,
             isLoading: connectionModel.isLoading,
             view: SettingsVariables.view,
             itemNum: connectionModel.connectionsNum,
             onTap: () {
-              if (FileInfos.values[i]["isDirectory"] == "true") {
+              if (connectionModel.fileInfos[i]["isDirectory"] == "true") {
                 setState(() {
                   connectionModel.directoryBefore = connectionModel.currentConnection.path;
                 });

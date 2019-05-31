@@ -150,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   hasSwitch: true,
                   onChanged: (bool value) async {
                     await SettingsVariables.setSortIsDescending(value);
-                    FileInfos.sort();
+                    connectionModel.sort();
                     setState(() {});
                   },
                 ),
@@ -160,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: "filename",
                   onChanged: (String value) async {
                     await SettingsVariables.setSort("filename");
-                    FileInfos.sort();
+                    connectionModel.sort();
                     setState(() {});
                   },
                 ),
@@ -170,7 +170,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: "modificationDate",
                   onChanged: (String value) async {
                     await SettingsVariables.setSort("modificationDate");
-                    FileInfos.sort();
+                    connectionModel.sort();
                     setState(() {});
                   },
                 ),
@@ -180,7 +180,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: "lastAccess",
                   onChanged: (String value) async {
                     await SettingsVariables.setSort("lastAccess");
-                    FileInfos.sort();
+                    connectionModel.sort();
                     setState(() {});
                   },
                 ),

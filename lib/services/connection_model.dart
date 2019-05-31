@@ -22,7 +22,21 @@ class ConnectionModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  get isLoading => _isLoading;
+
+  List<Map<String, String>> _fileInfos = [];
+  set fileInfos(List<Map<String, String>> value) {
+    _fileInfos = value;
+    notifyListeners();
+  }
+
+  List<Map<String, String>> get fileInfos => _fileInfos;
+
+  sort() {
+    fileInfos.sort((a, b) => a[SettingsVariables.sort].compareTo(b[SettingsVariables.sort]));
+    if (SettingsVariables.sortIsDescending) fileInfos = fileInfos.reversed.toList();
+    if (SettingsVariables.sort != "filename") fileInfos = fileInfos.reversed.toList();
+    notifyListeners();
+  }
 
   int connectionsNum = HomePage.favoritesPage.connections.length > 0 ? HomePage.favoritesPage.connections.length : 1;
 

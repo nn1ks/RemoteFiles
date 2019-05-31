@@ -59,20 +59,20 @@ class ConnectionMethods {
       }
       if (pathIsValid) {
         connectionModel.currentConnection = Connection(address: address, port: port, username: username, passwordOrKey: passwordOrKey, path: path);
-        FileInfos.values = [];
-        FileInfos.values.length = list.length;
+        connectionModel.fileInfos = [];
+        connectionModel.fileInfos.length = list.length;
         for (int i = 0; i < list.length; i++) {
-          FileInfos.values[i] = {};
+          connectionModel.fileInfos[i] = {};
           list[i].forEach((k, v) {
-            FileInfos.values[i].addAll({k.toString(): v.toString()});
+            connectionModel.fileInfos[i].addAll({k.toString(): v.toString()});
           });
-          FileInfos.values[i]["filename"] = _removeTrailingSlash(FileInfos.values[i]["filename"]);
+          connectionModel.fileInfos[i]["filename"] = _removeTrailingSlash(connectionModel.fileInfos[i]["filename"]);
         }
       }
     }
     connectionModel.isLoading = false;
-    connectionModel.connectionsNum = FileInfos.values.length;
-    FileInfos.sort();
+    connectionModel.connectionsNum = connectionModel.fileInfos.length;
+    connectionModel.sort();
     Provider.of<ConnectionModel>(context, listen: false).isLoading = false;
   }
 

@@ -50,7 +50,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
               ),
               elevation: .0,
               onPressed: () async {
-                if (FileInfos.values[index]["isDirectory"] == "true") {
+                if (connectionModel.fileInfos[index]["isDirectory"] == "true") {
                   await connectionModel.client.sftpRmdir(filePath);
                 } else {
                   await connectionModel.client.sftpRm(filePath);
@@ -69,11 +69,11 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> fileInfo = FileInfos.values[widget.index];
+    Map<String, String> fileInfo = connectionModel.fileInfos[widget.index];
     String currentPath = connectionModel.currentConnection.path;
     String filePath = currentPath;
     if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
-    filePath += FileInfos.values[widget.index]["filename"];
+    filePath += connectionModel.fileInfos[widget.index]["filename"];
     double tableFontSize = 16.0;
 
     return LayoutBuilder(
