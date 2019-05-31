@@ -5,14 +5,14 @@ import 'services.dart';
 
 var connectionModel = ConnectionModel();
 
-class ConnectionModel extends ChangeNotifier {
+class ConnectionModel with ChangeNotifier {
   SSHClient _client;
   set client(SSHClient value) {
     _client = value;
     notifyListeners();
   }
 
-  get client => _client;
+  SSHClient get client => _client;
 
   Connection currentConnection;
 
@@ -22,6 +22,23 @@ class ConnectionModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool get isLoading => _isLoading;
+
+  int _connectionsNum = HomePage.favoritesPage.connections.length > 0 ? HomePage.favoritesPage.connections.length : 1;
+  set connectionsNum(int value) {
+    _connectionsNum = value;
+    notifyListeners();
+  }
+
+  int get connectionsNum => _connectionsNum;
+
+  String _directoryBefore;
+  set directoryBefore(String value) {
+    _directoryBefore = value;
+    notifyListeners();
+  }
+
+  String get directoryBefore => _directoryBefore;
 
   List<Map<String, String>> _fileInfos = [];
   set fileInfos(List<Map<String, String>> value) {
@@ -38,18 +55,41 @@ class ConnectionModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  int connectionsNum = HomePage.favoritesPage.connections.length > 0 ? HomePage.favoritesPage.connections.length : 1;
+  bool _showProgress = false;
+  set showProgress(bool value) {
+    _showProgress = value;
+    notifyListeners();
+  }
 
-  String directoryBefore;
+  bool get showProgress => _showProgress;
 
-  bool showProgress = false;
+  String _progressType;
 
   /// can be 'download', 'upload', 'cache'
-  String progressType;
+  set progressType(String value) {
+    _progressType = value;
+    notifyListeners();
+  }
+
+  String get progressType => _progressType;
+
+  int _progressValue = 0;
 
   /// status of the download or upload in percentage
-  int progressValue = 0;
+  set progressValue(int value) {
+    _progressValue = value;
+    notifyListeners();
+  }
+
+  int get progressValue => _progressValue;
+
+  String _loadFilename;
 
   /// name of the file that is downloading or uploading
-  String loadFilename;
+  set loadFilename(String value) {
+    _loadFilename = value;
+    notifyListeners();
+  }
+
+  String get loadFilename => _loadFilename;
 }
