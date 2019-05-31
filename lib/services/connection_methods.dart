@@ -93,8 +93,8 @@ class ConnectionMethods {
     );
   }
 
-  static void goToDirectory(BuildContext context, String value) {
-    connectIndividually(
+  static Future<void> goToDirectory(BuildContext context, String value) async {
+    await connectIndividually(
       context,
       address: connectionModel.currentConnection.address,
       port: connectionModel.currentConnection.port,

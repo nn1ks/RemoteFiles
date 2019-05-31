@@ -110,7 +110,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                 setState(() {
                   connectionModel.directoryBefore = connectionModel.currentConnection.path;
                 });
-                ConnectionMethods.goToDirectory(context, connectionModel.currentConnection.path + "/" + FileInfos.values[i]["filename"]);
+                ConnectionMethods.goToDirectory(context, connectionModel.currentConnection.path + "/" + connectionModel.fileInfos[i]["filename"]);
               } else {
                 showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
               }
@@ -153,8 +153,12 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             physics: BouncingScrollPhysics(),
             child: Container(
               margin: EdgeInsets.only(right: 10.0),
-              child: Row(
-                children: _getCurrentPathWidgets(),
+              child: Consumer<ConnectionModel>(
+                builder: (context, connection, child) {
+                  return Row(
+                    children: _getCurrentPathWidgets(),
+                  );
+                },
               ),
             ),
           ),
@@ -165,205 +169,209 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, .08), blurRadius: 4.0, offset: Offset(.0, 2.0))],
         ),
         child: BottomAppBar(
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            height: (connectionModel.showProgress ? 50.0 : 0) + 55.0,
-            child: Stack(
-              alignment: Alignment.topLeft,
-              children: <Widget>[
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  height: connectionModel.showProgress ? 50.0 : 0,
+          child: Consumer<ConnectionModel>(
+            builder: (context, connectionModel, child) {
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 200),
+                height: (connectionModel.showProgress ? 50.0 : 0) + 55.0,
+                child: Stack(
                   alignment: Alignment.topLeft,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      height: connectionModel.showProgress ? 50.0 : 0,
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 18.0, bottom: 12.0),
-                              child: Text(
-                                connectionModel.progressType == "download"
-                                    ? "Downloading ${connectionModel.loadFilename}"
-                                    : (connectionModel.progressType == "uploading"
-                                        ? "Uploading ${connectionModel.loadFilename}"
-                                        : "Caching ${connectionModel.loadFilename}"),
-                                style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic),
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 18.0, bottom: 12.0),
+                                  child: Text(
+                                    connectionModel.progressType == "download"
+                                        ? "Downloading ${connectionModel.loadFilename}"
+                                        : (connectionModel.progressType == "uploading"
+                                            ? "Uploading ${connectionModel.loadFilename}"
+                                            : "Caching ${connectionModel.loadFilename}"),
+                                    style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 18.0, right: 18.0, bottom: 12.0),
+                                child: Text("${connectionModel.progressValue}%",
+                                    style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic)),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 18.0, right: 18.0, bottom: 12.0),
-                            child: Text("${connectionModel.progressValue}%",
-                                style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic)),
+                          SizedBox(
+                            height: 3.0,
+                            child: LinearProgressIndicator(
+                              backgroundColor: Colors.grey[300],
+                              value: connectionModel.progressValue.toDouble() * .01,
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 3.0,
-                        child: LinearProgressIndicator(
-                          backgroundColor: Colors.grey[300],
-                          value: connectionModel.progressValue.toDouble() * .01,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  height: 55.0,
-                  margin: EdgeInsets.only(top: connectionModel.showProgress ? 50.0 : 0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    child: Row(
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.chevron_left),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            HomePage.showConnectionDialog(
-                              context: context,
-                              page: "connection",
-                              primaryButtonIconData: Icons.remove_circle_outline,
-                              primaryButtonLabel: "Disconnect",
-                              primaryButtonOnPressed: () {
-                                if (!Platform.isIOS) connectionModel.client.disconnectSFTP();
-                                connectionModel.client.disconnect();
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                    ),
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      height: 55.0,
+                      margin: EdgeInsets.only(top: connectionModel.showProgress ? 50.0 : 0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Row(
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(Icons.chevron_left),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                HomePage.showConnectionDialog(
+                                  context: context,
+                                  page: "connection",
+                                  primaryButtonIconData: Icons.remove_circle_outline,
+                                  primaryButtonLabel: "Disconnect",
+                                  primaryButtonOnPressed: () {
+                                    if (!Platform.isIOS) connectionModel.client.disconnectSFTP();
+                                    connectionModel.client.disconnect();
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                );
                               },
-                            );
-                          },
-                          onLongPress: () async {
-                            await SettingsVariables.setShowAddressInAppBar(!SettingsVariables.showAddressInAppBar);
-                            setState(() {});
-                          },
-                          child: Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Padding(
-                                  padding: EdgeInsets.only(top: 1.0),
-                                  child: Icon(OMIcons.flashOn),
-                                ),
+                              onLongPress: () async {
+                                await SettingsVariables.setShowAddressInAppBar(!SettingsVariables.showAddressInAppBar);
+                                setState(() {});
+                              },
+                              child: Row(
+                                children: <Widget>[
+                                  IconButton(
+                                    icon: Padding(
+                                      padding: EdgeInsets.only(top: 1.0),
+                                      child: Icon(OMIcons.flashOn),
+                                    ),
+                                    onPressed: () {
+                                      HomePage.showConnectionDialog(
+                                        context: context,
+                                        page: "connection",
+                                        primaryButtonIconData: Icons.remove_circle_outline,
+                                        primaryButtonLabel: "Disconnect",
+                                        primaryButtonOnPressed: () {
+                                          if (!Platform.isIOS) connectionModel.client.disconnectSFTP();
+                                          connectionModel.client.disconnect();
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  AnimatedSize(
+                                    vsync: this,
+                                    duration: Duration(milliseconds: 200),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
+                                      child: SizedBox(
+                                        width: !SettingsVariables.showAddressInAppBar ? .0 : null,
+                                        child: Text(
+                                          ConnectionPage.connection.address,
+                                          style: TextStyle(fontFamily: "GoogleSans", fontSize: 16.0, fontWeight: FontWeight.w500),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.fade,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: 1.0,
+                              color: Theme.of(context).dividerColor,
+                              margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
+                            ),
+                            CustomTooltip(
+                              message: "Go to parent directory",
+                              child: IconButton(
+                                icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
                                 onPressed: () {
-                                  HomePage.showConnectionDialog(
+                                  ConnectionMethods.goToDirectoryBefore(context);
+                                },
+                              ),
+                            ),
+                            CustomTooltip(
+                              message: "Go to specific directory",
+                              child: IconButton(
+                                icon: Icon(Icons.youtube_searched_for),
+                                onPressed: () {
+                                  customShowDialog(
                                     context: context,
-                                    page: "connection",
-                                    primaryButtonIconData: Icons.remove_circle_outline,
-                                    primaryButtonLabel: "Disconnect",
-                                    primaryButtonOnPressed: () {
-                                      if (!Platform.isIOS) connectionModel.client.disconnectSFTP();
-                                      connectionModel.client.disconnect();
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
+                                    builder: (context) {
+                                      return CustomAlertDialog(
+                                        title: Text("Go to directory", style: TextStyle(fontFamily: "GoogleSans", fontSize: 18.0)),
+                                        content: Container(
+                                          width: 260.0,
+                                          child: TextField(
+                                            decoration: InputDecoration(
+                                              labelText: "Path",
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+                                              ),
+                                            ),
+                                            cursorColor: Theme.of(context).accentColor,
+                                            autofocus: true,
+                                            autocorrect: false,
+                                            onSubmitted: (String value) {
+                                              if (value[0] == "/") {
+                                                ConnectionMethods.goToDirectory(context, value);
+                                              } else {
+                                                ConnectionMethods.goToDirectory(context, connectionModel.currentConnection.path + "/" + value);
+                                              }
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                      );
                                     },
                                   );
                                 },
                               ),
-                              AnimatedSize(
-                                vsync: this,
-                                duration: Duration(milliseconds: 200),
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
-                                  child: SizedBox(
-                                    width: !SettingsVariables.showAddressInAppBar ? .0 : null,
-                                    child: Text(
-                                      ConnectionPage.connection.address,
-                                      style: TextStyle(fontFamily: "GoogleSans", fontSize: 16.0, fontWeight: FontWeight.w500),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.fade,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: 1.0,
-                          color: Theme.of(context).dividerColor,
-                          margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
-                        ),
-                        CustomTooltip(
-                          message: "Go to parent directory",
-                          child: IconButton(
-                            icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
-                            onPressed: () {
-                              ConnectionMethods.goToDirectoryBefore(context);
-                            },
-                          ),
-                        ),
-                        CustomTooltip(
-                          message: "Go to specific directory",
-                          child: IconButton(
-                            icon: Icon(Icons.youtube_searched_for),
-                            onPressed: () {
-                              customShowDialog(
-                                context: context,
-                                builder: (context) {
-                                  return CustomAlertDialog(
-                                    title: Text("Go to directory", style: TextStyle(fontFamily: "GoogleSans", fontSize: 18.0)),
-                                    content: Container(
-                                      width: 260.0,
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          labelText: "Path",
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
-                                          ),
-                                        ),
-                                        cursorColor: Theme.of(context).accentColor,
-                                        autofocus: true,
-                                        autocorrect: false,
-                                        onSubmitted: (String value) {
-                                          if (value[0] == "/") {
-                                            ConnectionMethods.goToDirectory(context, value);
-                                          } else {
-                                            ConnectionMethods.goToDirectory(context, connectionModel.currentConnection.path + "/" + value);
-                                          }
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ),
-                                  );
+                            ),
+                            CustomTooltip(
+                              message: SettingsVariables.showHiddenFiles ? "Dont't show hidden files" : "Show hidden files",
+                              child: IconButton(
+                                icon: Icon(SettingsVariables.showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
+                                onPressed: () async {
+                                  await SettingsVariables.setShowHiddenFiles(!SettingsVariables.showHiddenFiles);
+                                  setState(() {});
                                 },
-                              );
-                            },
-                          ),
+                              ),
+                            ),
+                            CustomTooltip(
+                              message: "Settings",
+                              child: IconButton(
+                                icon: Icon(OMIcons.settings),
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        CustomTooltip(
-                          message: SettingsVariables.showHiddenFiles ? "Dont't show hidden files" : "Show hidden files",
-                          child: IconButton(
-                            icon: Icon(SettingsVariables.showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
-                            onPressed: () async {
-                              await SettingsVariables.setShowHiddenFiles(!SettingsVariables.showHiddenFiles);
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                        CustomTooltip(
-                          message: "Settings",
-                          child: IconButton(
-                            icon: Icon(OMIcons.settings),
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-                            },
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),

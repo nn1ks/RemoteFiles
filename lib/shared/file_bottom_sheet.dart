@@ -193,7 +193,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                             ),
                             onTap: () async {
                               Navigator.pop(context);
-                              OpenFile.open(await LoadFile.saveInCache(connectionModel.currentConnection.path + "/" + fileInfo["filename"]));
+                              OpenFile.open(await LoadFile.saveInCache(filePath));
                             },
                           ),
                     fileInfo["isDirectory"] == "true"
