@@ -9,123 +9,124 @@ import '../pages/pages.dart';
 import 'services.dart';
 
 class LoadFile {
-  static Future<void> download(BuildContext context, String filePath, {bool isRedownloading = false}) async {
+  static Future<bool> _handlePermission() async {
     if (Platform.isIOS) {
       ConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("This function is not yet implemented in the iOS version."),
         ),
       );
-      return;
+      return false;
     }
-    await Future.delayed(Duration(milliseconds: 100));
+    PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+    if (permissionStatus != PermissionStatus.granted) {
+      Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
+        return true;
+      }
+    } else {
+      return true;
+    }
+    return false;
+  }
+
+  static Future<void> download(BuildContext context, String filePath, {bool isRedownloading = false}) async {
     try {
-      PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-      if (permissionStatus != PermissionStatus.granted) {
-        Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-        if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
-          await saveFile(context, filePath, isRedownloading: isRedownloading);
+      if (await _handlePermission()) {
+        String filename = "";
+        for (int i = 0; i < filePath.length; i++) {
+          filename += filePath[i];
+          if (filePath[i] == "/") {
+            filename = "";
+          }
         }
-      } else {
-        await saveFile(context, filePath, isRedownloading: isRedownloading);
+
+        var dir = await getExternalStorageDirectory();
+        var appdir = await Directory('${dir.path}/RemoteFiles').create(recursive: true);
+        bool fileNameExists = false;
+        var ls = await appdir.list().toList();
+        for (int i = 0; i < ls.length; i++) {
+          String lsFilenames = "";
+          String path = ls[i].path;
+          for (int i = 0; i < path.length; i++) {
+            lsFilenames += path[i];
+            if (path[i] == "/") {
+              lsFilenames = "";
+            }
+          }
+          if (filename == lsFilenames) fileNameExists = true;
+        }
+        if (!fileNameExists || isRedownloading) {
+          await connectionModel.client.sftpDownload(
+            path: filePath,
+            toPath: appdir.path,
+            callback: (progress) {
+              print(progress);
+              connectionModel.progressValue = progress;
+              if (progress == 5) {
+                connectionModel.showProgress = true;
+                connectionModel.loadFilename = filename;
+                connectionModel.progressType = "download";
+              } else if (progress == 100) {
+                _downOrUploadCompleted(context, "download", appdir.path + "/" + filename);
+              }
+            },
+          );
+        } else {
+          customShowDialog(
+              context: context,
+              builder: (context) {
+                return CustomAlertDialog(
+                  title: Text(
+                    "There is already a file with the same name. Replace $filename?",
+                    style: TextStyle(fontFamily: "GoogleSans"),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                      padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text("Cancel"),
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    RaisedButton(
+                      color: Theme.of(context).accentColor,
+                      splashColor: Colors.black12,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                      padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "OK",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      elevation: .0,
+                      onPressed: () {
+                        download(context, filePath, isRedownloading: true);
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(width: .0),
+                  ],
+                );
+              });
+        }
       }
     } catch (e) {
+      print(e);
       ConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 3),
           content: Text("Download failed"),
         ),
       );
-    }
-  }
-
-  static Future<void> saveFile(BuildContext context, String filePath, {bool isRedownloading}) async {
-    String filename = "";
-    for (int i = 0; i < filePath.length; i++) {
-      filename += filePath[i];
-      if (filePath[i] == "/") {
-        filename = "";
-      }
-    }
-    try {
-      var dir = await getExternalStorageDirectory();
-      var appdir = await Directory('${dir.path}/RemoteFiles').create(recursive: true);
-      bool fileNameExists = false;
-      var ls = await appdir.list().toList();
-      for (int i = 0; i < ls.length; i++) {
-        String lsFilenames = "";
-        String path = ls[i].path;
-        for (int i = 0; i < path.length; i++) {
-          lsFilenames += path[i];
-          if (path[i] == "/") {
-            lsFilenames = "";
-          }
-        }
-        if (filename == lsFilenames) fileNameExists = true;
-      }
-      if (!fileNameExists || isRedownloading) {
-        await connectionModel.client.sftpDownload(
-          path: filePath,
-          toPath: appdir.path,
-          callback: (progress) {
-            connectionModel.progressValue = progress;
-            if (progress == 5) {
-              connectionModel.showProgress = true;
-              connectionModel.loadFilename = filename;
-              connectionModel.progressType = "download";
-            } else if (progress == 100) {
-              _downOrUploadCompleted(context, "download", appdir.path + "/" + filename);
-            }
-          },
-        );
-      } else {
-        customShowDialog(
-            context: context,
-            builder: (context) {
-              return CustomAlertDialog(
-                title: Text(
-                  "There is already a file with the same name. Replace $filename?",
-                  style: TextStyle(fontFamily: "GoogleSans"),
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                    padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text("Cancel"),
-                      ],
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  RaisedButton(
-                    color: Theme.of(context).accentColor,
-                    splashColor: Colors.black12,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                    padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "OK",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    elevation: .0,
-                    onPressed: () {
-                      download(context, filePath, isRedownloading: true);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  SizedBox(width: .0),
-                ],
-              );
-            });
-      }
-    } catch (e) {
-      print(e);
     }
   }
 
