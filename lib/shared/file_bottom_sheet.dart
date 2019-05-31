@@ -20,7 +20,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
         return CustomAlertDialog(
           title: Text(
             "Delete '${fileInfo["filename"]}'?",
-            style: TextStyle(fontFamily: "GoogleSans"),
+            style: TextStyle(fontFamily: SettingsVariables.accentFont),
           ),
           actions: <Widget>[
             FlatButton(
@@ -232,7 +232,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                             return CustomAlertDialog(
                               title: Text(
                                 "Rename '${fileInfo["filename"]}'",
-                                style: TextStyle(fontFamily: "GoogleSans"),
+                                style: TextStyle(fontFamily: SettingsVariables.accentFont),
                               ),
                               content: TextField(
                                 decoration: InputDecoration(

@@ -59,7 +59,7 @@ class HomePage extends StatefulWidget {
           title: Text(
             page == "connection" ? "Current connection" : (values.name != "" ? values.name : values.address),
             style: TextStyle(
-              fontFamily: "GoogleSans",
+              fontFamily: SettingsVariables.accentFont,
             ),
           ),
           content: Container(
@@ -220,6 +220,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       SettingsVariables.sortIsDescending = SettingsVariables.getSortIsDescending();
       SettingsVariables.showHiddenFiles = SettingsVariables.getShowHiddenFiles();
       SettingsVariables.showAddressInAppBar = SettingsVariables.getShowAddressInAppBar();
+      SettingsVariables.accentFont = SettingsVariables.getAccentFont();
     });
     super.initState();
   }
@@ -249,7 +250,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             indicatorWeight: 2.0,
             labelColor: Theme.of(context).accentColor,
             unselectedLabelColor: Theme.of(context).brightness == Brightness.light ? Colors.grey[600] : Colors.grey[400],
-            labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w700, fontSize: 14.0),
+            labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w600, fontSize: 14.0),
             controller: _tabController,
             tabs: <Widget>[
               Tab(
@@ -302,10 +303,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   child: Row(
                     children: <Widget>[
                       Image.asset("assets/app_icon.png", width: 27.0),
-                      SizedBox(width: 6.0),
+                      SizedBox(width: 8.0),
                       Text(
                         "RemoteFiles",
-                        style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w600, fontSize: 17.0),
+                        style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w600, fontSize: 17.0),
                       ),
                     ],
                   ),
@@ -338,7 +339,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               padding: EdgeInsets.only(top: 18.0, bottom: 6.0),
                               child: Text(
                                 "RemoteFiles",
-                                style: TextStyle(fontWeight: FontWeight.w500, fontFamily: "GoogleSans", fontSize: 19.0),
+                                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: SettingsVariables.accentFont, fontSize: 19.0),
                               ),
                             ),
                             Text(

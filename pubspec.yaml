@@ -60,21 +60,16 @@ flutter_icons:
 flutter:
 
   fonts:
-    - family: GoogleSans
+    - family: OverpassMono
       fonts:
-        - asset: fonts/GoogleSans-Regular.ttf
-        - asset: fonts/GoogleSans-Italic.ttf
-          style: italic
-        - asset: fonts/GoogleSans-Medium.ttf
+        - asset: fonts/OverpassMono-Light.ttf
+          weight: 300
+        - asset: fonts/OverpassMono-Regular.ttf
+          weight: 400
+        - asset: fonts/OverpassMono-SemiBold.ttf
+          weight: 500
+        - asset: fonts/OverpassMono-Bold.ttf
           weight: 600
-        - asset: fonts/GoogleSans-MediumItalic.ttf
-          weight: 600
-          style: italic
-        - asset: fonts/GoogleSans-Bold.ttf
-          weight: 700
-        - asset: fonts/GoogleSans-BoldItalic.ttf
-          weight: 700
-          style: italic
 
   assets:
     - assets/app_icon.png

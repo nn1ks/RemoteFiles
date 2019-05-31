@@ -18,7 +18,8 @@ class _SettingsPageState extends State<SettingsPage> {
         children: <Widget>[
           Text(
             title.toUpperCase(),
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5, fontFamily: "GoogleSans", letterSpacing: 1.0, color: Color.fromRGBO(0, 0, 0, .6)),
+            style: TextStyle(
+                fontWeight: FontWeight.w700, fontSize: 14.5, fontFamily: SettingsVariables.accentFont, letterSpacing: 1.0, color: Color.fromRGBO(0, 0, 0, .6)),
           ),
           hasSwitch
               ? Switch(
@@ -53,7 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               Text(
                 "Settings",
-                style: TextStyle(fontFamily: "GoogleSans", fontSize: 17.0, fontWeight: FontWeight.w600),
+                style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -205,6 +206,17 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: SettingsVariables.showAddressInAppBar,
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowAddressInAppBar(value);
+                    setState(() {});
+                  },
+                ),
+                CheckboxListTile(
+                  title: Padding(
+                    padding: EdgeInsets.only(left: 3.0),
+                    child: Text("Use mono font for headers"),
+                  ),
+                  value: SettingsVariables.accentFont != null,
+                  onChanged: (bool value) async {
+                    await SettingsVariables.setAccentFont(value);
                     setState(() {});
                   },
                 ),

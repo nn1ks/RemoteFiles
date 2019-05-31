@@ -29,7 +29,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         borderRadius: BorderRadius.circular(100.0),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
-          child: Text("/", style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500, fontSize: 16.0)),
+          child: Text("/", style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, fontSize: 16.0)),
         ),
         onTap: () => ConnectionMethods.goToDirectory(context, "/"),
       ),
@@ -62,7 +62,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           borderRadius: BorderRadius.circular(100.0),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 11.0, vertical: 7.0),
-            child: Text(temp, style: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500, fontSize: 16.0)),
+            child: Text(temp, style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, fontSize: 16.0)),
           ),
           onTap: () {
             ConnectionMethods.goToDirectory(context, path.substring(0, i));
@@ -282,7 +282,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                         width: !SettingsVariables.showAddressInAppBar ? .0 : null,
                                         child: Text(
                                           ConnectionPage.connection.address,
-                                          style: TextStyle(fontFamily: "GoogleSans", fontSize: 16.0, fontWeight: FontWeight.w500),
+                                          style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 16.0, fontWeight: FontWeight.w600),
                                           maxLines: 1,
                                           overflow: TextOverflow.fade,
                                         ),
@@ -316,7 +316,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                     context: context,
                                     builder: (context) {
                                       return CustomAlertDialog(
-                                        title: Text("Go to directory", style: TextStyle(fontFamily: "GoogleSans", fontSize: 18.0)),
+                                        title: Text("Go to directory", style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 18.0)),
                                         content: Container(
                                           width: 260.0,
                                           child: TextField(
@@ -391,7 +391,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         children: [
           SpeedDialChild(
             label: "Upload File",
-            labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
+            labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500),
             child: Icon(OMIcons.cloudUpload),
             backgroundColor: Colors.white,
             foregroundColor: Theme.of(context).accentColor,
@@ -400,7 +400,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           ),
           SpeedDialChild(
             label: "Create Folder",
-            labelStyle: TextStyle(fontFamily: "GoogleSans", fontWeight: FontWeight.w500),
+            labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500),
             child: Icon(OMIcons.createNewFolder),
             backgroundColor: Colors.white,
             foregroundColor: Theme.of(context).accentColor,
@@ -412,7 +412,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                   return CustomAlertDialog(
                     title: Text(
                       "Folder Name",
-                      style: TextStyle(fontFamily: "GoogleSans"),
+                      style: TextStyle(fontFamily: SettingsVariables.accentFont),
                     ),
                     content: TextField(
                       decoration: InputDecoration(

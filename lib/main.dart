@@ -45,15 +45,11 @@ class MyApp extends StatelessWidget {
             bottomAppBarTheme: BottomAppBarTheme(
               elevation: 8.0,
             ),
-            textTheme: TextTheme(
-              button: TextStyle(fontFamily: "GoogleSans"),
-            ),
           ),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
           title: 'RemoteFiles',
           theme: theme,
-          //debugShowCheckedModeBanner: false,
           home: HomePage(),
         );
       },
