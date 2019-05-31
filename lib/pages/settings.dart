@@ -38,6 +38,29 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Widget _buildRadioListTile({@required String titleLabel, @required String value, @required bool isView}) {
+    return RadioListTile(
+      title: Text(titleLabel),
+      groupValue: isView ? SettingsVariables.view : SettingsVariables.sort,
+      value: value,
+      onChanged: (String radioValue) async {
+        isView ? await SettingsVariables.setView(value) : await SettingsVariables.setSort(value);
+        setState(() {});
+      },
+    );
+  }
+
+  Widget _buildCheckboxListTile({@required String titleLabel, @required bool value, @required ValueChanged<bool> onChanged}) {
+    return CheckboxListTile(
+      title: Padding(
+        padding: EdgeInsets.only(left: 3.0),
+        child: Text(titleLabel),
+      ),
+      value: value,
+      onChanged: onChanged,
+    );
+  }
+
   var _downloadPathTextController = TextEditingController(text: SettingsVariables.downloadDirectory.path);
 
   @override
@@ -118,32 +141,20 @@ class _SettingsPageState extends State<SettingsPage> {
                       )
                     : Container(),
                 _buildHeadline("View"),
-                RadioListTile(
-                  title: Text("List"),
-                  groupValue: SettingsVariables.view,
+                _buildRadioListTile(
+                  titleLabel: "List",
                   value: "list",
-                  onChanged: (String value) async {
-                    await SettingsVariables.setView("list");
-                    setState(() {});
-                  },
+                  isView: true,
                 ),
-                RadioListTile(
-                  title: Text("Detailed"),
-                  groupValue: SettingsVariables.view,
+                _buildRadioListTile(
+                  titleLabel: "Detailed",
                   value: "detailed",
-                  /*onChanged: (String value) async {
-                    await SettingsVariables.setView("detailed");
-                    setState(() {});
-                  },*/
+                  isView: true,
                 ),
-                RadioListTile(
-                  title: Text("Grid"),
-                  groupValue: SettingsVariables.view,
+                _buildRadioListTile(
+                  titleLabel: "Grid",
                   value: "grid",
-                  onChanged: (String value) async {
-                    SettingsVariables.setView("grid");
-                    setState(() {});
-                  },
+                  isView: true,
                 ),
                 Divider(),
                 _buildHeadline(
@@ -155,65 +166,41 @@ class _SettingsPageState extends State<SettingsPage> {
                     setState(() {});
                   },
                 ),
-                RadioListTile(
-                  title: Text("Name"),
-                  groupValue: SettingsVariables.sort,
+                _buildRadioListTile(
+                  titleLabel: "Name",
                   value: "filename",
-                  onChanged: (String value) async {
-                    await SettingsVariables.setSort("filename");
-                    connectionModel.sort();
-                    setState(() {});
-                  },
+                  isView: false,
                 ),
-                RadioListTile(
-                  title: Text("Modification Date"),
-                  groupValue: SettingsVariables.sort,
+                _buildRadioListTile(
+                  titleLabel: "Modification Date",
                   value: "modificationDate",
-                  onChanged: (String value) async {
-                    await SettingsVariables.setSort("modificationDate");
-                    connectionModel.sort();
-                    setState(() {});
-                  },
+                  isView: false,
                 ),
-                RadioListTile(
-                  title: Text("Last Access"),
-                  groupValue: SettingsVariables.sort,
+                _buildRadioListTile(
+                  titleLabel: "Last Access",
                   value: "lastAccess",
-                  onChanged: (String value) async {
-                    await SettingsVariables.setSort("lastAccess");
-                    connectionModel.sort();
-                    setState(() {});
-                  },
+                  isView: false,
                 ),
                 Divider(),
                 _buildHeadline("Other"),
-                CheckboxListTile(
-                  title: Padding(
-                    padding: EdgeInsets.only(left: 3.0),
-                    child: Text("Show hidden files"),
-                  ),
+                _buildCheckboxListTile(
+                  titleLabel: "Show hidden files",
                   value: SettingsVariables.showHiddenFiles,
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowHiddenFiles(value);
                     setState(() {});
                   },
                 ),
-                CheckboxListTile(
-                  title: Padding(
-                    padding: EdgeInsets.only(left: 3.0),
-                    child: Text("Show connection address in app bar"),
-                  ),
+                _buildCheckboxListTile(
+                  titleLabel: "Show connection address in app bar",
                   value: SettingsVariables.showAddressInAppBar,
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowAddressInAppBar(value);
                     setState(() {});
                   },
                 ),
-                CheckboxListTile(
-                  title: Padding(
-                    padding: EdgeInsets.only(left: 3.0),
-                    child: Text("Use mono font for headers"),
-                  ),
+                _buildCheckboxListTile(
+                  titleLabel: "Use mono font for headers",
                   value: SettingsVariables.accentFont != null,
                   onChanged: (bool value) async {
                     await SettingsVariables.setAccentFont(value);
