@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/services.dart';
 import 'custom_icon_button.dart';
 
 class ConnectionWidgetTile extends StatefulWidget {
@@ -31,17 +32,14 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
   Widget build(BuildContext context) {
     return widget.fileInfos.length > 0 && !widget.isLoading
         ? widget.view == "list"
-            ? Padding(
-                padding: EdgeInsets.only(bottom: widget.itemNum != null ? widget.index == widget.itemNum - 1 ? 80.0 : .0 : .0),
-                child: ListTile(
-                  leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
-                  title: Text(widget.fileInfos[widget.index]["filename"]),
-                  trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
-                      ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onSecondaryTap)
-                      : null,
-                  onTap: widget.onTap,
-                  onLongPress: widget.onLongPress,
-                ),
+            ? ListTile(
+                leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
+                title: Text(widget.fileInfos[widget.index]["filename"]),
+                trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
+                    ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onSecondaryTap)
+                    : null,
+                onTap: widget.onTap,
+                onLongPress: widget.onLongPress,
               )
             : widget.view == "grid"
                 ? Container(
@@ -100,9 +98,17 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                       ),
                     ),
                   )
-                : Container(
-                    //TODO: build widget for view key "detailed"
-                    )
+                : ListTile(
+                    leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
+                    title: Text(widget.fileInfos[widget.index]["filename"]),
+                    subtitle:
+                        Text(widget.fileInfos[widget.index][SettingsVariables.detailedViewTimeInfo == "modificationDate" ? "modificationDate" : "lastAccess"]),
+                    trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
+                        ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onSecondaryTap)
+                        : null,
+                    onTap: widget.onTap,
+                    onLongPress: widget.onLongPress,
+                  )
         : widget.index == 0
             ? Container(
                 child: Padding(

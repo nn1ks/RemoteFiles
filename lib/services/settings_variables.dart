@@ -52,6 +52,19 @@ class SettingsVariables {
     await prefs.setString("view", value);
   }
 
+  static String detailedViewTimeInfo = "modificationDate";
+  static String getDetailedViewTimeInfo() {
+    String detailedViewTimeInfoPrefs;
+    if (prefs != null) detailedViewTimeInfoPrefs = prefs.getString("detailedViewTimeInfo");
+    if (detailedViewTimeInfoPrefs != null) return detailedViewTimeInfoPrefs;
+    return detailedViewTimeInfo;
+  }
+
+  static Future<void> setDetailedViewTimeInfo(String value) async {
+    detailedViewTimeInfo = value;
+    await prefs.setString("detailedViewTimeInfo", value);
+  }
+
   static String sort = "filename";
   static String getSort() {
     String sortPrefs;

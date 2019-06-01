@@ -67,6 +67,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     SettingsVariables.setSharedPreferences().then((_) {
       SettingsVariables.getDownloadDirectory().then((Directory dir) => SettingsVariables.downloadDirectory = dir);
       SettingsVariables.view = SettingsVariables.getView();
+      SettingsVariables.detailedViewTimeInfo = SettingsVariables.getDetailedViewTimeInfo();
       SettingsVariables.sort = SettingsVariables.getSort();
       SettingsVariables.sortIsDescending = SettingsVariables.getSortIsDescending();
       SettingsVariables.showHiddenFiles = SettingsVariables.getShowHiddenFiles();

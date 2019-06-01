@@ -9,7 +9,7 @@ class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMixin {
   Widget _buildHeadline(String title, {bool hasSwitch = false, Function onChanged}) {
     return Padding(
       padding: EdgeInsets.only(top: hasSwitch ? 8.0 : 19.0, bottom: hasSwitch ? .0 : 11.0, left: 18.0, right: hasSwitch ? 22.0 : 18.0),
@@ -58,6 +58,39 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       value: value,
       onChanged: onChanged,
+    );
+  }
+
+  Widget _buildDetailedOptions() {
+    return Padding(
+      padding: EdgeInsets.only(left: 40.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 1.0,
+            margin: EdgeInsets.symmetric(horizontal: 18.0),
+            color: Colors.black12,
+          ),
+          RadioListTile(
+            title: Text("Show modification date"),
+            value: "modificationDate",
+            groupValue: SettingsVariables.detailedViewTimeInfo,
+            onChanged: (String value) async {
+              await SettingsVariables.setDetailedViewTimeInfo(value);
+              setState(() {});
+            },
+          ),
+          RadioListTile(
+            title: Text("Show last access"),
+            value: "lastAccess",
+            groupValue: SettingsVariables.detailedViewTimeInfo,
+            onChanged: (String value) async {
+              await SettingsVariables.setDetailedViewTimeInfo(value);
+              setState(() {});
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -146,10 +179,28 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: "list",
                   isView: true,
                 ),
-                _buildRadioListTile(
-                  titleLabel: "Detailed",
-                  value: "detailed",
-                  isView: true,
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 100),
+                  margin: EdgeInsets.symmetric(vertical: SettingsVariables.view == "detailed" ? 6.0 : .0),
+                  decoration: BoxDecoration(
+                    border: SettingsVariables.view == "detailed"
+                        ? Border(top: BorderSide(color: Colors.black12, width: 1.0), bottom: BorderSide(color: Colors.black12, width: 1.0))
+                        : null,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      _buildRadioListTile(
+                        titleLabel: "Detailed",
+                        value: "detailed",
+                        isView: true,
+                      ),
+                      AnimatedSize(
+                        duration: Duration(milliseconds: 100),
+                        vsync: this,
+                        child: SettingsVariables.view == "detailed" ? _buildDetailedOptions() : Container(),
+                      ),
+                    ],
+                  ),
                 ),
                 _buildRadioListTile(
                   titleLabel: "Grid",
