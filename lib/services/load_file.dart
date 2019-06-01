@@ -40,11 +40,10 @@ class LoadFile {
             filename = "";
           }
         }
-
-        var dir = await getExternalStorageDirectory();
-        var appdir = await Directory('${dir.path}/RemoteFiles').create(recursive: true);
+        Directory dir = await SettingsVariables.getDownloadDirectory();
+        dir = await dir.create(recursive: true);
         bool fileNameExists = false;
-        var ls = await appdir.list().toList();
+        var ls = await dir.list().toList();
         for (int i = 0; i < ls.length; i++) {
           String lsFilenames = "";
           String path = ls[i].path;
@@ -59,7 +58,7 @@ class LoadFile {
         if (!fileNameExists || isRedownloading) {
           await connectionModel.client.sftpDownload(
             path: filePath,
-            toPath: appdir.path,
+            toPath: dir.path,
             callback: (progress) {
               print(progress);
               connectionModel.progressValue = progress;
@@ -68,7 +67,7 @@ class LoadFile {
                 connectionModel.loadFilename = filename;
                 connectionModel.progressType = "download";
               } else if (progress == 100) {
-                _downOrUploadCompleted(context, "download", appdir.path + "/" + filename);
+                _downOrUploadCompleted(context, "download", dir.path + "/" + filename);
               }
             },
           );
