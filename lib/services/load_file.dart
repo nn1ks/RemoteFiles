@@ -11,12 +11,7 @@ import 'services.dart';
 class LoadFile {
   static Future<bool> _handlePermission() async {
     if (Platform.isIOS) {
-      ConnectionPage.scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text("This function is not yet implemented in the iOS version."),
-        ),
-      );
-      return false;
+      return true;
     }
     PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
     if (permissionStatus != PermissionStatus.granted) {

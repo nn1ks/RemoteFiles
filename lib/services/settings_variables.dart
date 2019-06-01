@@ -16,7 +16,7 @@ class SettingsVariables {
       dirDefault = await getExternalStorageDirectory();
       dirDefault = Directory(dirDefault.path + "/RemoteFiles");
     } else {
-      return Directory("");
+      return getApplicationDocumentsDirectory();
     }
     Directory dirPrefs;
     if (prefs != null) {
