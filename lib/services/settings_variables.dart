@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'services.dart';
 
 class SettingsVariables {
   static SharedPreferences prefs;
@@ -175,21 +176,14 @@ class SettingsVariables {
     await prefs.setBool("showAddressInAppBar", value);
   }
 
-  static String accentFont;
+  static String accentFont = "default";
   static String getAccentFont() {
     if (prefs != null) return prefs.getString("accentFont");
     return null;
   }
 
-  /// if the parameter is `true` the font family will be set to 'OverpassMono'.
-  /// if the parameter is `false`the font family will be set to the default font.
-  static Future<void> setAccentFont(bool value) async {
-    String font;
-    if (value)
-      font = "OverpassMono";
-    else
-      font = null;
-    accentFont = font;
-    await prefs.setString("accentFont", font);
+  static Future<void> setAccentFont(String value) async {
+    accentFont = value;
+    await prefs.setString("accentFont", value);
   }
 }

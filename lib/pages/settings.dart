@@ -313,12 +313,42 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                     setState(() {});
                   },
                 ),
-                _buildCheckboxListTile(
-                  titleLabel: "Use mono font for headers",
-                  value: SettingsVariables.accentFont != null,
-                  onChanged: (bool value) async {
-                    await SettingsVariables.setAccentFont(value);
-                    setState(() {});
+                ListTile(
+                  title: Text("Font to use for headers"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                            content: StatefulBuilder(builder: (context, setState2) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  RadioListTile(
+                                    title: Text("System default"),
+                                    value: "default",
+                                    groupValue: SettingsVariables.accentFont,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setAccentFont(value);
+                                      setState2(() {});
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    title: Text("Overpass Mono", style: TextStyle(fontFamily: "OverpassMono")),
+                                    value: "OverpassMono",
+                                    groupValue: SettingsVariables.accentFont,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setAccentFont(value);
+                                      setState2(() {});
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
+                    );
                   },
                 ),
                 SizedBox(height: 16.0),
