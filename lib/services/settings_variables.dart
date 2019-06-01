@@ -155,7 +155,8 @@ class SettingsVariables {
       }
       for (int i = 0; i < convertedFileSize.toString().length; i++) {
         if (convertedFileSize.toString()[i] == ".") {
-          convertedFileSize = double.parse(convertedFileSize.toString().substring(0, i + 3));
+          int substringLast = convertedFileSize.toString().length < (i + 3) ? convertedFileSize.toString().length : (i + 3);
+          convertedFileSize = double.parse(convertedFileSize.toString().substring(0, substringLast));
           break;
         }
       }
@@ -178,8 +179,10 @@ class SettingsVariables {
 
   static String accentFont = "default";
   static String getAccentFont() {
-    if (prefs != null) return prefs.getString("accentFont");
-    return null;
+    String accentFontPrefs;
+    if (prefs != null) accentFontPrefs = prefs.getString("accentFont");
+    if (accentFontPrefs != null) return accentFontPrefs;
+    return accentFont;
   }
 
   static Future<void> setAccentFont(String value) async {

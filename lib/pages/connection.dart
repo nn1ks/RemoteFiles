@@ -443,7 +443,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               return RefreshIndicator(
                 key: _refreshKey,
                 onRefresh: () async {
-                  await ConnectionMethods.connect(context, connectionModel.currentConnection, setIsLoading: true);
+                  await ConnectionMethods.connect(context, connectionModel.currentConnection, setIsLoading: false);
                 },
                 child: connectionModel.isLoading
                     ? Container(

@@ -99,11 +99,17 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                     ),
                   )
                 : ListTile(
-                    leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
+                    leading: Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
+                    ),
                     title: Text(widget.fileInfos[widget.index]["filename"]),
-                    subtitle: Text(
-                        (widget.fileInfos[widget.index]["isDirectory"] == "true" ? "Folder, " : widget.fileInfos[widget.index]["convertedFileSize"] + ", ") +
-                            widget.fileInfos[widget.index][SettingsVariables.detailedViewTimeInfo == "modificationDate" ? "modificationDate" : "lastAccess"]),
+                    subtitle: Text((widget.fileInfos[widget.index]["isDirectory"] == "true"
+                            ? "Folder, "
+                            : (widget.fileInfos[widget.index]["convertedFileSize"] == ""
+                                ? "Loading... "
+                                : widget.fileInfos[widget.index]["convertedFileSize"] + ", ")) +
+                        widget.fileInfos[widget.index][SettingsVariables.detailedViewTimeInfo]),
                     trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
                         ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onSecondaryTap)
                         : null,

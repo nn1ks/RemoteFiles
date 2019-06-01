@@ -127,7 +127,7 @@ class ConnectionDialog extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Container(
-                      margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
+                      margin: EdgeInsets.only(right: 3.5, bottom: 1.0),
                       child: Icon(
                         secondaryButtonIconData,
                         size: 19.0,
@@ -137,7 +137,7 @@ class ConnectionDialog extends StatelessWidget {
                   ],
                 ),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
+                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
                 onPressed: secondaryButtonOnPressed)
             : null,
         RaisedButton(
@@ -146,7 +146,7 @@ class ConnectionDialog extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(right: 3.5, bottom: 2.0),
+                margin: EdgeInsets.only(right: 3.5, bottom: 1.0),
                 child: Icon(
                   primaryButtonIconData,
                   size: 19.0,
@@ -160,7 +160,7 @@ class ConnectionDialog extends StatelessWidget {
             ],
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-          padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 12.0, right: 14.0),
+          padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
           elevation: .0,
           onPressed: primaryButtonOnPressed,
         ),

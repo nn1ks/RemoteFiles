@@ -125,7 +125,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                 Padding(
                                   padding: EdgeInsets.only(bottom: 2.0),
                                   child: Text(
-                                    "Filesize:",
+                                    "Size:",
                                     style: TextStyle(fontSize: tableFontSize),
                                   ),
                                 ),

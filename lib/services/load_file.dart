@@ -59,7 +59,7 @@ class LoadFile {
             callback: (progress) {
               print(progress);
               connectionModel.progressValue = progress;
-              if (progress == 5) {
+              if (progress != 100) {
                 connectionModel.showProgress = true;
                 connectionModel.loadFilename = filename;
                 connectionModel.progressType = "download";
@@ -158,7 +158,7 @@ class LoadFile {
           toPath: connectionModel.currentConnection.path,
           callback: (progress) {
             connectionModel.progressValue = progress;
-            if (progress == 5) {
+            if (progress != 100) {
               connectionModel.showProgress = true;
               connectionModel.loadFilename = filename;
             } else if (progress == 100) {
@@ -266,7 +266,7 @@ class LoadFile {
       toPath: cacheDir.path,
       callback: (progress) {
         connectionModel.progressValue = progress;
-        if (progress == 5) {
+        if (progress != 100) {
           connectionModel.showProgress = true;
           connectionModel.loadFilename = filename;
           connectionModel.progressType = "cache";
