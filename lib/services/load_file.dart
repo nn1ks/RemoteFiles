@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:RemoteFiles/services/connection_methods.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../shared/shared.dart';
 import '../pages/pages.dart';
 import 'services.dart';
@@ -220,10 +222,21 @@ class LoadFile {
       connectionModel.showProgress = false;
       ConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text("Download completed\nSaved file to $saveLocation"),
+          duration: Duration(seconds: 6),
+          content: Text("Download completed" + (Platform.isIOS ? "" : "\nSaved file to $saveLocation")),
+          action: SnackBarAction(
+            label: "Show file",
+            textColor: Colors.white,
+            onPressed: () async {
+              if (Platform.isIOS) {
+                await launch("shareddocuments://$saveLocation");
+              } else {
+                OpenFile.open(saveLocation);
+              }
+            },
+          ),
         ),
       );
-
       connectionModel.progressType = progressType;
     } else {
       connectionModel.showProgress = false;
