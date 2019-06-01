@@ -251,6 +251,9 @@ class LoadFile {
 
   static Future<String> saveInCache(String filePath) async {
     Directory cacheDir = await getTemporaryDirectory();
+    await cacheDir.list().forEach((v) async {
+      await v.delete();
+    });
     String filename = "";
     for (int i = 0; i < filePath.length; i++) {
       filename += filePath[i];
