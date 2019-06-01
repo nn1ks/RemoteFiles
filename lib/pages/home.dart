@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       SettingsVariables.sort = SettingsVariables.getSort();
       SettingsVariables.sortIsDescending = SettingsVariables.getSortIsDescending();
       SettingsVariables.showHiddenFiles = SettingsVariables.getShowHiddenFiles();
+      SettingsVariables.filesizeUnit = SettingsVariables.getFilesizeUnit();
       SettingsVariables.showAddressInAppBar = SettingsVariables.getShowAddressInAppBar();
       SettingsVariables.accentFont = SettingsVariables.getAccentFont();
     });

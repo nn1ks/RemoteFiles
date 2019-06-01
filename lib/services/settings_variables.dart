@@ -104,6 +104,64 @@ class SettingsVariables {
     await prefs.setBool("showHiddenFiles", value);
   }
 
+  static String filesizeUnit = "automatic";
+  static String getFilesizeUnit() {
+    String filesizeUnitPrefs;
+    if (prefs != null) filesizeUnitPrefs = prefs.getString("filesizeUnit");
+    if (filesizeUnitPrefs != null) return filesizeUnitPrefs;
+    return filesizeUnit;
+  }
+
+  /// can be 'B', 'KB', 'MB', 'GB' and 'automatic'.
+  static Future<void> setFilesizeUnit(String value) async {
+    filesizeUnit = value;
+    await prefs.setString("filesizeUnit", value);
+
+    int unitDivisor;
+    switch (value) {
+      case "B":
+        unitDivisor = 1;
+        break;
+      case "KB":
+        unitDivisor = 1000;
+        break;
+      case "MB":
+        unitDivisor = 1000000;
+        break;
+      case "GB":
+        unitDivisor = 1000000000;
+        break;
+    }
+    connectionModel.fileInfos.forEach((v) {
+      double convertedFileSize;
+      String unitValue;
+      if (v["fileSize"].length > 9) {
+        convertedFileSize = (double.parse(v["fileSize"]) / 1000000000);
+        unitValue = "GB";
+      } else if (v["fileSize"].length > 6) {
+        convertedFileSize = (double.parse(v["fileSize"]) / 1000000);
+        unitValue = "MB";
+      } else if (v["fileSize"].length > 3) {
+        convertedFileSize = (double.parse(v["fileSize"]) / 1000);
+        unitValue = "KB";
+      } else {
+        convertedFileSize = double.parse(v["fileSize"]);
+        unitValue = "B";
+      }
+      if (unitDivisor != null) {
+        convertedFileSize = (double.parse(v["fileSize"]) / unitDivisor.toDouble());
+        unitValue = value;
+      }
+      for (int i = 0; i < convertedFileSize.toString().length; i++) {
+        if (convertedFileSize.toString()[i] == ".") {
+          convertedFileSize = double.parse(convertedFileSize.toString().substring(0, i + 3));
+          break;
+        }
+      }
+      v["convertedFileSize"] = convertedFileSize.toString() + " $unitValue";
+    });
+  }
+
   static bool showAddressInAppBar = true;
   static bool getShowAddressInAppBar() {
     bool showAddressInAppBarPrefs;

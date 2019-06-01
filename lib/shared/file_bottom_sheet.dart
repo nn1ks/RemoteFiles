@@ -120,6 +120,20 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                         child: Table(
                           columnWidths: {0: FixedColumnWidth(158.0)},
                           children: <TableRow>[
+                            if (fileInfo["isDirectory"] == "false")
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Filesize:",
+                                    style: TextStyle(fontSize: tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  fileInfo["convertedFileSize"],
+                                  style: TextStyle(fontSize: tableFontSize),
+                                ),
+                              ]),
                             TableRow(children: [
                               Padding(
                                 padding: EdgeInsets.only(bottom: 2.0),

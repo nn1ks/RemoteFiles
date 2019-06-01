@@ -242,6 +242,69 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                     setState(() {});
                   },
                 ),
+                ListTile(
+                  title: Text("Unit for filesize"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                            content: StatefulBuilder(builder: (context, setState) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  RadioListTile(
+                                    title: Text("Automatic"),
+                                    value: "automatic",
+                                    groupValue: SettingsVariables.filesizeUnit,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setFilesizeUnit(value);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    title: Text("Byte"),
+                                    value: "B",
+                                    groupValue: SettingsVariables.filesizeUnit,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setFilesizeUnit(value);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    title: Text("KiloByte"),
+                                    value: "KB",
+                                    groupValue: SettingsVariables.filesizeUnit,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setFilesizeUnit(value);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    title: Text("MegaByte"),
+                                    value: "MB",
+                                    groupValue: SettingsVariables.filesizeUnit,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setFilesizeUnit(value);
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    title: Text("GigaByte"),
+                                    value: "GB",
+                                    groupValue: SettingsVariables.filesizeUnit,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setFilesizeUnit(value);
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
+                    );
+                  },
+                ),
                 _buildCheckboxListTile(
                   titleLabel: "Show connection address in app bar",
                   value: SettingsVariables.showAddressInAppBar,

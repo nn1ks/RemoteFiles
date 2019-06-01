@@ -67,9 +67,11 @@ class ConnectionMethods {
             connectionModel.fileInfos[i].addAll({k.toString(): v.toString()});
           });
           connectionModel.fileInfos[i]["filename"] = _removeTrailingSlash(connectionModel.fileInfos[i]["filename"]);
+          connectionModel.fileInfos[i].addAll({"convertedFileSize": ""});
         }
       }
     }
+    SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit);
     connectionModel.isLoading = false;
     connectionModel.connectionsNum = connectionModel.fileInfos.length;
     connectionModel.sort();
