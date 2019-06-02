@@ -13,12 +13,13 @@ class HomePage extends StatefulWidget {
   static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
   static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json", false);
 
+  static var scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  var _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
 
   AnimationController _rotationController1;
@@ -87,7 +88,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+      key: HomePage.scaffoldKey,
       appBar: AppBar(
         elevation: 2.8,
         backgroundColor: Colors.white,
@@ -221,7 +222,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                         await launch(url);
                                       } else {
                                         Navigator.pop(context);
-                                        _scaffoldKey.currentState.showSnackBar(
+                                        HomePage.scaffoldKey.currentState.showSnackBar(
                                           SnackBar(
                                             content: Text("Could not launch $url"),
                                           ),
@@ -248,7 +249,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     ),
                                     onPressed: () {
                                       Navigator.pop(context);
-                                      _scaffoldKey.currentState.showSnackBar(
+                                      HomePage.scaffoldKey.currentState.showSnackBar(
                                         SnackBar(
                                           content: Text("App is not yet available in the Google PlayStore"),
                                         ),
