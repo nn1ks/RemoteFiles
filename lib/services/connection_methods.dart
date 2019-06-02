@@ -30,7 +30,6 @@ class ConnectionMethods {
       await model.client.connect();
     } catch (e) {
       connected = false;
-      Navigator.pop(context);
       HomePage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 5),

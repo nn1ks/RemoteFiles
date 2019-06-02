@@ -192,4 +192,18 @@ class SettingsVariables {
     accentFont = value;
     await prefs.setString("accentFont", value);
   }
+
+  static initState() {
+    setSharedPreferences().then((_) {
+      getDownloadDirectory().then((Directory dir) => downloadDirectory = dir);
+      view = getView();
+      detailedViewTimeInfo = getDetailedViewTimeInfo();
+      sort = getSort();
+      sortIsDescending = getSortIsDescending();
+      showHiddenFiles = getShowHiddenFiles();
+      filesizeUnit = getFilesizeUnit();
+      showAddressInAppBar = getShowAddressInAppBar();
+      accentFont = getAccentFont();
+    });
+  }
 }

@@ -134,15 +134,11 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   @override
   void initState() {
     _rotationController = AnimationController(duration: Duration(milliseconds: 100), vsync: this);
-    //ConnectionMethods.connect(context, Provider.of<ConnectionModel>(context), ConnectionPage.connection);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    /*WidgetsBinding.instance.addPostFrameCallback((_) {
-      ConnectionMethods.connect(context, Provider.of<ConnectionModel>(context), ConnectionPage.connection);
-    });*/
     return Scaffold(
       key: ConnectionPage.scaffoldKey,
       appBar: PreferredSize(

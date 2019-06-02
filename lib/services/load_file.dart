@@ -12,17 +12,15 @@ import 'services.dart';
 
 class LoadFile {
   static Future<bool> _handlePermission() async {
-    if (Platform.isIOS) {
-      return true;
-    }
+    if (Platform.isIOS) return true;
     PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-    if (permissionStatus != PermissionStatus.granted) {
+    if (permissionStatus == PermissionStatus.granted) {
+      return true;
+    } else {
       Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
       if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
         return true;
       }
-    } else {
-      return true;
     }
     return false;
   }
@@ -80,12 +78,8 @@ class LoadFile {
                   actions: <Widget>[
                     FlatButton(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                      padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
-                      child: Row(
-                        children: <Widget>[
-                          Text("Cancel"),
-                        ],
-                      ),
+                      padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                      child: Text("Cancel"),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -94,15 +88,8 @@ class LoadFile {
                       color: Theme.of(context).accentColor,
                       splashColor: Colors.black12,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                      padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            "OK",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
+                      padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                      child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
                       elevation: .0,
                       onPressed: () {
                         download(context, model, filePath, isRedownloading: true);

@@ -195,11 +195,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         value: "detailed",
                         isView: true,
                       ),
-                      AnimatedSize(
-                        duration: Duration(milliseconds: 100),
-                        vsync: this,
-                        child: SettingsVariables.view == "detailed" ? _buildDetailedOptions() : Container(),
-                      ),
+                      SettingsVariables.view == "detailed" ? _buildDetailedOptions() : Container(),
                     ],
                   ),
                 ),
@@ -273,7 +269,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
-                                    title: Text("KiloByte"),
+                                    title: Text("Kilobyte"),
                                     value: "KB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
@@ -282,7 +278,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
-                                    title: Text("MegaByte"),
+                                    title: Text("Megabyte"),
                                     value: "MB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
@@ -291,7 +287,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
-                                    title: Text("GigaByte"),
+                                    title: Text("Gigabyte"),
                                     value: "GB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {

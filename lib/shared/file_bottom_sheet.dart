@@ -26,12 +26,8 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
           actions: <Widget>[
             FlatButton(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
-              child: Row(
-                children: <Widget>[
-                  Text("Cancel"),
-                ],
-              ),
+              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+              child: Text("Cancel"),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -40,15 +36,8 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
               color: Theme.of(context).accentColor,
               splashColor: Colors.black12,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    "OK",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
+              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+              child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
               elevation: .0,
               onPressed: () async {
                 if (model.fileInfos[index]["isDirectory"] == "true") {
