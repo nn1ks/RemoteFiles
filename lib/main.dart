@@ -1,58 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'services/services.dart';
+import 'shared/shared.dart';
 import 'pages/pages.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      builder: (context) => ConnectionModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(builder: (context) => ConnectionModel()),
+        ChangeNotifierProvider(builder: (context) => CustomTheme()),
+      ],
       child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-    final Color accentColor = Colors.blueAccent[700];
-    return DynamicTheme(
-      defaultBrightness: Brightness.light,
-      data: (brightness) => ThemeData(
-            scaffoldBackgroundColor: Colors.white,
-            accentColor: accentColor,
-            accentColorBrightness: Brightness.dark,
-            primaryColor: Colors.white,
-            buttonColor: accentColor,
-            buttonTheme: ButtonThemeData(
-              textTheme: ButtonTextTheme.primary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-            ),
-            inputDecorationTheme: InputDecorationTheme(
-              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: accentColor, width: 2.0), borderRadius: BorderRadius.circular(4.0)),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
-              labelStyle: TextStyle(fontSize: 16.0, color: Theme.of(context).hintColor),
-              contentPadding: EdgeInsets.all(14.0),
-            ),
-            cursorColor: accentColor,
-            dialogBackgroundColor: Colors.white,
-            indicatorColor: accentColor,
-            textSelectionHandleColor: accentColor,
-            bottomAppBarTheme: BottomAppBarTheme(
-              elevation: 8.0,
-            ),
-          ),
-      themedWidgetBuilder: (context, theme) {
-        return MaterialApp(
-          title: 'RemoteFiles',
-          theme: theme,
-          home: HomePage(),
-        );
-      },
+    return MaterialApp(
+      title: 'RemoteFiles',
+      theme: Provider.of<CustomTheme>(context).themeValue == "dark" ? CustomThemes.dark : CustomThemes.light,
+      // 'darkTheme' is not active because it's not working properly in versions of Android earlier than Android Pie.
+      // According to the Flutter API, darkTheme should only be used when a concept of brightness mode is supported on a platform.
+      // But it is also used on platforms that don't support a concept of brightness mode.
+      // Until this is fixed the theme option 'automatic' in the settings will always show the light theme.
+      // ---
+      // darkTheme: Provider.of<CustomTheme>(context).themeValue == "light" ? CustomThemes.light : CustomThemes.dark,
+      home: HomePage(),
     );
   }
 }

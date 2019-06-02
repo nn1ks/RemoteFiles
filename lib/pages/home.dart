@@ -4,6 +4,7 @@ import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
@@ -77,11 +78,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Provider.of<CustomTheme>(context).setThemeValue(await Provider.of<CustomTheme>(context).getThemeValue());
+    });
     return Scaffold(
       key: HomePage.scaffoldKey,
       appBar: AppBar(
         elevation: 2.8,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).bottomAppBarColor,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(18.0),
           child: TabBar(
@@ -188,22 +192,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                             Text(
                               "Version: $version",
-                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Colors.grey[700]),
+                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Theme.of(context).hintColor),
                             ),
                             Divider(height: 30.0),
                             Row(
                               children: <Widget>[
                                 Expanded(
                                   child: RaisedButton(
-                                    color: Color.fromRGBO(235, 240, 255, 1.0),
-                                    splashColor: Color.fromRGBO(215, 225, 250, 1.0),
+                                    color: Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(235, 240, 255, 1) : Color.fromRGBO(84, 88, 92, 1),
+                                    splashColor:
+                                        Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(215, 225, 250, 1) : Color.fromRGBO(100, 104, 110, 1),
                                     elevation: .0,
                                     highlightElevation: 2.8,
                                     child: Padding(
                                       padding: EdgeInsets.only(top: .8),
                                       child: Text(
                                         "GitHub",
-                                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.body1.color, fontSize: 13.6, fontFamily: "Roboto"),
                                       ),
                                     ),
                                     onPressed: () async {
@@ -226,15 +232,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                                 Expanded(
                                   child: RaisedButton(
-                                    color: Color.fromRGBO(235, 240, 255, 1.0),
-                                    splashColor: Color.fromRGBO(215, 225, 250, 1.0),
+                                    color: Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(235, 240, 255, 1) : Color.fromRGBO(84, 88, 92, 1),
+                                    splashColor:
+                                        Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(215, 225, 250, 1) : Color.fromRGBO(100, 104, 110, 1),
                                     elevation: .0,
                                     highlightElevation: 2.8,
                                     child: Padding(
                                       padding: EdgeInsets.only(top: .8),
                                       child: Text(
                                         "PlayStore",
-                                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87, fontSize: 13.6, fontFamily: "Roboto"),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.body1.color, fontSize: 13.6, fontFamily: "Roboto"),
                                       ),
                                     ),
                                     onPressed: () {

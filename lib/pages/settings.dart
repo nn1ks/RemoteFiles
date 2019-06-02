@@ -20,16 +20,16 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
           Text(
             title.toUpperCase(),
             style: TextStyle(
-                fontWeight: FontWeight.w700, fontSize: 14.5, fontFamily: SettingsVariables.accentFont, letterSpacing: 1.0, color: Color.fromRGBO(0, 0, 0, .6)),
+                fontWeight: FontWeight.w700, fontSize: 14.5, fontFamily: SettingsVariables.accentFont, letterSpacing: 1.0, color: Theme.of(context).hintColor),
           ),
           hasSwitch
               ? Switch(
                   activeThumbImage: AssetImage("assets/arrow_drop_down.png"),
-                  activeColor: Colors.grey[50],
-                  activeTrackColor: Colors.grey[300],
+                  activeColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[50] : Colors.grey[500],
+                  activeTrackColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[300] : Colors.grey[700],
                   inactiveThumbImage: AssetImage("assets/arrow_drop_up.png"),
-                  inactiveTrackColor: Colors.grey[300],
-                  inactiveThumbColor: Colors.grey[50],
+                  inactiveTrackColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[300] : Colors.grey[700],
+                  inactiveThumbColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[50] : Colors.grey[500],
                   value: SettingsVariables.sortIsDescending,
                   onChanged: onChanged,
                 )
@@ -41,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
 
   Widget _buildRadioListTile({@required String titleLabel, @required String value, @required bool isView}) {
     return RadioListTile(
+      activeColor: Theme.of(context).accentColor,
       title: Text(titleLabel),
       groupValue: isView ? SettingsVariables.view : SettingsVariables.sort,
       value: value,
@@ -53,6 +54,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
 
   Widget _buildCheckboxListTile({@required String titleLabel, @required bool value, @required ValueChanged<bool> onChanged}) {
     return CheckboxListTile(
+      activeColor: Theme.of(context).accentColor,
       title: Padding(
         padding: EdgeInsets.only(left: 3.0),
         child: Text(titleLabel),
@@ -70,9 +72,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
           Container(
             height: 1.0,
             margin: EdgeInsets.symmetric(horizontal: 18.0),
-            color: Colors.black12,
+            color: Theme.of(context).dividerColor,
           ),
           RadioListTile(
+            activeColor: Theme.of(context).accentColor,
             title: Text("Show modification date"),
             value: "modificationDate",
             groupValue: SettingsVariables.detailedViewTimeInfo,
@@ -82,6 +85,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
             },
           ),
           RadioListTile(
+            activeColor: Theme.of(context).accentColor,
             title: Text("Show last access"),
             value: "lastAccess",
             groupValue: SettingsVariables.detailedViewTimeInfo,
@@ -144,7 +148,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                       CustomTooltip(
                                         message: "Clear",
                                         child: CustomIconButton(
-                                          icon: Icon(Icons.close, color: Colors.black87),
+                                          icon: Icon(Icons.close, color: Theme.of(context).iconTheme.color),
                                           onPressed: () {
                                             SettingsVariables.setDownloadDirectory("").then((_) => _downloadPathTextController.text = "");
                                           },
@@ -153,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                       CustomTooltip(
                                         message: "Set to default",
                                         child: CustomIconButton(
-                                          icon: Icon(Icons.settings_backup_restore, color: Colors.black87),
+                                          icon: Icon(Icons.settings_backup_restore, color: Theme.of(context).iconTheme.color),
                                           onPressed: () {
                                             SettingsVariables.setDownloadDirectoryToDefault().then((Directory dir) {
                                               _downloadPathTextController.text = dir.path;
@@ -185,7 +189,9 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   margin: EdgeInsets.symmetric(vertical: SettingsVariables.view == "detailed" ? 6.0 : .0),
                   decoration: BoxDecoration(
                     border: SettingsVariables.view == "detailed"
-                        ? Border(top: BorderSide(color: Colors.black12, width: 1.0), bottom: BorderSide(color: Colors.black12, width: 1.0))
+                        ? Border(
+                            top: BorderSide(color: Theme.of(context).dividerColor, width: 1.0),
+                            bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
                         : null,
                   ),
                   child: Column(
@@ -251,6 +257,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
                                     title: Text("Automatic"),
                                     value: "automatic",
                                     groupValue: SettingsVariables.filesizeUnit,
@@ -260,6 +267,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
                                     title: Text("Byte"),
                                     value: "B",
                                     groupValue: SettingsVariables.filesizeUnit,
@@ -269,6 +277,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
                                     title: Text("Kilobyte"),
                                     value: "KB",
                                     groupValue: SettingsVariables.filesizeUnit,
@@ -278,6 +287,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
                                     title: Text("Megabyte"),
                                     value: "MB",
                                     groupValue: SettingsVariables.filesizeUnit,
@@ -287,11 +297,104 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     },
                                   ),
                                   RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
                                     title: Text("Gigabyte"),
                                     value: "GB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
                                       await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
+                    );
+                  },
+                ),
+                Divider(),
+                _buildHeadline("Appearance"),
+                ListTile(
+                  title: Text("Theme"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                            content: StatefulBuilder(builder: (context, setState) {
+                              return Consumer<CustomTheme>(builder: (context, model, child) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    RadioListTile(
+                                      activeColor: Theme.of(context).accentColor,
+                                      title: Text("Automatic"),
+                                      value: "automatic",
+                                      groupValue: model.themeValue,
+                                      onChanged: (String value) async {
+                                        await model.setThemeValue(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    RadioListTile(
+                                      activeColor: Theme.of(context).accentColor,
+                                      title: Text("Light"),
+                                      value: "light",
+                                      groupValue: model.themeValue,
+                                      onChanged: (String value) async {
+                                        await model.setThemeValue(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    RadioListTile(
+                                      activeColor: Theme.of(context).accentColor,
+                                      title: Text("Dark"),
+                                      value: "dark",
+                                      groupValue: model.themeValue,
+                                      onChanged: (String value) async {
+                                        await model.setThemeValue(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                            }),
+                          ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("Font to use for headers"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                            content: StatefulBuilder(builder: (context, setState2) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
+                                    title: Text("System default"),
+                                    value: "default",
+                                    groupValue: SettingsVariables.accentFont,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setAccentFont(value);
+                                      setState2(() {});
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
+                                    title: Text("Overpass Mono", style: TextStyle(fontFamily: "OverpassMono")),
+                                    value: "OverpassMono",
+                                    groupValue: SettingsVariables.accentFont,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setAccentFont(value);
+                                      setState2(() {});
                                       setState(() {});
                                     },
                                   ),
@@ -308,44 +411,6 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowAddressInAppBar(value);
                     setState(() {});
-                  },
-                ),
-                ListTile(
-                  title: Text("Font to use for headers"),
-                  onTap: () {
-                    customShowDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                            content: StatefulBuilder(builder: (context, setState2) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  RadioListTile(
-                                    title: Text("System default"),
-                                    value: "default",
-                                    groupValue: SettingsVariables.accentFont,
-                                    onChanged: (String value) async {
-                                      await SettingsVariables.setAccentFont(value);
-                                      setState2(() {});
-                                      setState(() {});
-                                    },
-                                  ),
-                                  RadioListTile(
-                                    title: Text("Overpass Mono", style: TextStyle(fontFamily: "OverpassMono")),
-                                    value: "OverpassMono",
-                                    groupValue: SettingsVariables.accentFont,
-                                    onChanged: (String value) async {
-                                      await SettingsVariables.setAccentFont(value);
-                                      setState2(() {});
-                                      setState(() {});
-                                    },
-                                  ),
-                                ],
-                              );
-                            }),
-                          ),
-                    );
                   },
                 ),
                 SizedBox(height: 16.0),

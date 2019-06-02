@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../shared/shared.dart';
 import '../services/services.dart';
 import 'custom_icon_button.dart';
 
@@ -33,7 +35,10 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
     return widget.fileInfos.length > 0 && !widget.isLoading
         ? widget.view == "list"
             ? ListTile(
-                leading: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
+                leading: Icon(
+                  widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
+                  color: Theme.of(context).hintColor,
+                ),
                 title: Text(widget.fileInfos[widget.index]["filename"]),
                 trailing: widget.fileInfos[widget.index]["isDirectory"] == "true"
                     ? CustomIconButton(icon: Icon(Icons.more_vert), onPressed: widget.onSecondaryTap)
@@ -45,7 +50,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                 ? Container(
                     margin: EdgeInsets.all(6.0),
                     decoration: BoxDecoration(
-                      color: Color.fromRGBO(0, 0, 0, .07),
+                      color: Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(0, 0, 0, .07) : Color.fromRGBO(255, 255, 255, .04),
                       borderRadius: BorderRadius.circular(6.0),
                     ),
                     child: InkWell(
@@ -101,7 +106,10 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                 : ListTile(
                     leading: Padding(
                       padding: EdgeInsets.only(top: 8.0),
-                      child: widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icon(Icons.folder_open) : Icon(Icons.insert_drive_file),
+                      child: Icon(
+                        widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
+                        color: Theme.of(context).hintColor,
+                      ),
                     ),
                     title: Text(widget.fileInfos[widget.index]["filename"]),
                     subtitle: Text((widget.fileInfos[widget.index]["isDirectory"] == "true"

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../pages/pages.dart';
 import '../services/services.dart';
 import 'shared.dart';
@@ -45,7 +46,7 @@ class ConnectionDialog extends StatelessWidget {
           width: 4.0,
           height: 4.0,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.body1.color,
             shape: BoxShape.circle,
           ),
         ),
@@ -150,12 +151,12 @@ class ConnectionDialog extends StatelessWidget {
                 child: Icon(
                   primaryButtonIconData,
                   size: 19.0,
-                  color: Colors.white,
+                  color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black,
                 ),
               ),
               Text(
                 primaryButtonLabel,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black),
               ),
             ],
           ),

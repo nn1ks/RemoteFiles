@@ -39,6 +39,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         focusNode: focusNodes[index],
         cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword,
+        autocorrect: key != "name",
         textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         keyboardType: key == "port" ? TextInputType.numberWithOptions() : null,
         decoration: InputDecoration(
@@ -154,6 +155,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
               ),
               widget.isNew
                   ? CheckboxListTile(
+                      activeColor: Theme.of(context).accentColor,
                       secondary: Icon(Icons.star_border),
                       title: Padding(
                         padding: EdgeInsets.only(top: 2.0),

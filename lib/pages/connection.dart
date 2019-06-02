@@ -144,6 +144,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(48.0),
         child: AppBar(
+          backgroundColor: Theme.of(context).bottomAppBarColor,
           elevation: 1.6,
           automaticallyImplyLeading: false,
           title: SingleChildScrollView(
@@ -193,7 +194,12 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                     model.progressType == "download"
                                         ? "Downloading ${model.loadFilename}"
                                         : (model.progressType == "uploading" ? "Uploading ${model.loadFilename}" : "Caching ${model.loadFilename}"),
-                                    style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic),
+                                    style: TextStyle(
+                                      fontSize: 15.8,
+                                      fontWeight: FontWeight.w500,
+                                      color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[700] : Colors.grey[200],
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.clip,
                                   ),
@@ -201,8 +207,15 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               ),
                               Padding(
                                 padding: EdgeInsets.only(left: 18.0, right: 18.0, bottom: 12.0),
-                                child: Text("${model.progressValue}%",
-                                    style: TextStyle(fontSize: 15.8, fontWeight: FontWeight.w500, color: Colors.grey[700], fontStyle: FontStyle.italic)),
+                                child: Text(
+                                  "${model.progressValue}%",
+                                  style: TextStyle(
+                                    fontSize: 15.8,
+                                    fontWeight: FontWeight.w500,
+                                    color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[700] : Colors.grey[200],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -375,6 +388,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Consumer<ConnectionModel>(builder: (context, model, child) {
         return SpeedDial(
+          overlayColor: Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(255, 255, 255, .2) : Color.fromRGBO(18, 18, 18, .2),
           heroTag: "fab",
           child: RotationTransition(
             turns: Tween(begin: .0, end: 0.125).animate(_rotationController),
@@ -389,18 +403,20 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           children: [
             SpeedDialChild(
               label: "Upload File",
-              labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500),
+              labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.body1.color),
+              labelBackgroundColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.grey[800],
               child: Icon(OMIcons.cloudUpload),
-              backgroundColor: Colors.white,
+              backgroundColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.grey[800],
               foregroundColor: Theme.of(context).accentColor,
               elevation: 3.0,
               onTap: () async => LoadFile.upload(context, model),
             ),
             SpeedDialChild(
               label: "Create Folder",
-              labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500),
+              labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.body1.color),
+              labelBackgroundColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.grey[800],
               child: Icon(OMIcons.createNewFolder),
-              backgroundColor: Colors.white,
+              backgroundColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.grey[800],
               foregroundColor: Theme.of(context).accentColor,
               elevation: 3.0,
               onTap: () async {
