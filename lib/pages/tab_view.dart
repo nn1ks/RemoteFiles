@@ -213,7 +213,7 @@ class _TabViewPageState extends State<TabViewPage> {
 
   @override
   void initState() {
-    getApplicationDocumentsDirectory().then((Directory dir) {
+    (Platform.isIOS ? getApplicationSupportDirectory() : getApplicationDocumentsDirectory()).then((Directory dir) {
       setState(() {
         widget.dir = dir;
         widget.jsonFile = File(widget.dir.path + "/" + widget.jsonFileName);
