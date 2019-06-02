@@ -114,7 +114,10 @@ class SettingsVariables {
   }
 
   /// can be 'B', 'KB', 'MB', 'GB' and 'automatic'.
-  static Future<void> setFilesizeUnit(String value) async {
+  static Future<void> setFilesizeUnit(
+    String value,
+    ConnectionModel model,
+  ) async {
     filesizeUnit = value;
     await prefs.setString("filesizeUnit", value);
 
@@ -133,7 +136,7 @@ class SettingsVariables {
         unitDivisor = 1000000000;
         break;
     }
-    connectionModel.fileInfos.forEach((v) {
+    model.fileInfos.forEach((v) {
       double convertedFileSize;
       String unitValue;
       if (v["fileSize"].length > 9) {

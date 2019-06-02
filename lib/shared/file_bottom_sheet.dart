@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:open_file/open_file.dart';
+import 'package:provider/provider.dart';
 import '../services/services.dart';
 import 'shared.dart';
 
@@ -13,7 +14,7 @@ class FileBottomSheet extends StatefulWidget {
 }
 
 class _FileBottomSheetState extends State<FileBottomSheet> {
-  _showDeleteConfirmDialog(String filePath, Map<String, String> fileInfo, int index) {
+  _showDeleteConfirmDialog(ConnectionModel model, String filePath, Map<String, String> fileInfo, int index) {
     customShowDialog(
       context: context,
       builder: (context) {
@@ -50,14 +51,14 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
               ),
               elevation: .0,
               onPressed: () async {
-                if (connectionModel.fileInfos[index]["isDirectory"] == "true") {
-                  await connectionModel.client.sftpRmdir(filePath);
+                if (model.fileInfos[index]["isDirectory"] == "true") {
+                  await model.client.sftpRmdir(filePath);
                 } else {
-                  await connectionModel.client.sftpRm(filePath);
+                  await model.client.sftpRm(filePath);
                 }
                 Navigator.pop(context);
                 Navigator.pop(context);
-                ConnectionMethods.refresh(context);
+                ConnectionMethods.refresh(context, model);
               },
             ),
             SizedBox(width: .0),
@@ -69,11 +70,11 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> fileInfo = connectionModel.fileInfos[widget.index];
-    String currentPath = connectionModel.currentConnection.path;
+    Map<String, String> fileInfo = Provider.of<ConnectionModel>(context).fileInfos[widget.index];
+    String currentPath = Provider.of<ConnectionModel>(context).currentConnection.path;
     String filePath = currentPath;
     if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
-    filePath += connectionModel.fileInfos[widget.index]["filename"];
+    filePath += Provider.of<ConnectionModel>(context).fileInfos[widget.index]["filename"];
     double tableFontSize = 16.0;
     var renameController = TextEditingController(text: fileInfo["filename"]);
 
@@ -108,191 +109,193 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                 height: 1.0,
                 color: Theme.of(context).dividerColor,
               ),
-              Container(
-                height: constraints.maxHeight - 57.0,
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(18.0),
-                      child: Opacity(
-                        opacity: .8,
-                        child: Table(
-                          columnWidths: {0: FixedColumnWidth(158.0)},
-                          children: <TableRow>[
-                            if (fileInfo["isDirectory"] == "false")
+              Consumer<ConnectionModel>(builder: (context, model, child) {
+                return Container(
+                  height: constraints.maxHeight - 57.0,
+                  child: ListView(
+                    physics: BouncingScrollPhysics(),
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(18.0),
+                        child: Opacity(
+                          opacity: .8,
+                          child: Table(
+                            columnWidths: {0: FixedColumnWidth(158.0)},
+                            children: <TableRow>[
+                              if (fileInfo["isDirectory"] == "false")
+                                TableRow(children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 2.0),
+                                    child: Text(
+                                      "Size:",
+                                      style: TextStyle(fontSize: tableFontSize),
+                                    ),
+                                  ),
+                                  Text(
+                                    fileInfo["convertedFileSize"],
+                                    style: TextStyle(fontSize: tableFontSize),
+                                  ),
+                                ]),
                               TableRow(children: [
                                 Padding(
                                   padding: EdgeInsets.only(bottom: 2.0),
                                   child: Text(
-                                    "Size:",
+                                    "Permissions:",
                                     style: TextStyle(fontSize: tableFontSize),
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["convertedFileSize"],
+                                  fileInfo["permissions"],
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
-                            TableRow(children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 2.0),
-                                child: Text(
-                                  "Permissions:",
-                                  style: TextStyle(fontSize: tableFontSize),
-                                ),
-                              ),
-                              Text(
-                                fileInfo["permissions"],
-                                style: TextStyle(fontSize: tableFontSize),
-                              ),
-                            ]),
-                            TableRow(children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 2.0),
-                                child: Text(
-                                  "Modification Date:",
-                                  style: TextStyle(fontSize: tableFontSize),
-                                ),
-                              ),
-                              Text(
-                                fileInfo["modificationDate"],
-                                style: TextStyle(fontSize: tableFontSize),
-                              ),
-                            ]),
-                            TableRow(children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 2.0),
-                                child: Text(
-                                  "Last Access:",
-                                  style: TextStyle(fontSize: tableFontSize),
-                                ),
-                              ),
-                              Text(
-                                fileInfo["lastAccess"],
-                                style: TextStyle(fontSize: tableFontSize),
-                              ),
-                            ]),
-                            TableRow(children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 2.0),
-                                child: Text(
-                                  "Path:",
-                                  style: TextStyle(fontSize: tableFontSize),
-                                ),
-                              ),
-                              Text(
-                                currentPath + "/" + fileInfo["filename"],
-                                style: TextStyle(fontSize: tableFontSize),
-                              ),
-                            ]),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 1.0,
-                      margin: EdgeInsets.only(bottom: 8.0),
-                      color: Theme.of(context).dividerColor,
-                    ),
-                    fileInfo["isDirectory"] == "true"
-                        ? Container()
-                        : ListTile(
-                            leading: Icon(Icons.open_in_new, color: Theme.of(context).accentColor),
-                            title: Padding(
-                              padding: EdgeInsets.only(top: 2.0),
-                              child: Text(
-                                "Open",
-                                style: TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                            onTap: () async {
-                              Navigator.pop(context);
-                              OpenFile.open(await LoadFile.saveInCache(filePath));
-                            },
-                          ),
-                    fileInfo["isDirectory"] == "true"
-                        ? Container()
-                        : Column(
-                            children: <Widget>[
-                              ListTile(
-                                leading: Icon(Icons.file_download, color: Theme.of(context).accentColor),
-                                title: Padding(
-                                  padding: EdgeInsets.only(top: 2.0),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
                                   child: Text(
-                                    "Download",
-                                    style: TextStyle(fontWeight: FontWeight.w500),
+                                    "Modification Date:",
+                                    style: TextStyle(fontSize: tableFontSize),
                                   ),
                                 ),
-                                onTap: () async {
-                                  Navigator.pop(context);
-                                  await LoadFile.download(context, filePath);
-                                },
-                              ),
+                                Text(
+                                  fileInfo["modificationDate"],
+                                  style: TextStyle(fontSize: tableFontSize),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Last Access:",
+                                    style: TextStyle(fontSize: tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  fileInfo["lastAccess"],
+                                  style: TextStyle(fontSize: tableFontSize),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 2.0),
+                                  child: Text(
+                                    "Path:",
+                                    style: TextStyle(fontSize: tableFontSize),
+                                  ),
+                                ),
+                                Text(
+                                  currentPath + "/" + fileInfo["filename"],
+                                  style: TextStyle(fontSize: tableFontSize),
+                                ),
+                              ]),
                             ],
                           ),
-                    ListTile(
-                      leading: Icon(OMIcons.edit, color: Theme.of(context).accentColor),
-                      title: Padding(
-                        padding: EdgeInsets.only(top: 2.0),
-                        child: Text(
-                          "Rename",
-                          style: TextStyle(fontWeight: FontWeight.w500),
                         ),
                       ),
-                      onTap: () {
-                        customShowDialog(
-                          context: context,
-                          builder: (context) {
-                            return CustomAlertDialog(
-                              title: Text(
-                                "Rename '${fileInfo["filename"]}'",
-                                style: TextStyle(fontFamily: SettingsVariables.accentFont),
-                              ),
-                              content: TextField(
-                                controller: renameController,
-                                decoration: InputDecoration(
-                                  labelText: "New name",
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
-                                  ),
+                      Container(
+                        height: 1.0,
+                        margin: EdgeInsets.only(bottom: 8.0),
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      fileInfo["isDirectory"] == "true"
+                          ? Container()
+                          : ListTile(
+                              leading: Icon(Icons.open_in_new, color: Theme.of(context).accentColor),
+                              title: Padding(
+                                padding: EdgeInsets.only(top: 2.0),
+                                child: Text(
+                                  "Open",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
                                 ),
-                                cursorColor: Theme.of(context).accentColor,
-                                autofocus: true,
-                                onSubmitted: (String value) async {
-                                  String newFilePath = currentPath;
-                                  if (currentPath.substring(currentPath.length - 2) != "/") {
-                                    newFilePath += "/";
-                                  }
-                                  newFilePath += value;
-                                  await connectionModel.client.sftpRename(
-                                    oldPath: filePath,
-                                    newPath: newFilePath,
-                                  );
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  ConnectionMethods.refresh(context);
-                                },
                               ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(OMIcons.delete, color: Theme.of(context).accentColor),
-                      title: Padding(
-                        padding: EdgeInsets.only(top: 2.0),
-                        child: Text(
-                          "Delete",
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                OpenFile.open(await LoadFile.saveInCache(filePath, model));
+                              },
+                            ),
+                      fileInfo["isDirectory"] == "true"
+                          ? Container()
+                          : Column(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: Icon(Icons.file_download, color: Theme.of(context).accentColor),
+                                  title: Padding(
+                                    padding: EdgeInsets.only(top: 2.0),
+                                    child: Text(
+                                      "Download",
+                                      style: TextStyle(fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    Navigator.pop(context);
+                                    await LoadFile.download(context, model, filePath);
+                                  },
+                                ),
+                              ],
+                            ),
+                      ListTile(
+                        leading: Icon(OMIcons.edit, color: Theme.of(context).accentColor),
+                        title: Padding(
+                          padding: EdgeInsets.only(top: 2.0),
+                          child: Text(
+                            "Rename",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
                         ),
+                        onTap: () {
+                          customShowDialog(
+                            context: context,
+                            builder: (context) {
+                              return CustomAlertDialog(
+                                title: Text(
+                                  "Rename '${fileInfo["filename"]}'",
+                                  style: TextStyle(fontFamily: SettingsVariables.accentFont),
+                                ),
+                                content: TextField(
+                                  controller: renameController,
+                                  decoration: InputDecoration(
+                                    labelText: "New name",
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+                                    ),
+                                  ),
+                                  cursorColor: Theme.of(context).accentColor,
+                                  autofocus: true,
+                                  onSubmitted: (String value) async {
+                                    String newFilePath = currentPath;
+                                    if (currentPath.substring(currentPath.length - 2) != "/") {
+                                      newFilePath += "/";
+                                    }
+                                    newFilePath += value;
+                                    await model.client.sftpRename(
+                                      oldPath: filePath,
+                                      newPath: newFilePath,
+                                    );
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    ConnectionMethods.refresh(context, model);
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                      onTap: () => _showDeleteConfirmDialog(filePath, fileInfo, widget.index),
-                    ),
-                  ],
-                ),
-              ),
+                      ListTile(
+                        leading: Icon(OMIcons.delete, color: Theme.of(context).accentColor),
+                        title: Padding(
+                          padding: EdgeInsets.only(top: 2.0),
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        onTap: () => _showDeleteConfirmDialog(model, filePath, fileInfo, widget.index),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             ],
           ),
         );

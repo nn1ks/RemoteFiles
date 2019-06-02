@@ -27,7 +27,7 @@ class LoadFile {
     return false;
   }
 
-  static Future<void> download(BuildContext context, String filePath, {bool isRedownloading = false}) async {
+  static Future<void> download(BuildContext context, ConnectionModel model, String filePath, {bool isRedownloading = false}) async {
     try {
       if (await _handlePermission()) {
         String filename = "";
@@ -53,18 +53,18 @@ class LoadFile {
           if (filename == lsFilenames) fileNameExists = true;
         }
         if (!fileNameExists || isRedownloading) {
-          await connectionModel.client.sftpDownload(
+          await model.client.sftpDownload(
             path: filePath,
             toPath: dir.path,
             callback: (progress) {
               print(progress);
-              connectionModel.progressValue = progress;
+              model.progressValue = progress;
               if (progress != 100) {
-                connectionModel.showProgress = true;
-                connectionModel.loadFilename = filename;
-                connectionModel.progressType = "download";
+                model.showProgress = true;
+                model.loadFilename = filename;
+                model.progressType = "download";
               } else if (progress == 100) {
-                _downOrUploadCompleted(context, "download", dir.path + "/" + filename);
+                _downOrUploadCompleted(context, model, "download", dir.path + "/" + filename);
               }
             },
           );
@@ -105,7 +105,7 @@ class LoadFile {
                       ),
                       elevation: .0,
                       onPressed: () {
-                        download(context, filePath, isRedownloading: true);
+                        download(context, model, filePath, isRedownloading: true);
                         Navigator.pop(context);
                       },
                     ),
@@ -126,8 +126,8 @@ class LoadFile {
     }
   }
 
-  static Future<void> upload(BuildContext context, {bool isReuploading = false, String pathFromReuploading}) async {
-    connectionModel.progressValue = 0;
+  static Future<void> upload(BuildContext context, ConnectionModel model, {bool isReuploading = false, String pathFromReuploading}) async {
+    model.progressValue = 0;
     String path;
     if (!isReuploading) {
       try {
@@ -147,22 +147,22 @@ class LoadFile {
       }
     }
     bool fileNameExisting = false;
-    var ls = await connectionModel.client.sftpLs(connectionModel.currentConnection.path);
+    var ls = await model.client.sftpLs(model.currentConnection.path);
     for (int i = 0; i < ls.length; i++) {
       if (filename == ls[i]["filename"]) fileNameExisting = true;
     }
     if (!fileNameExisting || isReuploading) {
       try {
-        connectionModel.client.sftpUpload(
+        model.client.sftpUpload(
           path: path,
-          toPath: connectionModel.currentConnection.path,
+          toPath: model.currentConnection.path,
           callback: (progress) {
-            connectionModel.progressValue = progress;
+            model.progressValue = progress;
             if (progress != 100) {
-              connectionModel.showProgress = true;
-              connectionModel.loadFilename = filename;
+              model.showProgress = true;
+              model.loadFilename = filename;
             } else if (progress == 100) {
-              _downOrUploadCompleted(context, "upload");
+              _downOrUploadCompleted(context, model, "upload");
             }
           },
         );
@@ -206,7 +206,7 @@ class LoadFile {
                   ),
                   elevation: .0,
                   onPressed: () {
-                    upload(context, isReuploading: true, pathFromReuploading: path);
+                    upload(context, model, isReuploading: true, pathFromReuploading: path);
                     Navigator.pop(context);
                   },
                 ),
@@ -217,9 +217,9 @@ class LoadFile {
     }
   }
 
-  static void _downOrUploadCompleted(BuildContext context, String progressType, [String saveLocation]) {
+  static void _downOrUploadCompleted(BuildContext context, ConnectionModel model, String progressType, [String saveLocation]) {
     if (progressType == "download") {
-      connectionModel.showProgress = false;
+      model.showProgress = false;
       ConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 6),
@@ -237,19 +237,19 @@ class LoadFile {
           ),
         ),
       );
-      connectionModel.progressType = progressType;
+      model.progressType = progressType;
     } else {
-      connectionModel.showProgress = false;
+      model.showProgress = false;
       ConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("Upload completed"),
         ),
       );
-      ConnectionMethods.refresh(context);
+      ConnectionMethods.refresh(context, model);
     }
   }
 
-  static Future<String> saveInCache(String filePath) async {
+  static Future<String> saveInCache(String filePath, ConnectionModel model) async {
     Directory cacheDir = await getTemporaryDirectory();
     await cacheDir.list().forEach((v) async {
       await v.delete();
@@ -261,17 +261,17 @@ class LoadFile {
         filename = "";
       }
     }
-    await connectionModel.client.sftpDownload(
+    await model.client.sftpDownload(
       path: filePath,
       toPath: cacheDir.path,
       callback: (progress) {
-        connectionModel.progressValue = progress;
+        model.progressValue = progress;
         if (progress != 100) {
-          connectionModel.showProgress = true;
-          connectionModel.loadFilename = filename;
-          connectionModel.progressType = "cache";
+          model.showProgress = true;
+          model.loadFilename = filename;
+          model.progressType = "cache";
         } else if (progress == 100) {
-          connectionModel.showProgress = false;
+          model.showProgress = false;
         }
       },
     );

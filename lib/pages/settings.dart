@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../shared/shared.dart';
 import '../services/services.dart';
 
@@ -213,7 +214,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   hasSwitch: true,
                   onChanged: (bool value) async {
                     await SettingsVariables.setSortIsDescending(value);
-                    connectionModel.sort();
+                    Provider.of<ConnectionModel>(context).sort();
                     setState(() {});
                   },
                 ),
@@ -258,7 +259,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "automatic",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value);
+                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
                                       setState(() {});
                                     },
                                   ),
@@ -267,7 +268,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "B",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value);
+                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
                                       setState(() {});
                                     },
                                   ),
@@ -276,7 +277,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "KB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value);
+                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
                                       setState(() {});
                                     },
                                   ),
@@ -285,7 +286,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "MB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value);
+                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
                                       setState(() {});
                                     },
                                   ),
@@ -294,7 +295,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "GB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value);
+                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
                                       setState(() {});
                                     },
                                   ),

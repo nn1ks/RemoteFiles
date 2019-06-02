@@ -3,7 +3,7 @@ import 'package:ssh/ssh.dart';
 import '../pages/pages.dart';
 import 'services.dart';
 
-var connectionModel = ConnectionModel();
+//var connectionModel = ConnectionModel();
 
 class ConnectionModel with ChangeNotifier {
   SSHClient _client;
