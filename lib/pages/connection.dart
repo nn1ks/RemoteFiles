@@ -252,45 +252,47 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                 await SettingsVariables.setShowAddressInAppBar(!SettingsVariables.showAddressInAppBar);
                                 setState(() {});
                               },
-                              child: Row(
-                                children: <Widget>[
-                                  IconButton(
-                                    icon: Padding(
-                                      padding: EdgeInsets.only(top: 1.0),
-                                      child: Icon(OMIcons.flashOn),
+                              child: ClipRect(
+                                child: Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Padding(
+                                        padding: EdgeInsets.only(top: 1.0),
+                                        child: Icon(OMIcons.flashOn),
+                                      ),
+                                      onPressed: () {
+                                        ConnectionDialog(
+                                          context: context,
+                                          page: "connection",
+                                          primaryButtonIconData: Icons.remove_circle_outline,
+                                          primaryButtonLabel: "Disconnect",
+                                          primaryButtonOnPressed: () {
+                                            if (!Platform.isIOS) model.client.disconnectSFTP();
+                                            model.client.disconnect();
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                        ).show();
+                                      },
                                     ),
-                                    onPressed: () {
-                                      ConnectionDialog(
-                                        context: context,
-                                        page: "connection",
-                                        primaryButtonIconData: Icons.remove_circle_outline,
-                                        primaryButtonLabel: "Disconnect",
-                                        primaryButtonOnPressed: () {
-                                          if (!Platform.isIOS) model.client.disconnectSFTP();
-                                          model.client.disconnect();
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        },
-                                      ).show();
-                                    },
-                                  ),
-                                  AnimatedSize(
-                                    vsync: this,
-                                    duration: Duration(milliseconds: 200),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
-                                      child: SizedBox(
-                                        width: !SettingsVariables.showAddressInAppBar ? .0 : null,
-                                        child: Text(
-                                          ConnectionPage.connection.address,
-                                          style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 16.0, fontWeight: FontWeight.w600),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.fade,
+                                    AnimatedSize(
+                                      vsync: this,
+                                      duration: Duration(milliseconds: 200),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
+                                        child: SizedBox(
+                                          width: !SettingsVariables.showAddressInAppBar ? .0 : null,
+                                          child: Text(
+                                            ConnectionPage.connection.address,
+                                            style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 16.0, fontWeight: FontWeight.w600),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.fade,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                             Container(
