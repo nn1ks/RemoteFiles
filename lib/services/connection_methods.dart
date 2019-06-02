@@ -15,6 +15,7 @@ class ConnectionMethods {
     String path,
     bool setIsLoading = true,
   }) async {
+    model.fileInfos = [];
     model.client = SSHClient(
       host: address,
       port: port != null && port != "" ? int.parse(port) : 22,

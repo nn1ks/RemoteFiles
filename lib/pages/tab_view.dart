@@ -190,6 +190,7 @@ class _TabViewPageState extends State<TabViewPage> {
                             ),
                       ),
                     );
+                    Provider.of<ConnectionModel>(context).currentConnection = null;
                     Future.delayed(Duration(milliseconds: 50)).then((_) {
                       ConnectionMethods.connect(context, Provider.of<ConnectionModel>(context), ConnectionPage.connection);
                     });
