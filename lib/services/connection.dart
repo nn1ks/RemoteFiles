@@ -42,7 +42,7 @@ class Connection {
     return Connection(
       name: map["name"] ?? "",
       address: map["address"],
-      port: map["port"] ?? "22",
+      port: map["port"] != null && map["port"] != "" ? map["port"] : "22",
       username: map["username"] ?? "",
       passwordOrKey: map["passwordOrKey"] ?? "",
       path: map["path"] ?? "~",
