@@ -125,8 +125,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        notchMargin: 6.0,
-        shape: CircularNotchedRectangle(),
         child: Container(
           height: 55.0,
           child: Row(
@@ -269,14 +267,157 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton(
-        heroTag: "fab",
-        elevation: 4.0,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditConnectionPage(isNew: true)));
-        },
-      ),
+      floatingActionButton: StatefulBuilder(builder: (context, setState) {
+        return FloatingActionRow(
+          heroTag: "fab",
+          children: <Widget>[
+            FloatingActionRowButton(
+              icon: Icon(Icons.flash_on),
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      bool _inputIsValid = true;
+                      return SafeArea(
+                        child: Container(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Quick connect",
+                                style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
+                              ),
+                              SizedBox(height: 12.0),
+                              TextField(
+                                autofocus: true,
+                                decoration: InputDecoration(
+                                  hintText: "username@address:port",
+                                  errorText: _inputIsValid ? null : "Input is not valid",
+                                ),
+                                onSubmitted: (String value) {
+                                  bool isValid = true;
+                                  bool usernameIsGiven = false;
+                                  int atSignIndex;
+                                  int atSignsNumber = 0;
+                                  for (int i = 0; i < value.length; i++) {
+                                    if (value[i] == "@") {
+                                      atSignIndex = i;
+                                      atSignsNumber++;
+                                      usernameIsGiven = true;
+                                      if (atSignsNumber > 1) {
+                                        isValid = false;
+                                      }
+                                    }
+                                  }
+                                  if (isValid) {
+                                    int usernameStartIndex = 0;
+                                    if (usernameIsGiven) {
+                                      for (int i = 0; i < value.substring(0, atSignIndex).length; i++) {
+                                        if (value[i] == ":" || value[i] == "/" || value[i] == "") {
+                                          usernameStartIndex = i + 1;
+                                        }
+                                      }
+                                    }
+                                    int portStartIndex;
+                                    if (!usernameIsGiven) atSignIndex = -1;
+                                    for (int i = atSignIndex + 1; i < value.length; i++) {
+                                      if (value[i] == ":") {
+                                        portStartIndex = i + 1;
+                                      }
+                                    }
+                                    Connection connection = Connection();
+                                    Navigator.pop(context);
+                                    customShowDialog(
+                                      context: context,
+                                      builder: (context) => CustomAlertDialog(
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                if (!usernameIsGiven)
+                                                  Padding(
+                                                    padding: EdgeInsets.only(bottom: 16.0),
+                                                    child: TextField(
+                                                      autofocus: true,
+                                                      autocorrect: false,
+                                                      decoration: InputDecoration(labelText: "Username"),
+                                                      onChanged: (String value) => connection.username = value,
+                                                    ),
+                                                  ),
+                                                TextField(
+                                                  autofocus: usernameIsGiven,
+                                                  obscureText: true,
+                                                  decoration: InputDecoration(labelText: "Password"),
+                                                  onChanged: (String value) => connection.passwordOrKey = value,
+                                                ),
+                                              ],
+                                            ),
+                                            actions: <Widget>[
+                                              RaisedButton(
+                                                color: Theme.of(context).accentColor,
+                                                splashColor: Colors.black12,
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 3.5, bottom: 1.0),
+                                                      child: Icon(
+                                                        Icons.flash_on,
+                                                        size: 19.0,
+                                                        color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Connect",
+                                                      style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black),
+                                                    ),
+                                                  ],
+                                                ),
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                                                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
+                                                elevation: .0,
+                                                onPressed: () {
+                                                  if (usernameIsGiven) connection.username = value.substring(usernameStartIndex, atSignIndex);
+                                                  connection.address =
+                                                      value.substring(atSignIndex + 1, portStartIndex == null ? value.length : portStartIndex - 1);
+                                                  connection.port = portStartIndex == null ? "22" : value.substring(portStartIndex);
+                                                  print(connection);
+                                                  HomePage.recentlyAddedPage.addToJson(connection);
+                                                  HomePage.recentlyAddedPage.setConnectionsFromJson();
+                                                  Navigator.pop(context);
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectionPage(connection)));
+                                                  Provider.of<ConnectionModel>(context).currentConnection = null;
+                                                  Future.delayed(Duration(milliseconds: 50)).then((_) {
+                                                    ConnectionMethods.connect(context, Provider.of<ConnectionModel>(context), connection);
+                                                  });
+                                                },
+                                              ),
+                                              Container(),
+                                            ],
+                                          ),
+                                    );
+                                  } else {
+                                    setState(() => _inputIsValid = false);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              },
+            ),
+            FloatingActionRowDivider(),
+            FloatingActionRowButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditConnectionPage(isNew: true)));
+              },
+            ),
+          ],
+        );
+      }),
       body: SafeArea(
         child: TabBarView(
           controller: _tabController,
