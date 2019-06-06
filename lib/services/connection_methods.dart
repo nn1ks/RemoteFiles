@@ -30,7 +30,7 @@ class ConnectionMethods {
       await model.client.connect();
     } catch (e) {
       connected = false;
-      HomePage.scaffoldKey.currentState.showSnackBar(
+      ConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 5),
           content: Text("Unable to connect to $address\n$e"),
