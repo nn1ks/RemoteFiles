@@ -13,7 +13,7 @@ class CustomTheme with ChangeNotifier {
 
   bool isLightTheme() {
     if (_themeValue == "automatic") {
-      return MediaQueryData().platformBrightness == Brightness.light;
+      return true;
     } else if (_themeValue == "light") {
       return true;
     } else {
