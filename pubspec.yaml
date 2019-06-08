@@ -72,6 +72,8 @@ flutter:
 
   assets:
     - assets/app_icon.png
+    - assets/app_icon_black.png
+    - assets/app_icon_white.png
     - assets/arrow_drop_down.png
     - assets/arrow_drop_up.png
 
