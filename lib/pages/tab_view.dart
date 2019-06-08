@@ -14,15 +14,11 @@ class TabViewPage extends StatefulWidget {
 
   TabViewPage(this.jsonFileName, this.isFavorites);
 
-  set connections(List<Connection> value) => _TabViewPageState().connections = value;
-  List<Connection> get connections => _TabViewPageState().connections;
+  List<Connection> connections = [];
 
-  set dir(Directory value) => _TabViewPageState().dir = value;
-  Directory get dir => _TabViewPageState().dir;
-  set jsonFile(File value) => _TabViewPageState().jsonFile = value;
-  File get jsonFile => _TabViewPageState().jsonFile;
-  set jsonFileExists(bool value) => _TabViewPageState().jsonFileExists = value;
-  bool get jsonFileExists => _TabViewPageState().jsonFileExists;
+  Directory dir;
+  File jsonFile;
+  bool jsonFileExists = false;
 
   List<Connection> getConnectionsFromJson() {
     if (!jsonFileExists) return null;
@@ -90,12 +86,6 @@ class TabViewPage extends StatefulWidget {
 }
 
 class _TabViewPageState extends State<TabViewPage> {
-  List<Connection> connections = [];
-
-  Directory dir;
-  File jsonFile;
-  bool jsonFileExists = false;
-
   String _getSubtitle(int index) {
     String _output = "";
     bool _addressIsInOutput = false;
