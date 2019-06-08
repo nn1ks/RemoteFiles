@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../shared/shared.dart';
 import '../services/services.dart';
+import 'pages.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -411,6 +412,47 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowAddressInAppBar(value);
                     setState(() {});
+                  },
+                ),
+                Divider(),
+                ListTile(
+                  title: Text("Delete all connections"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            title: Text(
+                              "Delete all connections?\nThis cannot be undone.",
+                              style: TextStyle(fontFamily: SettingsVariables.accentFont),
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                                child: Text("Cancel"),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              RaisedButton(
+                                color: Theme.of(context).accentColor,
+                                splashColor: Colors.black12,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                                child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
+                                elevation: .0,
+                                onPressed: () {
+                                  HomePage.favoritesPage.removeAllFromJson();
+                                  HomePage.favoritesPage.setConnectionsFromJson();
+                                  HomePage.recentlyAddedPage.removeAllFromJson();
+                                  HomePage.recentlyAddedPage.setConnectionsFromJson();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              SizedBox(width: .0),
+                            ],
+                          ),
+                    );
                   },
                 ),
                 SizedBox(height: 16.0),

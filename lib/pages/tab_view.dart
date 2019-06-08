@@ -81,6 +81,10 @@ class TabViewPage extends StatefulWidget {
     jsonFile.writeAsStringSync(json.encode(mapList));
   }
 
+  void removeAllFromJson() {
+    jsonFile.writeAsStringSync(json.encode([]));
+  }
+
   @override
   _TabViewPageState createState() => _TabViewPageState();
 }
