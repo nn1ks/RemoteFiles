@@ -1,79 +1,95 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ssh/ssh.dart';
 import '../pages/pages.dart';
 import 'services.dart';
 
 class ConnectionMethods {
+  static Future<bool> connectClient(BuildContext context, {@required String address, int port, String username, String passwordOrKey}) async {
+    try {
+      var model = Provider.of<ConnectionModel>(context);
+      model.client = SSHClient(
+        host: address,
+        port: port ?? 22,
+        username: username,
+        passwordOrKey: passwordOrKey,
+      );
+      await model.client.connect();
+      await model.client.connectSFTP();
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   static Future<void> connectIndividually(
-    BuildContext context,
-    ConnectionModel model, {
+    BuildContext context, {
     @required String address,
     String port,
     String username,
     String passwordOrKey,
     String path,
     bool setIsLoading = true,
+    bool openNewPage = true,
   }) async {
-    model.fileInfos = [];
-    model.client = SSHClient(
-      host: address,
-      port: port != null && port != "" ? int.parse(port) : 22,
-      username: username,
-      passwordOrKey: passwordOrKey,
+    var model = Provider.of<ConnectionModel>(context);
+
+    ConnectionPage currentTemp = ConnectionPage(
+      Connection(
+        address: address,
+        port: port,
+        username: username,
+        passwordOrKey: passwordOrKey,
+        path: path,
+      ),
     );
-    if (setIsLoading) {
-      model.isLoading = true;
+
+    if (setIsLoading) model.isLoading = true;
+
+    if (path.length == 0 || path[0] != "/") {
+      await model.client.execute("cd");
+      path = await model.client.execute("pwd");
+      path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
+      currentTemp.connection.path = path;
     }
-    bool connected = true;
+
+    if (openNewPage) Navigator.push(context, MaterialPageRoute(builder: (context) => currentTemp));
+
+    var fileInfos = List<Map<String, String>>();
     try {
-      await model.client.connect();
+      var list = await model.client.sftpLs(path);
+      fileInfos.length = list.length;
+      for (int i = 0; i < list.length; i++) {
+        fileInfos[i] = {};
+        list[i].forEach((k, v) {
+          fileInfos[i].addAll({k.toString(): v.toString()});
+        });
+        fileInfos[i]["filename"] = _removeTrailingSlash(fileInfos[i]["filename"]);
+        fileInfos[i].addAll({"convertedFileSize": ""});
+      }
+      model.current = currentTemp;
+      model.current.fileInfos = fileInfos;
     } catch (e) {
-      connected = false;
-      ConnectionPage.scaffoldKey.currentState.showSnackBar(
+      print(e);
+      if (openNewPage && model.current != null) {
+        Navigator.pop(context);
+      } else {
+        model.current = currentTemp;
+      }
+      print("show SnackBar");
+      print(model.current.connection.path);
+      model.current.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 5),
-          content: Text("Unable to connect to $address\n$e"),
+          content: Text("Unable to list directory $path\n$e"),
         ),
       );
     }
-    if (connected) {
-      await model.client.connectSFTP();
-      bool pathIsGiven = path.length != 0;
-      if (!pathIsGiven || path[0] != "/") {
-        path = await model.client.execute("pwd");
-        path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
-      }
-      bool pathIsValid = true;
-      var list;
-      try {
-        list = await model.client.sftpLs(path);
-      } catch (e) {
-        pathIsValid = false;
-        ConnectionPage.scaffoldKey.currentState.showSnackBar(
-          SnackBar(
-            duration: Duration(seconds: 5),
-            content: Text("Unable to go to directory $path\n$e"),
-          ),
-        );
-      }
-      if (pathIsValid) {
-        model.currentConnection = Connection(address: address, port: port, username: username, passwordOrKey: passwordOrKey, path: path);
-        model.fileInfos = [];
-        model.fileInfos.length = list.length;
-        for (int i = 0; i < list.length; i++) {
-          model.fileInfos[i] = {};
-          list[i].forEach((k, v) {
-            model.fileInfos[i].addAll({k.toString(): v.toString()});
-          });
-          model.fileInfos[i]["filename"] = _removeTrailingSlash(model.fileInfos[i]["filename"]);
-          model.fileInfos[i].addAll({"convertedFileSize": ""});
-        }
-      }
-    }
+
     SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit, model);
     model.isLoading = false;
-    model.connectionsNum = model.fileInfos.length;
     model.sort();
   }
 
@@ -82,45 +98,50 @@ class ConnectionMethods {
     return path;
   }
 
-  static Future<void> connect(BuildContext context, ConnectionModel model, Connection connection, {bool setIsLoading = true}) async {
+  static Future<void> connect(BuildContext context, Connection connection, {bool setIsLoading = true, bool openNewPage = true}) async {
     await connectIndividually(
       context,
-      model,
       address: connection.address,
       port: connection.port,
       username: connection.username,
       passwordOrKey: connection.passwordOrKey,
       path: connection.path,
       setIsLoading: setIsLoading,
+      openNewPage: openNewPage,
     );
   }
 
-  static Future<void> goToDirectory(BuildContext context, ConnectionModel model, String value) async {
-    await connectIndividually(
+  static void goToDirectory(BuildContext context, String path) {
+    var currentConnection = Provider.of<ConnectionModel>(context).current.connection;
+    print(path[0] == "/" ? path : currentConnection.path + "/" + path);
+    print(currentConnection.path + "/" + path);
+    print(path);
+    connect(
       context,
-      model,
-      address: model.currentConnection.address,
-      port: model.currentConnection.port,
-      username: model.currentConnection.username,
-      passwordOrKey: model.currentConnection.passwordOrKey,
-      path: value,
+      Connection(
+        name: currentConnection.name,
+        address: currentConnection.address,
+        port: currentConnection.port,
+        username: currentConnection.username,
+        passwordOrKey: currentConnection.passwordOrKey,
+        path: path[0] == "/" ? path : currentConnection.path + "/" + path,
+      ),
     );
   }
 
-  static Future<void> goToDirectoryBefore(BuildContext context, ConnectionModel model) async {
-    String current = model.currentConnection.path;
+  static Future<void> goToDirectoryBefore(BuildContext context) async {
+    String currentPath = Provider.of<ConnectionModel>(context).current.connection.path;
     int lastSlashIndex;
-    for (int i = 0; i < current.length - 1; i++) {
-      if (current[i] == "/") {
+    for (int i = 0; i < currentPath.length - 1; i++) {
+      if (currentPath[i] == "/") {
         lastSlashIndex = i;
       }
     }
     if (lastSlashIndex == 0) lastSlashIndex = 1;
-    model.directoryBefore = current.substring(0, lastSlashIndex);
-    goToDirectory(context, model, model.directoryBefore);
+    goToDirectory(context, currentPath.substring(0, lastSlashIndex));
   }
 
-  static Future<void> refresh(BuildContext context, ConnectionModel model) async {
-    await connect(context, model, model.currentConnection);
+  static Future<void> refresh(BuildContext context, {bool setIsLoading}) async {
+    await connect(context, Provider.of<ConnectionModel>(context).current.connection, setIsLoading: setIsLoading, openNewPage: false);
   }
 }

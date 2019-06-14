@@ -237,6 +237,106 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   isView: false,
                 ),
                 Divider(),
+                _buildHeadline("Appearance"),
+                ListTile(
+                  title: Text("Theme"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                            content: StatefulBuilder(builder: (context, setState) {
+                              return Consumer<CustomTheme>(builder: (context, model, child) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    RadioListTile(
+                                      activeColor: Theme.of(context).accentColor,
+                                      title: Text("Automatic"),
+                                      value: "automatic",
+                                      groupValue: model.themeValue,
+                                      onChanged: (String value) async {
+                                        await model.setThemeValue(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    RadioListTile(
+                                      activeColor: Theme.of(context).accentColor,
+                                      title: Text("Light"),
+                                      value: "light",
+                                      groupValue: model.themeValue,
+                                      onChanged: (String value) async {
+                                        await model.setThemeValue(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                    RadioListTile(
+                                      activeColor: Theme.of(context).accentColor,
+                                      title: Text("Dark"),
+                                      value: "dark",
+                                      groupValue: model.themeValue,
+                                      onChanged: (String value) async {
+                                        await model.setThemeValue(value);
+                                        setState(() {});
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                            }),
+                          ),
+                    );
+                  },
+                ),
+                /*ListTile(
+                  title: Text("Font to use for headers"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                            content: StatefulBuilder(builder: (context, setState2) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
+                                    title: Text("System default"),
+                                    value: "default",
+                                    groupValue: SettingsVariables.accentFont,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setAccentFont(value);
+                                      setState2(() {});
+                                      setState(() {});
+                                    },
+                                  ),
+                                  RadioListTile(
+                                    activeColor: Theme.of(context).accentColor,
+                                    title: Text("Overpass Mono", style: TextStyle(fontFamily: "OverpassMono")),
+                                    value: "OverpassMono",
+                                    groupValue: SettingsVariables.accentFont,
+                                    onChanged: (String value) async {
+                                      await SettingsVariables.setAccentFont(value);
+                                      setState2(() {});
+                                      setState(() {});
+                                    },
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
+                    );
+                  },
+                ),*/
+                _buildCheckboxListTile(
+                  titleLabel: "Show connection address in app bar",
+                  value: SettingsVariables.showAddressInAppBar,
+                  onChanged: (bool value) async {
+                    await SettingsVariables.setShowAddressInAppBar(value);
+                    setState(() {});
+                  },
+                ),
+                Divider(),
                 _buildHeadline("Other"),
                 _buildCheckboxListTile(
                   titleLabel: "Show hidden files",
@@ -314,107 +414,6 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                     );
                   },
                 ),
-                Divider(),
-                _buildHeadline("Appearance"),
-                ListTile(
-                  title: Text("Theme"),
-                  onTap: () {
-                    customShowDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                            content: StatefulBuilder(builder: (context, setState) {
-                              return Consumer<CustomTheme>(builder: (context, model, child) {
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    RadioListTile(
-                                      activeColor: Theme.of(context).accentColor,
-                                      title: Text("Automatic"),
-                                      value: "automatic",
-                                      groupValue: model.themeValue,
-                                      onChanged: (String value) async {
-                                        await model.setThemeValue(value);
-                                        setState(() {});
-                                      },
-                                    ),
-                                    RadioListTile(
-                                      activeColor: Theme.of(context).accentColor,
-                                      title: Text("Light"),
-                                      value: "light",
-                                      groupValue: model.themeValue,
-                                      onChanged: (String value) async {
-                                        await model.setThemeValue(value);
-                                        setState(() {});
-                                      },
-                                    ),
-                                    RadioListTile(
-                                      activeColor: Theme.of(context).accentColor,
-                                      title: Text("Dark"),
-                                      value: "dark",
-                                      groupValue: model.themeValue,
-                                      onChanged: (String value) async {
-                                        await model.setThemeValue(value);
-                                        setState(() {});
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                            }),
-                          ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text("Font to use for headers"),
-                  onTap: () {
-                    customShowDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                            content: StatefulBuilder(builder: (context, setState2) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  RadioListTile(
-                                    activeColor: Theme.of(context).accentColor,
-                                    title: Text("System default"),
-                                    value: "default",
-                                    groupValue: SettingsVariables.accentFont,
-                                    onChanged: (String value) async {
-                                      await SettingsVariables.setAccentFont(value);
-                                      setState2(() {});
-                                      setState(() {});
-                                    },
-                                  ),
-                                  RadioListTile(
-                                    activeColor: Theme.of(context).accentColor,
-                                    title: Text("Overpass Mono", style: TextStyle(fontFamily: "OverpassMono")),
-                                    value: "OverpassMono",
-                                    groupValue: SettingsVariables.accentFont,
-                                    onChanged: (String value) async {
-                                      await SettingsVariables.setAccentFont(value);
-                                      setState2(() {});
-                                      setState(() {});
-                                    },
-                                  ),
-                                ],
-                              );
-                            }),
-                          ),
-                    );
-                  },
-                ),
-                _buildCheckboxListTile(
-                  titleLabel: "Show connection address in app bar",
-                  value: SettingsVariables.showAddressInAppBar,
-                  onChanged: (bool value) async {
-                    await SettingsVariables.setShowAddressInAppBar(value);
-                    setState(() {});
-                  },
-                ),
-                Divider(),
                 ListTile(
                   title: Text("Delete all connections"),
                   onTap: () {

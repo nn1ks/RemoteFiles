@@ -98,117 +98,135 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
     }
 
-    void connect() {
-      if (connection.address == null) {
-        mainInputIsValid = false;
-        showError = true;
-      } else {
-        HomePage.recentlyAddedPage.addToJson(connection);
-        HomePage.recentlyAddedPage.setConnectionsFromJson();
-        Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ConnectionPage(connection)));
-        Provider.of<ConnectionModel>(context).currentConnection = null;
-        Future.delayed(Duration(milliseconds: 50)).then((_) {
-          ConnectionMethods.connect(context, Provider.of<ConnectionModel>(context), connection);
-        });
-      }
-    }
-
     showCustomModalBottomSheet(
         context: context,
         builder: (context) {
           return SafeArea(
-            child: Container(
-              padding: EdgeInsets.all(16.0),
-              child: StatefulBuilder(builder: (context, setState2) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Quick connect",
-                      style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(height: 12.0),
-                    TextField(
-                      autofocus: true,
-                      autocorrect: false,
-                      decoration: InputDecoration(
-                        hintText: "username@address:port",
-                        errorText: showError ? "Input is not valid" : null,
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                child: StatefulBuilder(builder: (context, setState2) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Quick connect",
+                        style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
                       ),
-                      onChanged: (String value) {
-                        showError = false;
-                        mainTextInput = value;
-                        setConnection();
-                        if (mainInputIsValid) {
-                          if (connection.username == null || connection.username == "") {
-                            showUsernameInput = true;
-                          } else {
-                            showUsernameInput = false;
-                          }
-                        }
-                      },
-                      onSubmitted: (String value) {},
-                    ),
-                    Divider(height: 20.0),
-                    if (showUsernameInput)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 16.0),
-                        child: TextField(
-                          autofocus: true,
-                          autocorrect: false,
-                          decoration: InputDecoration(labelText: "Username"),
-                          onChanged: (String value) => connection.username = value,
+                      SizedBox(height: 12.0),
+                      TextField(
+                        autofocus: true,
+                        autocorrect: false,
+                        decoration: InputDecoration(
+                          hintText: "[username@]address[:port]",
+                          errorText: showError ? "Input is not valid" : null,
                         ),
+                        onChanged: (String value) {
+                          showError = false;
+                          mainTextInput = value;
+                          setConnection();
+                          if (mainInputIsValid) {
+                            if (connection.username == null || connection.username == "") {
+                              showUsernameInput = true;
+                            } else {
+                              showUsernameInput = false;
+                            }
+                          }
+                        },
+                        onSubmitted: (String value) {},
                       ),
-                    TextField(
-                      autofocus: true,
-                      obscureText: true,
-                      decoration: InputDecoration(labelText: "Password"),
-                      onChanged: (String value) => connection.passwordOrKey = value,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Row(
+                      Divider(height: 20.0),
+                      if (showUsernameInput)
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 16.0),
+                          child: TextField(
+                            autofocus: true,
+                            autocorrect: false,
+                            decoration: InputDecoration(labelText: "Username"),
+                            onChanged: (String value) => connection.username = value,
+                          ),
+                        ),
+                      TextField(
+                        autofocus: true,
+                        obscureText: true,
+                        decoration: InputDecoration(labelText: "Password"),
+                        onChanged: (String value) => connection.passwordOrKey = value,
+                      ),
+                      Divider(height: 20.0),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            splashColor: Colors.black12,
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  margin: EdgeInsets.only(right: 3.5, bottom: 1.0),
-                                  child: Icon(
-                                    Icons.flash_on,
-                                    size: 19.0,
-                                    color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black,
-                                  ),
+                          Expanded(
+                            child: RaisedButton(
+                              color: Theme.of(context).accentColor,
+                              splashColor: Colors.black12,
+                              child: Padding(
+                                padding: EdgeInsets.all(5),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(right: 3.5, top: 1),
+                                      child: Icon(
+                                        Icons.flash_on,
+                                        size: 19.0,
+                                        color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Connect",
+                                      style: TextStyle(fontSize: 16.0, color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  "Connect",
-                                  style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black),
-                                ),
-                              ],
+                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+                              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
+                              elevation: .0,
+                              onPressed: () {
+                                customShowDialog(
+                                  context: context,
+                                  builder: (context) => CustomAlertDialog(
+                                        content: CircularProgressIndicator(),
+                                      ),
+                                );
+                                if (mainInputIsValid && connection.address != null) {
+                                  HomePage.recentlyAddedPage.addToJson(connection);
+                                  HomePage.recentlyAddedPage.setConnectionsFromJson();
+                                  Navigator.pop(context);
+                                  ConnectionMethods.connectClient(
+                                    context,
+                                    address: connection.address,
+                                    port: int.parse(connection.port),
+                                    username: connection.username,
+                                    passwordOrKey: connection.passwordOrKey,
+                                  ).then((bool connected) {
+                                    Navigator.pop(context);
+                                    if (connected) {
+                                      ConnectionMethods.connect(context, connection);
+                                    } else {
+                                      Scaffold.of(context).showSnackBar(SnackBar(
+                                        duration: Duration(seconds: 5),
+                                        content: Text("Unable to connect to ${connection.address}"),
+                                      ));
+                                    }
+                                  });
+                                } else {
+                                  mainInputIsValid = false;
+                                  showError = true;
+                                }
+                              },
                             ),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                            padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
-                            elevation: .0,
-                            onPressed: () {
-                              if (mainInputIsValid) {
-                                connect();
-                              } else {
-                                showError = true;
-                              }
-                            },
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                );
-              }),
+                    ],
+                  );
+                }),
+              ),
             ),
           );
         });

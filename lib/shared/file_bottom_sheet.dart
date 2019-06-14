@@ -47,7 +47,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                 }
                 Navigator.pop(context);
                 Navigator.pop(context);
-                ConnectionMethods.refresh(context, model);
+                ConnectionMethods.refresh(context);
               },
             ),
             SizedBox(width: .0),
@@ -262,7 +262,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                     );
                                     Navigator.pop(context);
                                     Navigator.pop(context);
-                                    ConnectionMethods.refresh(context, model);
+                                    ConnectionMethods.refresh(context);
                                   },
                                 ),
                               );

@@ -23,7 +23,7 @@ class ConnectionPage extends StatefulWidget {
 class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStateMixin {
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
-  List<Widget> _getCurrentPathWidgets(ConnectionModel model) {
+  List<Widget> _getCurrentPathWidgets() {
     List<Widget> widgets = [
       InkWell(
         borderRadius: BorderRadius.circular(100.0),
@@ -31,7 +31,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
           child: Text("/", style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, fontSize: 16.0)),
         ),
-        onTap: () => ConnectionMethods.goToDirectory(context, model, "/"),
+        onTap: () => ConnectionMethods.goToDirectory(context, "/"),
       ),
       Container(
         width: .0,
@@ -65,7 +65,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             child: Text(temp, style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, fontSize: 16.0)),
           ),
           onTap: () {
-            ConnectionMethods.goToDirectory(context, model, path.substring(0, i));
+            ConnectionMethods.goToDirectory(context, path.substring(0, i));
           },
         ));
         if (path.substring(i + 1, path.length).contains("/")) {
@@ -123,7 +123,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
         }
       }
     }
-    list.addAll([Container(), Container(), Container()]);
+    list.add(Container());
     return list;
   }
 
@@ -151,12 +151,8 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             physics: BouncingScrollPhysics(),
             child: Container(
               margin: EdgeInsets.only(right: 10.0),
-              child: Consumer<ConnectionModel>(
-                builder: (context, model, child) {
-                  return Row(
-                    children: _getCurrentPathWidgets(model),
-                  );
-                },
+              child: Row(
+                children: _getCurrentPathWidgets(),
               ),
             ),
           ),
@@ -302,7 +298,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                 ),
                               ),
                             ),
-                            Container(
+                            /*Container(
                               height: MediaQuery.of(context).size.height,
                               width: 1.0,
                               color: Theme.of(context).dividerColor,
@@ -312,9 +308,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                               message: "Go to parent directory",
                               child: IconButton(
                                 icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
-                                onPressed: () => ConnectionMethods.goToDirectoryBefore(context, model),
+                                onPressed: () => ConnectionMethods.goToDirectoryBefore(context),
                               ),
-                            ),
+                            ),*/
                             CustomTooltip(
                               message: "Go to specific directory",
                               child: IconButton(
@@ -338,11 +334,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                             autofocus: true,
                                             autocorrect: false,
                                             onSubmitted: (String value) {
-                                              if (value[0] == "/") {
-                                                ConnectionMethods.goToDirectory(context, model, value);
-                                              } else {
-                                                ConnectionMethods.goToDirectory(context, model, model.currentConnection.path + "/" + value);
-                                              }
+                                              ConnectionMethods.goToDirectory(context, value);
                                               Navigator.pop(context);
                                             },
                                           ),
@@ -436,9 +428,9 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         autofocus: true,
                         autocorrect: false,
                         onSubmitted: (String value) async {
-                          await model.client.sftpMkdir(model.currentConnection.path + "/" + value);
+                          await model.client.sftpMkdir(widget.connection.path + "/" + value);
                           Navigator.pop(context);
-                          ConnectionMethods.connect(context, model, model.currentConnection);
+                          ConnectionMethods.refresh(context);
                         },
                       ),
                     );
@@ -456,7 +448,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               return RefreshIndicator(
                 key: _refreshKey,
                 onRefresh: () async {
-                  await ConnectionMethods.connect(context, model, model.currentConnection, setIsLoading: false);
+                  await ConnectionMethods.refresh(context, setIsLoading: false);
                 },
                 child: model.isLoading
                     ? Container(

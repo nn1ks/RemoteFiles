@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
 import 'pages.dart';
@@ -181,23 +180,38 @@ class _TabViewPageState extends State<TabViewPage> {
                     },
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConnectionPage(
-                              Connection(
-                                address: widget.connections[index].address,
-                                port: widget.connections[index].port,
-                                username: widget.connections[index].username,
-                                passwordOrKey: widget.connections[index].passwordOrKey,
-                                path: widget.connections[index].path,
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => Center(
+                            child: Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: CircularProgressIndicator(),
                               ),
                             ),
-                      ),
+                          ),
                     );
-                    Provider.of<ConnectionModel>(context).currentConnection = null;
-                    Future.delayed(Duration(milliseconds: 50)).then((_) {
-                      ConnectionMethods.connect(context, Provider.of<ConnectionModel>(context), ConnectionPage.connection);
+                    ConnectionMethods.connectClient(
+                      context,
+                      address: widget.connections[index].address,
+                      port: int.parse(widget.connections[index].port),
+                      username: widget.connections[index].username,
+                      passwordOrKey: widget.connections[index].passwordOrKey,
+                    ).then((bool connected) {
+                      Navigator.pop(context);
+                      if (connected) {
+                        ConnectionMethods.connect(context, widget.connections[index]);
+                      } else {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          duration: Duration(seconds: 5),
+                          content: Text("Unable to connect to ${widget.connections[index].address}"),
+                        ));
+                      }
                     });
                   },
                 )
