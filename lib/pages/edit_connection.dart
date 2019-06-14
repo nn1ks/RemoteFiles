@@ -39,7 +39,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         focusNode: focusNodes[index],
         cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword,
-        autocorrect: key != "name",
+        autocorrect: key == "name",
         textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
         keyboardType: key == "port" ? TextInputType.numberWithOptions() : null,
         decoration: InputDecoration(
@@ -49,7 +49,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
           suffixIcon: key == "passwordOrKey" && !_passwordWasChanged && _textEditingController[key].text != ""
               ? CustomIconButton(
-                  icon: Icon(Icons.clear, color: Colors.black87),
+                  icon: Icon(Icons.clear, color: Theme.of(context).textTheme.body1.color),
                   onPressed: () {
                     _textEditingController[key].text = "";
                     _connection.setter(key, "");
