@@ -136,7 +136,7 @@ class SettingsVariables {
         unitDivisor = 1000000000;
         break;
     }
-    model.fileInfos.forEach((v) {
+    model.current.fileInfos.forEach((v) {
       double convertedFileSize;
       String unitValue;
       if (v["fileSize"].length > 9) {

@@ -40,7 +40,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
               child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
               elevation: .0,
               onPressed: () async {
-                if (model.fileInfos[index]["isDirectory"] == "true") {
+                if (model.current.fileInfos[index]["isDirectory"] == "true") {
                   await model.client.sftpRmdir(filePath);
                 } else {
                   await model.client.sftpRm(filePath);
@@ -59,11 +59,11 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> fileInfo = Provider.of<ConnectionModel>(context).fileInfos[widget.index];
-    String currentPath = Provider.of<ConnectionModel>(context).currentConnection.path;
+    Map<String, String> fileInfo = Provider.of<ConnectionModel>(context).current.fileInfos[widget.index];
+    String currentPath = Provider.of<ConnectionModel>(context).current.connection.path;
     String filePath = currentPath;
     if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
-    filePath += Provider.of<ConnectionModel>(context).fileInfos[widget.index]["filename"];
+    filePath += Provider.of<ConnectionModel>(context).current.fileInfos[widget.index]["filename"];
     double tableFontSize = 16.0;
     var renameController = TextEditingController(text: fileInfo["filename"]);
 

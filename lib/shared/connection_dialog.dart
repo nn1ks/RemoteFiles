@@ -63,7 +63,7 @@ class ConnectionDialog extends StatelessWidget {
     } else if (page == "recentlyAdded") {
       values = HomePage.recentlyAddedPage.connections[index];
     } else if (page == "connection") {
-      values = ConnectionPage.connection;
+      values = Provider.of<ConnectionModel>(context).current.connection;
     }
     return CustomAlertDialog(
       title: Text(

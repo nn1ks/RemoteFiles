@@ -9,12 +9,12 @@ import '../shared/shared.dart';
 import 'pages.dart';
 
 class ConnectionPage extends StatefulWidget {
-  static Connection connection;
-  ConnectionPage(Connection connection) {
-    ConnectionPage.connection = connection;
-  }
+  final Connection connection;
+  List<Map<String, String>> fileInfos;
 
-  static var scaffoldKey = GlobalKey<ScaffoldState>();
+  ConnectionPage(this.connection);
+
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   _ConnectionPageState createState() => _ConnectionPageState();
@@ -52,7 +52,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
     ];
     String temp = "";
     String path = "";
-    if (model.currentConnection != null) path = model.currentConnection.path != null ? model.currentConnection.path + "/" : "";
+    if (widget.connection != null) path = widget.connection.path != null ? widget.connection.path + "/" : "";
     if (path.length > 1) {
       if (path[0] == "/" && path[1] == "/") path = path.substring(1, path.length);
     }
@@ -95,22 +95,20 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   }
 
   List<Widget> _getItemList(ConnectionModel model) {
+    int _connectionsNum = widget.fileInfos == null ? 0 : widget.fileInfos.length;
     List<Widget> list = [];
-    if (model.fileInfos.length > 0) {
-      for (int i = 0; i < model.connectionsNum; i++) {
-        if (SettingsVariables.showHiddenFiles || model.fileInfos[i]["filename"][0] != ".") {
+    if (widget.fileInfos.length > 0) {
+      for (int i = 0; i < _connectionsNum; i++) {
+        if (SettingsVariables.showHiddenFiles || widget.fileInfos[i]["filename"][0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
-            fileInfos: model.fileInfos,
+            fileInfos: widget.fileInfos,
             isLoading: model.isLoading,
             view: SettingsVariables.view,
-            itemNum: model.connectionsNum,
+            itemNum: _connectionsNum,
             onTap: () {
-              if (model.fileInfos[i]["isDirectory"] == "true") {
-                setState(() {
-                  model.directoryBefore = model.currentConnection.path;
-                });
-                ConnectionMethods.goToDirectory(context, model, model.currentConnection.path + "/" + model.fileInfos[i]["filename"]);
+              if (widget.fileInfos[i]["isDirectory"] == "true") {
+                ConnectionMethods.goToDirectory(context, widget.connection.path + "/" + widget.fileInfos[i]["filename"]);
               } else {
                 showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
               }
@@ -140,7 +138,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: ConnectionPage.scaffoldKey,
+      key: widget.scaffoldKey,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(48.0),
         child: AppBar(
@@ -292,7 +290,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                         child: SizedBox(
                                           width: !SettingsVariables.showAddressInAppBar ? .0 : null,
                                           child: Text(
-                                            ConnectionPage.connection.address,
+                                            widget.connection.address,
                                             style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 16.0, fontWeight: FontWeight.w600),
                                             maxLines: 1,
                                             overflow: TextOverflow.fade,

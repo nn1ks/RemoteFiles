@@ -8,7 +8,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../shared/shared.dart';
-import '../pages/pages.dart';
 import 'services.dart';
 
 class LoadFile {
@@ -105,7 +104,7 @@ class LoadFile {
       }
     } catch (e) {
       print(e);
-      ConnectionPage.scaffoldKey.currentState.showSnackBar(
+      model.current.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 3),
           content: Text("Download failed"),
@@ -135,7 +134,7 @@ class LoadFile {
       }
     }
     bool fileNameExisting = false;
-    var ls = await model.client.sftpLs(model.currentConnection.path);
+    var ls = await model.client.sftpLs(model.current.connection.path);
     for (int i = 0; i < ls.length; i++) {
       if (filename == ls[i]["filename"]) fileNameExisting = true;
     }
@@ -143,7 +142,7 @@ class LoadFile {
       try {
         model.client.sftpUpload(
           path: path,
-          toPath: model.currentConnection.path,
+          toPath: model.current.connection.path,
           callback: (progress) {
             model.progressValue = progress;
             if (progress != 100) {
@@ -208,7 +207,7 @@ class LoadFile {
   static void _downOrUploadCompleted(BuildContext context, ConnectionModel model, String progressType, [String saveLocation]) {
     if (progressType == "download") {
       model.showProgress = false;
-      ConnectionPage.scaffoldKey.currentState.showSnackBar(
+      model.current.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 6),
           content: Text("Download completed" + (Platform.isIOS ? "" : "\nSaved file to $saveLocation")),
@@ -228,7 +227,7 @@ class LoadFile {
       model.progressType = progressType;
     } else {
       model.showProgress = false;
-      ConnectionPage.scaffoldKey.currentState.showSnackBar(
+      model.current.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("Upload completed"),
         ),
