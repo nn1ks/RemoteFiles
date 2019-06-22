@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'services.dart';
+import '../pages/pages.dart';
 
 class SettingsVariables {
   static SharedPreferences prefs;
@@ -114,10 +114,7 @@ class SettingsVariables {
   }
 
   /// can be 'B', 'KB', 'MB', 'GB' and 'automatic'.
-  static Future<void> setFilesizeUnit(
-    String value,
-    ConnectionModel model,
-  ) async {
+  static Future<void> setFilesizeUnit(String value, ConnectionPage currentConnectionPage) async {
     filesizeUnit = value;
     await prefs.setString("filesizeUnit", value);
 
@@ -136,7 +133,7 @@ class SettingsVariables {
         unitDivisor = 1000000000;
         break;
     }
-    model.current.fileInfos.forEach((v) {
+    currentConnectionPage.fileInfos.forEach((v) {
       double convertedFileSize;
       String unitValue;
       if (v["fileSize"].length > 9) {

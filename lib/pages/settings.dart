@@ -372,7 +372,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "automatic",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
+                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -382,7 +382,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "B",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
+                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -392,7 +392,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "KB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
+                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -402,7 +402,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "MB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
+                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -412,7 +412,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "GB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      await SettingsVariables.setFilesizeUnit(value, Provider.of<ConnectionModel>(context));
+                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
