@@ -2,25 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
+import '../pages/pages.dart';
 import '../services/services.dart';
 import 'shared.dart';
 
 class FileBottomSheet extends StatefulWidget {
-  final int index;
-  FileBottomSheet(this.index);
+  final Map<String, String> fileInfo;
+  final ConnectionPage currentConnectionPage;
+  FileBottomSheet(this.fileInfo, this.currentConnectionPage);
 
   @override
   _FileBottomSheetState createState() => _FileBottomSheetState();
 }
 
 class _FileBottomSheetState extends State<FileBottomSheet> {
-  _showDeleteConfirmDialog(ConnectionModel model, String filePath, Map<String, String> fileInfo, int index) {
+  _showDeleteConfirmDialog(ConnectionModel model, String filePath) {
     customShowDialog(
       context: context,
       builder: (context) {
         return CustomAlertDialog(
           title: Text(
-            "Delete '${fileInfo["filename"]}'?",
+            "Delete '${widget.fileInfo["filename"]}'?",
             style: TextStyle(fontFamily: SettingsVariables.accentFont),
           ),
           actions: <Widget>[
@@ -40,7 +42,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
               child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
               elevation: .0,
               onPressed: () async {
-                if (model.current.fileInfos[index]["isDirectory"] == "true") {
+                if (widget.fileInfo["isDirectory"] == "true") {
                   await model.client.sftpRmdir(filePath);
                 } else {
                   await model.client.sftpRm(filePath);
@@ -59,13 +61,12 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> fileInfo = Provider.of<ConnectionModel>(context).current.fileInfos[widget.index];
-    String currentPath = Provider.of<ConnectionModel>(context).current.connection.path;
-    String filePath = currentPath;
-    if (currentPath.substring(currentPath.length - 2) != "/") filePath += "/";
-    filePath += Provider.of<ConnectionModel>(context).current.fileInfos[widget.index]["filename"];
+    String filePath = widget.currentConnectionPage.connection.path;
+    if (widget.currentConnectionPage.connection.path.substring(widget.currentConnectionPage.connection.path.length - 2) != "/") filePath += "/";
+    filePath += widget.fileInfo["filename"];
+
     double tableFontSize = 16.0;
-    var renameController = TextEditingController(text: fileInfo["filename"]);
+    var renameController = TextEditingController(text: widget.fileInfo["filename"]);
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -75,14 +76,14 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
               Container(
                 height: 56.0,
                 child: ListTile(
-                  leading: Icon(fileInfo["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file),
+                  leading: Icon(widget.fileInfo["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file),
                   title: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: BouncingScrollPhysics(),
                     child: Padding(
                       padding: EdgeInsets.only(top: 2.0),
                       child: Text(
-                        fileInfo["filename"],
+                        widget.fileInfo["filename"],
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                         ),
@@ -111,7 +112,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                           child: Table(
                             columnWidths: {0: FixedColumnWidth(158.0)},
                             children: <TableRow>[
-                              if (fileInfo["isDirectory"] == "false")
+                              if (widget.fileInfo["isDirectory"] == "false")
                                 TableRow(children: [
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 2.0),
@@ -121,7 +122,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                     ),
                                   ),
                                   Text(
-                                    fileInfo["convertedFileSize"],
+                                    widget.fileInfo["convertedFileSize"],
                                     style: TextStyle(fontSize: tableFontSize),
                                   ),
                                 ]),
@@ -134,7 +135,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["permissions"],
+                                  widget.fileInfo["permissions"],
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -147,7 +148,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["modificationDate"],
+                                  widget.fileInfo["modificationDate"],
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -160,7 +161,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["lastAccess"],
+                                  widget.fileInfo["lastAccess"],
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -173,7 +174,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                   ),
                                 ),
                                 Text(
-                                  currentPath + "/" + fileInfo["filename"],
+                                  widget.currentConnectionPage.connection.path + "/" + widget.fileInfo["filename"],
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -186,7 +187,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                         margin: EdgeInsets.only(bottom: 8.0),
                         color: Theme.of(context).dividerColor,
                       ),
-                      fileInfo["isDirectory"] == "true"
+                      widget.fileInfo["isDirectory"] == "true"
                           ? Container()
                           : ListTile(
                               leading: Icon(Icons.open_in_new, color: Theme.of(context).accentColor),
@@ -202,7 +203,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                 OpenFile.open(await LoadFile.saveInCache(filePath, model));
                               },
                             ),
-                      fileInfo["isDirectory"] == "true"
+                      widget.fileInfo["isDirectory"] == "true"
                           ? Container()
                           : Column(
                               children: <Widget>[
@@ -237,7 +238,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                             builder: (context) {
                               return CustomAlertDialog(
                                 title: Text(
-                                  "Rename '${fileInfo["filename"]}'",
+                                  "Rename '${widget.fileInfo["filename"]}'",
                                   style: TextStyle(fontFamily: SettingsVariables.accentFont),
                                 ),
                                 content: TextField(
@@ -251,8 +252,9 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                   cursorColor: Theme.of(context).accentColor,
                                   autofocus: true,
                                   onSubmitted: (String value) async {
-                                    String newFilePath = currentPath;
-                                    if (currentPath.substring(currentPath.length - 2) != "/") {
+                                    String newFilePath = widget.currentConnectionPage.connection.path;
+                                    if (widget.currentConnectionPage.connection.path.substring(widget.currentConnectionPage.connection.path.length - 2) !=
+                                        "/") {
                                       newFilePath += "/";
                                     }
                                     newFilePath += value;
@@ -279,7 +281,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ),
-                        onTap: () => _showDeleteConfirmDialog(model, filePath, fileInfo, widget.index),
+                        onTap: () => _showDeleteConfirmDialog(model, filePath),
                       ),
                     ],
                   ),

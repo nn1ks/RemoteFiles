@@ -118,14 +118,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               if (widget.fileInfos[i]["isDirectory"] == "true") {
                 ConnectionMethods.goToDirectory(context, widget.connection.path + "/" + widget.fileInfos[i]["filename"], widget.connection);
               } else {
-                showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
+                showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(widget.fileInfos[i], widget));
               }
             },
             onSecondaryTap: () {
-              showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
+              showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(widget.fileInfos[i], widget));
             },
             onLongPress: () {
-              showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
+              showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(widget.fileInfos[i], widget));
             },
           ));
         }
