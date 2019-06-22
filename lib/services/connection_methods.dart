@@ -90,7 +90,7 @@ class ConnectionMethods {
 
     SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit, model);
     model.isLoading = false;
-    model.sort();
+    connectionPage.sort();
   }
 
   static String _removeTrailingSlash(String path) {

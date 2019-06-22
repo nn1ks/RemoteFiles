@@ -47,7 +47,12 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
       groupValue: isView ? SettingsVariables.view : SettingsVariables.sort,
       value: value,
       onChanged: (String radioValue) async {
-        isView ? await SettingsVariables.setView(value) : await SettingsVariables.setSort(value);
+        if (isView) {
+          await SettingsVariables.setView(value);
+        } else {
+          await SettingsVariables.setSort(value);
+          if (widget.currentConnectionPage != null) widget.currentConnectionPage.sort();
+        }
         setState(() {});
       },
     );
@@ -217,7 +222,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   hasSwitch: true,
                   onChanged: (bool value) async {
                     await SettingsVariables.setSortIsDescending(value);
-                    Provider.of<ConnectionModel>(context).sort();
+                    if (widget.currentConnectionPage != null) widget.currentConnectionPage.sort();
                     setState(() {});
                   },
                 ),

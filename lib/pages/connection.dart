@@ -16,6 +16,14 @@ class ConnectionPage extends StatefulWidget {
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
+  sort() {
+    print(fileInfos);
+    fileInfos.sort((a, b) => a[SettingsVariables.sort].compareTo(b[SettingsVariables.sort]));
+    if (SettingsVariables.sortIsDescending) fileInfos = fileInfos.reversed.toList();
+    if (SettingsVariables.sort != "filename") fileInfos = fileInfos.reversed.toList();
+    print(fileInfos);
+  }
+
   @override
   _ConnectionPageState createState() => _ConnectionPageState();
 }
