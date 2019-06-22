@@ -39,7 +39,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 7.0),
           child: Text("/", style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, fontSize: 16.0)),
         ),
-        onTap: () => ConnectionMethods.goToDirectory(context, "/"),
+        onTap: () => ConnectionMethods.goToDirectory(context, "/", widget.connection),
       ),
       Container(
         width: .0,
@@ -73,7 +73,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             child: Text(temp, style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w500, fontSize: 16.0)),
           ),
           onTap: () {
-            ConnectionMethods.goToDirectory(context, path.substring(0, i));
+            ConnectionMethods.goToDirectory(context, path.substring(0, i), widget.connection);
           },
         ));
         if (path.substring(i + 1, path.length).contains("/")) {
@@ -116,7 +116,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
             itemNum: _connectionsNum,
             onTap: () {
               if (widget.fileInfos[i]["isDirectory"] == "true") {
-                ConnectionMethods.goToDirectory(context, widget.connection.path + "/" + widget.fileInfos[i]["filename"]);
+                ConnectionMethods.goToDirectory(context, widget.connection.path + "/" + widget.fileInfos[i]["filename"], widget.connection);
               } else {
                 showModalBottomSheet(context: context, builder: (context) => FileBottomSheet(i));
               }
@@ -438,7 +438,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         onSubmitted: (String value) async {
                           await model.client.sftpMkdir(widget.connection.path + "/" + value);
                           Navigator.pop(context);
-                          ConnectionMethods.refresh(context);
+                          ConnectionMethods.refresh(context, widget.connection);
                         },
                       ),
                     );
@@ -456,7 +456,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               return RefreshIndicator(
                 key: _refreshKey,
                 onRefresh: () async {
-                  await ConnectionMethods.refresh(context, setIsLoading: false);
+                  await ConnectionMethods.refresh(context, widget.connection, setIsLoading: false);
                 },
                 child: model.isLoading
                     ? Container(

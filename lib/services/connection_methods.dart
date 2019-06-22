@@ -33,10 +33,11 @@ class ConnectionMethods {
     String path,
     bool setIsLoading = true,
     bool openNewPage = true,
+    bool hasPageBefore = true,
   }) async {
     var model = Provider.of<ConnectionModel>(context);
 
-    ConnectionPage currentTemp = ConnectionPage(
+    ConnectionPage connectionPage = ConnectionPage(
       Connection(
         address: address,
         port: port,
@@ -46,41 +47,33 @@ class ConnectionMethods {
       ),
     );
 
-    if (setIsLoading) model.isLoading = true;
-
     if (path.length == 0 || path[0] != "/") {
       await model.client.execute("cd");
       path = await model.client.execute("pwd");
       path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
-      currentTemp.connection.path = path;
+      connectionPage.connection.path = path;
     }
 
-    if (openNewPage) Navigator.push(context, MaterialPageRoute(builder: (context) => currentTemp));
+    if (openNewPage) Navigator.push(context, MaterialPageRoute(builder: (context) => connectionPage));
 
-    var fileInfos = List<Map<String, String>>();
+    connectionPage.fileInfos = List<Map<String, String>>();
     try {
       var list = await model.client.sftpLs(path);
-      fileInfos.length = list.length;
+      connectionPage.fileInfos.length = list.length;
       for (int i = 0; i < list.length; i++) {
-        fileInfos[i] = {};
+        connectionPage.fileInfos[i] = {};
         list[i].forEach((k, v) {
-          fileInfos[i].addAll({k.toString(): v.toString()});
+          connectionPage.fileInfos[i].addAll({k.toString(): v.toString()});
         });
-        fileInfos[i]["filename"] = _removeTrailingSlash(fileInfos[i]["filename"]);
-        fileInfos[i].addAll({"convertedFileSize": ""});
+        connectionPage.fileInfos[i]["filename"] = _removeTrailingSlash(connectionPage.fileInfos[i]["filename"]);
+        connectionPage.fileInfos[i].addAll({"convertedFileSize": ""});
       }
-      model.current = currentTemp;
-      model.current.fileInfos = fileInfos;
     } catch (e) {
       print(e);
-      if (openNewPage && model.current != null) {
+      if (openNewPage && hasPageBefore) {
         Navigator.pop(context);
-      } else {
-        model.current = currentTemp;
       }
-      print("show SnackBar");
-      print(model.current.connection.path);
-      model.current.scaffoldKey.currentState.showSnackBar(
+      connectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 5),
           content: Text("Unable to list directory $path\n$e"),
@@ -88,7 +81,7 @@ class ConnectionMethods {
       );
     }
 
-    SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit, model);
+    SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit, connectionPage);
     model.isLoading = false;
     connectionPage.sort();
   }
@@ -111,11 +104,7 @@ class ConnectionMethods {
     );
   }
 
-  static void goToDirectory(BuildContext context, String path) {
-    var currentConnection = Provider.of<ConnectionModel>(context).current.connection;
-    print(path[0] == "/" ? path : currentConnection.path + "/" + path);
-    print(currentConnection.path + "/" + path);
-    print(path);
+  static void goToDirectory(BuildContext context, String path, Connection currentConnection) {
     connect(
       context,
       Connection(
@@ -129,19 +118,18 @@ class ConnectionMethods {
     );
   }
 
-  static Future<void> goToDirectoryBefore(BuildContext context) async {
-    String currentPath = Provider.of<ConnectionModel>(context).current.connection.path;
+  static Future<void> goToDirectoryBefore(BuildContext context, Connection currentConnection) async {
     int lastSlashIndex;
-    for (int i = 0; i < currentPath.length - 1; i++) {
-      if (currentPath[i] == "/") {
+    for (int i = 0; i < currentConnection.path.length - 1; i++) {
+      if (currentConnection.path[i] == "/") {
         lastSlashIndex = i;
       }
     }
     if (lastSlashIndex == 0) lastSlashIndex = 1;
-    goToDirectory(context, currentPath.substring(0, lastSlashIndex));
+    goToDirectory(context, currentConnection.path.substring(0, lastSlashIndex), currentConnection);
   }
 
-  static Future<void> refresh(BuildContext context, {bool setIsLoading}) async {
-    await connect(context, Provider.of<ConnectionModel>(context).current.connection, setIsLoading: setIsLoading, openNewPage: false);
+  static Future<void> refresh(BuildContext context, Connection currentConnection, {bool setIsLoading}) async {
+    await connect(context, currentConnection, setIsLoading: setIsLoading, openNewPage: false);
   }
 }

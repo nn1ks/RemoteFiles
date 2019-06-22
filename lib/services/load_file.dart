@@ -232,7 +232,7 @@ class LoadFile {
           content: Text("Upload completed"),
         ),
       );
-      ConnectionMethods.refresh(context);
+      ConnectionMethods.refresh(context, currentConnectionPage.connection);
     }
   }
 
