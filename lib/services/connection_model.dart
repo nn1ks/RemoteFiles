@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:ssh/ssh.dart';
-import '../pages/pages.dart';
-import 'services.dart';
 
 class ConnectionModel with ChangeNotifier {
   SSHClient _client;
@@ -12,8 +10,6 @@ class ConnectionModel with ChangeNotifier {
 
   SSHClient get client => _client;
 
-  ConnectionPage current;
-
   bool _isLoading = true;
   set isLoading(bool value) {
     _isLoading = value;
@@ -21,13 +17,6 @@ class ConnectionModel with ChangeNotifier {
   }
 
   bool get isLoading => _isLoading;
-
-  sort() {
-    current.fileInfos.sort((a, b) => a[SettingsVariables.sort].compareTo(b[SettingsVariables.sort]));
-    if (SettingsVariables.sortIsDescending) current.fileInfos = current.fileInfos.reversed.toList();
-    if (SettingsVariables.sort != "filename") current.fileInfos = current.fileInfos.reversed.toList();
-    notifyListeners();
-  }
 
   bool _showProgress = false;
   set showProgress(bool value) {
