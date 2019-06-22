@@ -217,7 +217,7 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                                   ),
                                   onTap: () async {
                                     Navigator.pop(context);
-                                    await LoadFile.download(context, model, filePath);
+                                    await LoadFile.download(context, filePath, widget.currentConnectionPage);
                                   },
                                 ),
                               ],

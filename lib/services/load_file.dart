@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../pages/pages.dart';
 import '../shared/shared.dart';
 import 'services.dart';
 
@@ -25,7 +26,8 @@ class LoadFile {
     return false;
   }
 
-  static Future<void> download(BuildContext context, ConnectionModel model, String filePath, {bool isRedownloading = false}) async {
+  static Future<void> download(BuildContext context, String filePath, ConnectionPage currentConnectionPage, {bool isRedownloading = false}) async {
+    var model = Provider.of<ConnectionModel>(context);
     try {
       if (await _handlePermission()) {
         String filename = "";
@@ -62,7 +64,7 @@ class LoadFile {
                 model.loadFilename = filename;
                 model.progressType = "download";
               } else if (progress == 100) {
-                _downOrUploadCompleted(context, model, "download", dir.path + "/" + filename);
+                _downOrUploadCompleted(context, model, currentConnectionPage, "download", dir.path + "/" + filename);
               }
             },
           );
@@ -92,7 +94,7 @@ class LoadFile {
                       child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
                       elevation: .0,
                       onPressed: () {
-                        download(context, model, filePath, isRedownloading: true);
+                        download(context, filePath, currentConnectionPage, isRedownloading: true);
                         Navigator.pop(context);
                       },
                     ),
@@ -104,7 +106,7 @@ class LoadFile {
       }
     } catch (e) {
       print(e);
-      model.current.scaffoldKey.currentState.showSnackBar(
+      currentConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 3),
           content: Text("Download failed"),
@@ -113,7 +115,8 @@ class LoadFile {
     }
   }
 
-  static Future<void> upload(BuildContext context, ConnectionModel model, {bool isReuploading = false, String pathFromReuploading}) async {
+  static Future<void> upload(BuildContext context, ConnectionPage currentConnectionPage, {bool isReuploading = false, String pathFromReuploading}) async {
+    var model = Provider.of<ConnectionModel>(context);
     model.progressValue = 0;
     String path;
     if (!isReuploading) {
@@ -134,7 +137,7 @@ class LoadFile {
       }
     }
     bool fileNameExisting = false;
-    var ls = await model.client.sftpLs(model.current.connection.path);
+    var ls = await model.client.sftpLs(currentConnectionPage.connection.path);
     for (int i = 0; i < ls.length; i++) {
       if (filename == ls[i]["filename"]) fileNameExisting = true;
     }
@@ -142,14 +145,14 @@ class LoadFile {
       try {
         model.client.sftpUpload(
           path: path,
-          toPath: model.current.connection.path,
+          toPath: currentConnectionPage.connection.path,
           callback: (progress) {
             model.progressValue = progress;
             if (progress != 100) {
               model.showProgress = true;
               model.loadFilename = filename;
             } else if (progress == 100) {
-              _downOrUploadCompleted(context, model, "upload");
+              _downOrUploadCompleted(context, model, currentConnectionPage, "upload");
             }
           },
         );
@@ -193,7 +196,7 @@ class LoadFile {
                   ),
                   elevation: .0,
                   onPressed: () {
-                    upload(context, model, isReuploading: true, pathFromReuploading: path);
+                    upload(context, currentConnectionPage, isReuploading: true, pathFromReuploading: path);
                     Navigator.pop(context);
                   },
                 ),
@@ -204,10 +207,11 @@ class LoadFile {
     }
   }
 
-  static void _downOrUploadCompleted(BuildContext context, ConnectionModel model, String progressType, [String saveLocation]) {
+  static void _downOrUploadCompleted(BuildContext context, ConnectionModel model, ConnectionPage currentConnectionPage, String progressType,
+      [String saveLocation]) {
     if (progressType == "download") {
       model.showProgress = false;
-      model.current.scaffoldKey.currentState.showSnackBar(
+      currentConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 6),
           content: Text("Download completed" + (Platform.isIOS ? "" : "\nSaved file to $saveLocation")),
@@ -227,7 +231,7 @@ class LoadFile {
       model.progressType = progressType;
     } else {
       model.showProgress = false;
-      model.current.scaffoldKey.currentState.showSnackBar(
+      currentConnectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text("Upload completed"),
         ),

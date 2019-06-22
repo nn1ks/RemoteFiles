@@ -407,7 +407,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
               backgroundColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.grey[800],
               foregroundColor: Theme.of(context).accentColor,
               elevation: 3.0,
-              onTap: () async => LoadFile.upload(context, model),
+              onTap: () async => LoadFile.upload(context, widget),
             ),
             SpeedDialChild(
               label: "Create Folder",
