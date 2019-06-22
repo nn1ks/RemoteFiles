@@ -42,6 +42,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode()];
+
   void _showQuickConnection() {
     Connection connection = Connection();
     String mainTextInput;
@@ -119,6 +121,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       TextField(
                         autofocus: true,
                         autocorrect: false,
+                        focusNode: focusNodes[0],
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                           hintText: "[username@]address[:port]",
                           errorText: showError ? "Input is not valid" : null,
@@ -135,7 +139,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             }
                           }
                         },
-                        onSubmitted: (String value) {},
+                        onSubmitted: (String value) => FocusScope.of(context).requestFocus(focusNodes[showUsernameInput ? 1 : 2]),
                       ),
                       Divider(height: 20.0),
                       if (showUsernameInput)
@@ -144,13 +148,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           child: TextField(
                             autofocus: true,
                             autocorrect: false,
+                            focusNode: focusNodes[1],
+                            textInputAction: TextInputAction.next,
                             decoration: InputDecoration(labelText: "Username"),
                             onChanged: (String value) => connection.username = value,
+                            onSubmitted: (String value) => FocusScope.of(context).requestFocus(focusNodes[2]),
                           ),
                         ),
                       TextField(
                         autofocus: true,
                         obscureText: true,
+                        focusNode: focusNodes[2],
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(labelText: "Password"),
                         onChanged: (String value) => connection.passwordOrKey = value,
                       ),
