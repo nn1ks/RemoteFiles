@@ -7,6 +7,10 @@ import '../services/services.dart';
 import 'pages.dart';
 
 class SettingsPage extends StatefulWidget {
+  final ConnectionPage currentConnectionPage;
+
+  SettingsPage({this.currentConnectionPage});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
