@@ -184,10 +184,10 @@ class _TabViewPageState extends State<TabViewPage> {
                       context: context,
                       builder: (context) => Center(
                             child: Container(
-                              height: 100,
-                              width: 100,
+                              height: 80,
+                              width: 80,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).dialogBackgroundColor,
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
