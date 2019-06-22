@@ -6,6 +6,7 @@ import 'shared.dart';
 
 class ConnectionDialog extends StatelessWidget {
   final BuildContext context;
+  final ConnectionPage currentConnectionPage;
   final int index;
   final String page;
   final IconData primaryButtonIconData;
@@ -18,6 +19,7 @@ class ConnectionDialog extends StatelessWidget {
 
   ConnectionDialog({
     @required this.context,
+    this.currentConnectionPage,
     this.index,
     @required this.page,
     @required this.primaryButtonIconData,
@@ -63,7 +65,7 @@ class ConnectionDialog extends StatelessWidget {
     } else if (page == "recentlyAdded") {
       values = HomePage.recentlyAddedPage.connections[index];
     } else if (page == "connection") {
-      values = Provider.of<ConnectionModel>(context).current.connection;
+      values = currentConnectionPage.connection;
     }
     return CustomAlertDialog(
       title: Text(
