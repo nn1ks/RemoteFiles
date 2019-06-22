@@ -196,13 +196,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
                               elevation: .0,
                               onPressed: () {
-                                customShowDialog(
-                                  context: context,
-                                  builder: (context) => CustomAlertDialog(
-                                        content: CircularProgressIndicator(),
-                                      ),
-                                );
                                 if (mainInputIsValid && connection.address != null) {
+                                  customShowDialog(
+                                    context: context,
+                                    builder: (context) => Center(
+                                          child: Container(
+                                            height: 80,
+                                            width: 80,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).dialogBackgroundColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Center(
+                                              child: CircularProgressIndicator(),
+                                            ),
+                                          ),
+                                        ),
+                                  );
                                   HomePage.recentlyAddedPage.addToJson(connection);
                                   HomePage.recentlyAddedPage.setConnectionsFromJson();
                                   Navigator.pop(context);
