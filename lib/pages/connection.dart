@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+
 import '../services/services.dart';
 import '../shared/shared.dart';
 import 'pages.dart';
@@ -240,14 +241,71 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                         physics: BouncingScrollPhysics(),
                         child: Row(
                           children: <Widget>[
-                            IconButton(
-                              icon: Icon(Icons.chevron_left),
-                              onPressed: () => Navigator.pop(context),
+                            CustomTooltip(
+                              message: "Back",
+                              child: IconButton(
+                                icon: Icon(Icons.chevron_left),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ),
+                            CustomTooltip(
+                              message: "Go to specific directory",
+                              child: IconButton(
+                                icon: Icon(Icons.youtube_searched_for),
+                                onPressed: () {
+                                  customShowDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CustomAlertDialog(
+                                        title: Text("Go to directory", style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 18.0)),
+                                        content: Container(
+                                          width: 260.0,
+                                          child: TextField(
+                                            decoration: InputDecoration(
+                                              labelText: "Path",
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+                                              ),
+                                            ),
+                                            cursorColor: Theme.of(context).accentColor,
+                                            autofocus: true,
+                                            autocorrect: false,
+                                            onSubmitted: (String value) {
+                                              ConnectionMethods.goToDirectory(context, value, widget.connection);
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                            CustomTooltip(
+                              message: SettingsVariables.showHiddenFiles ? "Dont't show hidden files" : "Show hidden files",
+                              child: IconButton(
+                                icon: Icon(SettingsVariables.showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
+                                onPressed: () async {
+                                  await SettingsVariables.setShowHiddenFiles(!SettingsVariables.showHiddenFiles);
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                            CustomTooltip(
+                              message: "Settings",
+                              child: IconButton(
+                                icon: Icon(OMIcons.settings),
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage(currentConnectionPage: widget)));
+                                },
+                              ),
                             ),
                             GestureDetector(
                               onTap: () {
                                 ConnectionDialog(
                                   context: context,
+                                  currentConnectionPage: widget,
                                   page: "connection",
                                   primaryButtonIconData: Icons.remove_circle_outline,
                                   primaryButtonLabel: "Disconnect",
@@ -274,14 +332,14 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                       onPressed: () {
                                         ConnectionDialog(
                                           context: context,
+                                          currentConnectionPage: widget,
                                           page: "connection",
                                           primaryButtonIconData: Icons.remove_circle_outline,
                                           primaryButtonLabel: "Disconnect",
                                           primaryButtonOnPressed: () {
                                             if (!Platform.isIOS) model.client.disconnectSFTP();
                                             model.client.disconnect();
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
+                                            Navigator.popUntil(context, ModalRoute.withName('/'));
                                           },
                                         ).show();
                                       },
@@ -290,7 +348,7 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                       vsync: this,
                                       duration: Duration(milliseconds: 200),
                                       child: Padding(
-                                        padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 8.0 : .0),
+                                        padding: EdgeInsets.only(right: SettingsVariables.showAddressInAppBar ? 18.0 : .0),
                                         child: SizedBox(
                                           width: !SettingsVariables.showAddressInAppBar ? .0 : null,
                                           child: Text(
@@ -304,72 +362,6 @@ class _ConnectionPageState extends State<ConnectionPage> with TickerProviderStat
                                     ),
                                   ],
                                 ),
-                              ),
-                            ),
-                            /*Container(
-                              height: MediaQuery.of(context).size.height,
-                              width: 1.0,
-                              color: Theme.of(context).dividerColor,
-                              margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
-                            ),
-                            CustomTooltip(
-                              message: "Go to parent directory",
-                              child: IconButton(
-                                icon: RotatedBox(quarterTurns: 2, child: Icon(Icons.subdirectory_arrow_right)),
-                                onPressed: () => ConnectionMethods.goToDirectoryBefore(context),
-                              ),
-                            ),*/
-                            CustomTooltip(
-                              message: "Go to specific directory",
-                              child: IconButton(
-                                icon: Icon(Icons.youtube_searched_for),
-                                onPressed: () {
-                                  customShowDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return CustomAlertDialog(
-                                        title: Text("Go to directory", style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 18.0)),
-                                        content: Container(
-                                          width: 260.0,
-                                          child: TextField(
-                                            decoration: InputDecoration(
-                                              labelText: "Path",
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0),
-                                              ),
-                                            ),
-                                            cursorColor: Theme.of(context).accentColor,
-                                            autofocus: true,
-                                            autocorrect: false,
-                                            onSubmitted: (String value) {
-                                              ConnectionMethods.goToDirectory(context, value);
-                                              Navigator.pop(context);
-                                            },
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            CustomTooltip(
-                              message: SettingsVariables.showHiddenFiles ? "Dont't show hidden files" : "Show hidden files",
-                              child: IconButton(
-                                icon: Icon(SettingsVariables.showHiddenFiles ? OMIcons.visibilityOff : OMIcons.visibility),
-                                onPressed: () async {
-                                  await SettingsVariables.setShowHiddenFiles(!SettingsVariables.showHiddenFiles);
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                            CustomTooltip(
-                              message: "Settings",
-                              child: IconButton(
-                                icon: Icon(OMIcons.settings),
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-                                },
                               ),
                             ),
                           ],
