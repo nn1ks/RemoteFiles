@@ -64,7 +64,7 @@ class LoadFile {
                 model.loadFilename = filename;
                 model.progressType = "download";
               } else if (progress == 100) {
-                _downOrUploadCompleted(context, model, currentConnectionPage, "download", dir.path + "/" + filename);
+                _downloadCompleted(context, currentConnectionPage, dir.path + "/" + filename);
               }
             },
           );
@@ -151,8 +151,9 @@ class LoadFile {
             if (progress != 100) {
               model.showProgress = true;
               model.loadFilename = filename;
+              model.progressType = "upload";
             } else if (progress == 100) {
-              _downOrUploadCompleted(context, model, currentConnectionPage, "upload");
+              _uploadCompleted(context, currentConnectionPage);
             }
           },
         );
@@ -207,37 +208,37 @@ class LoadFile {
     }
   }
 
-  static void _downOrUploadCompleted(BuildContext context, ConnectionModel model, ConnectionPage currentConnectionPage, String progressType,
-      [String saveLocation]) {
-    if (progressType == "download") {
-      model.showProgress = false;
-      currentConnectionPage.scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 6),
-          content: Text("Download completed" + (Platform.isIOS ? "" : "\nSaved file to $saveLocation")),
-          action: SnackBarAction(
-            label: "Show file",
-            textColor: Colors.white,
-            onPressed: () async {
-              if (Platform.isIOS) {
-                await launch("shareddocuments://$saveLocation");
-              } else {
-                OpenFile.open(saveLocation);
-              }
-            },
-          ),
+  static void _downloadCompleted(BuildContext context, ConnectionPage currentConnectionPage, String saveLocation) {
+    var model = Provider.of<ConnectionModel>(context);
+    model.showProgress = false;
+    currentConnectionPage.scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        duration: Duration(seconds: 6),
+        content: Text("Download completed" + (Platform.isIOS ? "" : "\nSaved file to $saveLocation")),
+        action: SnackBarAction(
+          label: "Show file",
+          textColor: Colors.white,
+          onPressed: () async {
+            if (Platform.isIOS) {
+              await launch("shareddocuments://$saveLocation");
+            } else {
+              OpenFile.open(saveLocation);
+            }
+          },
         ),
-      );
-      model.progressType = progressType;
-    } else {
-      model.showProgress = false;
-      currentConnectionPage.scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text("Upload completed"),
-        ),
-      );
-      ConnectionMethods.refresh(context, currentConnectionPage.connection);
-    }
+      ),
+    );
+  }
+
+  static void _uploadCompleted(BuildContext context, ConnectionPage currentConnectionPage) {
+    var model = Provider.of<ConnectionModel>(context);
+    model.showProgress = false;
+    currentConnectionPage.scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text("Upload completed"),
+      ),
+    );
+    ConnectionMethods.refresh(context, currentConnectionPage.connection);
   }
 
   static Future<String> saveInCache(String filePath, ConnectionModel model) async {
