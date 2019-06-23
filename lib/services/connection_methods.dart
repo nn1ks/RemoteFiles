@@ -130,6 +130,11 @@ class ConnectionMethods {
     goToDirectory(context, currentConnection.path.substring(0, lastSlashIndex), currentConnection);
   }
 
+  static Future<void> refresh(BuildContext context, Connection currentConnection, {bool setIsLoading = true}) async {
+    Navigator.pop(context);
+    await connect(context, currentConnection, setIsLoading: setIsLoading, openNewPage: true);
+  }
+
   static void showDeleteConfirmDialog({
     BuildContext context,
     List<String> filePaths,
