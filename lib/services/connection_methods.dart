@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssh/ssh.dart';
 import '../pages/pages.dart';
+import '../shared/shared.dart';
 import 'services.dart';
 
 class ConnectionMethods {
@@ -129,7 +130,67 @@ class ConnectionMethods {
     goToDirectory(context, currentConnection.path.substring(0, lastSlashIndex), currentConnection);
   }
 
-  static Future<void> refresh(BuildContext context, Connection currentConnection, {bool setIsLoading}) async {
-    await connect(context, currentConnection, setIsLoading: setIsLoading, openNewPage: false);
+  static void showDeleteConfirmDialog({
+    BuildContext context,
+    List<String> filePaths,
+    List<bool> isDirectory,
+    Connection currentConnection,
+    bool calledFromFileBottomSheet,
+  }) {
+    var model = Provider.of<ConnectionModel>(context);
+
+    List<String> filenames = List.filled(filePaths.length, "");
+    for (int i = 0; i < filePaths.length; i++) {
+      for (int j = filePaths[i].length - 1; j >= 0; j--) {
+        if (filePaths[i][j] != "/") {
+          filenames[i] = filePaths[i][j] + filenames[i];
+        } else {
+          break;
+        }
+      }
+    }
+
+    customShowDialog(
+      context: context,
+      builder: (context) {
+        return CustomAlertDialog(
+          title: Text(
+            filenames.length == 1 ? "Delete '${filenames[0]}'?" : "Delete ${filenames.length} files?",
+            style: TextStyle(fontFamily: SettingsVariables.accentFont),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            RaisedButton(
+              color: Theme.of(context).accentColor,
+              splashColor: Colors.black12,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+              child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
+              elevation: .0,
+              onPressed: () async {
+                for (int i = 0; i < filePaths.length; i++) {
+                  if (isDirectory[i]) {
+                    await model.client.sftpRmdir(filePaths[i]);
+                  } else {
+                    await model.client.sftpRm(filePaths[i]);
+                  }
+                }
+                Navigator.pop(context);
+                if (calledFromFileBottomSheet) Navigator.pop(context);
+                ConnectionMethods.refresh(context, currentConnection);
+              },
+            ),
+            SizedBox(width: .0),
+          ],
+        );
+      },
+    );
   }
 }

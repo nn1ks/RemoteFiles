@@ -16,49 +16,6 @@ class FileBottomSheet extends StatefulWidget {
 }
 
 class _FileBottomSheetState extends State<FileBottomSheet> {
-  _showDeleteConfirmDialog(ConnectionModel model, String filePath) {
-    customShowDialog(
-      context: context,
-      builder: (context) {
-        return CustomAlertDialog(
-          title: Text(
-            "Delete '${widget.fileInfo["filename"]}'?",
-            style: TextStyle(fontFamily: SettingsVariables.accentFont),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-              child: Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            RaisedButton(
-              color: Theme.of(context).accentColor,
-              splashColor: Colors.black12,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-              child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
-              elevation: .0,
-              onPressed: () async {
-                if (widget.fileInfo["isDirectory"] == "true") {
-                  await model.client.sftpRmdir(filePath);
-                } else {
-                  await model.client.sftpRm(filePath);
-                }
-                Navigator.pop(context);
-                Navigator.pop(context);
-                ConnectionMethods.refresh(context, widget.currentConnectionPage.connection);
-              },
-            ),
-            SizedBox(width: .0),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     String filePath = widget.currentConnectionPage.connection.path;
@@ -281,7 +238,13 @@ class _FileBottomSheetState extends State<FileBottomSheet> {
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ),
-                        onTap: () => _showDeleteConfirmDialog(model, filePath),
+                        onTap: () => ConnectionMethods.showDeleteConfirmDialog(
+                              context: context,
+                              filePaths: [filePath],
+                              isDirectory: [widget.fileInfo["isDirectory"] == "true"],
+                              currentConnection: widget.currentConnectionPage.connection,
+                              calledFromFileBottomSheet: true,
+                            ),
                       ),
                     ],
                   ),
