@@ -56,6 +56,10 @@ class ConnectionMethods {
     }
 
     if (openNewPage) Navigator.push(context, MaterialPageRoute(builder: (context) => connectionPage));
+    bool loadingDone = false;
+    Future.delayed(Duration(milliseconds: 600)).then((_) {
+      if (setIsLoading && !loadingDone) model.isLoading = true;
+    });
 
     connectionPage.fileInfos = List<Map<String, String>>();
     try {
@@ -71,9 +75,6 @@ class ConnectionMethods {
       }
     } catch (e) {
       print(e);
-      if (openNewPage && hasPageBefore) {
-        Navigator.pop(context);
-      }
       connectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 5),
@@ -81,8 +82,8 @@ class ConnectionMethods {
         ),
       );
     }
-
     SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit, connectionPage);
+    loadingDone = true;
     model.isLoading = false;
     connectionPage.sort();
   }
