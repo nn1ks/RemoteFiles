@@ -15,26 +15,52 @@ class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMixin {
-  Widget _buildHeadline(String title, {bool hasSwitch = false, Function onChanged}) {
+class _SettingsPageState extends State<SettingsPage>
+    with TickerProviderStateMixin {
+  Widget _buildHeadline(
+    String title, {
+    bool hasSwitch = false,
+    Function onChanged,
+  }) {
     return Padding(
-      padding: EdgeInsets.only(top: hasSwitch ? 8.0 : 19.0, bottom: hasSwitch ? .0 : 11.0, left: 18.0, right: hasSwitch ? 22.0 : 18.0),
+      padding: EdgeInsets.only(
+        top: hasSwitch ? 8.0 : 19.0,
+        bottom: hasSwitch ? .0 : 11.0,
+        left: 18.0,
+        right: hasSwitch ? 22.0 : 18.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
             title.toUpperCase(),
             style: TextStyle(
-                fontWeight: FontWeight.w700, fontSize: 14.5, fontFamily: SettingsVariables.accentFont, letterSpacing: 1.0, color: Theme.of(context).hintColor),
+              fontWeight: FontWeight.w700,
+              fontSize: 14.5,
+              fontFamily: SettingsVariables.accentFont,
+              letterSpacing: 1.0,
+              color: Theme.of(context).hintColor,
+            ),
           ),
           hasSwitch
               ? Switch(
                   activeThumbImage: AssetImage("assets/arrow_drop_down.png"),
-                  activeColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[50] : Colors.grey[500],
-                  activeTrackColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[300] : Colors.grey[700],
+                  activeColor: Provider.of<CustomTheme>(context).isLightTheme()
+                      ? Colors.grey[50]
+                      : Colors.grey[500],
+                  activeTrackColor:
+                      Provider.of<CustomTheme>(context).isLightTheme()
+                          ? Colors.grey[300]
+                          : Colors.grey[700],
                   inactiveThumbImage: AssetImage("assets/arrow_drop_up.png"),
-                  inactiveTrackColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[300] : Colors.grey[700],
-                  inactiveThumbColor: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.grey[50] : Colors.grey[500],
+                  inactiveTrackColor:
+                      Provider.of<CustomTheme>(context).isLightTheme()
+                          ? Colors.grey[300]
+                          : Colors.grey[700],
+                  inactiveThumbColor:
+                      Provider.of<CustomTheme>(context).isLightTheme()
+                          ? Colors.grey[50]
+                          : Colors.grey[500],
                   value: SettingsVariables.sortIsDescending,
                   onChanged: onChanged,
                 )
@@ -44,7 +70,11 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildRadioListTile({@required String titleLabel, @required String value, @required bool isView}) {
+  Widget _buildRadioListTile({
+    @required String titleLabel,
+    @required String value,
+    @required bool isView,
+  }) {
     return RadioListTile(
       activeColor: Theme.of(context).accentColor,
       title: Text(titleLabel),
@@ -55,14 +85,20 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
           await SettingsVariables.setView(value);
         } else {
           await SettingsVariables.setSort(value);
-          if (widget.currentConnectionPage != null) widget.currentConnectionPage.sort();
+          if (widget.currentConnectionPage != null) {
+            widget.currentConnectionPage.sort();
+          }
         }
         setState(() {});
       },
     );
   }
 
-  Widget _buildCheckboxListTile({@required String titleLabel, @required bool value, @required ValueChanged<bool> onChanged}) {
+  Widget _buildCheckboxListTile({
+    @required String titleLabel,
+    @required bool value,
+    @required ValueChanged<bool> onChanged,
+  }) {
     return CheckboxListTile(
       activeColor: Theme.of(context).accentColor,
       title: Padding(
@@ -109,7 +145,78 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
     );
   }
 
-  var _downloadPathTextController = TextEditingController(text: SettingsVariables.downloadDirectory.path);
+  Widget _buildSaveToWidget() {
+    if (Platform.isIOS) {
+      return Container();
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _buildHeadline("Save files to:"),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 19.0,
+              vertical: 4.0,
+            ),
+            child: Container(
+              child: TextField(
+                controller: _downloadPathTextController,
+                decoration: InputDecoration(
+                  labelText: "Path",
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).accentColor,
+                      width: 2.0,
+                    ),
+                  ),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      CustomTooltip(
+                        message: "Clear",
+                        child: CustomIconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          onPressed: () {
+                            SettingsVariables.setDownloadDirectory("").then(
+                                (_) => _downloadPathTextController.text = "");
+                          },
+                        ),
+                      ),
+                      CustomTooltip(
+                        message: "Set to default",
+                        child: CustomIconButton(
+                          icon: Icon(
+                            Icons.settings_backup_restore,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          onPressed: () {
+                            SettingsVariables.setDownloadDirectoryToDefault()
+                                .then((Directory dir) {
+                              _downloadPathTextController.text = dir.path;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                onChanged: (String value) async {
+                  await SettingsVariables.setDownloadDirectory(value);
+                },
+              ),
+            ),
+          ),
+          Divider(),
+        ],
+      );
+    }
+  }
+
+  var _downloadPathTextController =
+      TextEditingController(text: SettingsVariables.downloadDirectory.path);
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +232,11 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
               ),
               Text(
                 "Settings",
-                style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontFamily: SettingsVariables.accentFont,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -139,55 +250,7 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
               physics: BouncingScrollPhysics(),
               children: <Widget>[
                 SizedBox(height: 14.0),
-                !Platform.isIOS
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _buildHeadline("Save files to:"),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 19.0, vertical: 4.0),
-                            child: Container(
-                              child: TextField(
-                                controller: _downloadPathTextController,
-                                decoration: InputDecoration(
-                                  labelText: "Path",
-                                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
-                                  suffixIcon: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      CustomTooltip(
-                                        message: "Clear",
-                                        child: CustomIconButton(
-                                          icon: Icon(Icons.close, color: Theme.of(context).iconTheme.color),
-                                          onPressed: () {
-                                            SettingsVariables.setDownloadDirectory("").then((_) => _downloadPathTextController.text = "");
-                                          },
-                                        ),
-                                      ),
-                                      CustomTooltip(
-                                        message: "Set to default",
-                                        child: CustomIconButton(
-                                          icon: Icon(Icons.settings_backup_restore, color: Theme.of(context).iconTheme.color),
-                                          onPressed: () {
-                                            SettingsVariables.setDownloadDirectoryToDefault().then((Directory dir) {
-                                              _downloadPathTextController.text = dir.path;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                onChanged: (String value) async {
-                                  await SettingsVariables.setDownloadDirectory(value);
-                                },
-                              ),
-                            ),
-                          ),
-                          Divider(),
-                        ],
-                      )
-                    : Container(),
+                _buildSaveToWidget(),
                 _buildHeadline("View"),
                 _buildRadioListTile(
                   titleLabel: "List",
@@ -196,12 +259,21 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                 ),
                 AnimatedContainer(
                   duration: Duration(milliseconds: 100),
-                  margin: EdgeInsets.symmetric(vertical: SettingsVariables.view == "detailed" ? 6.0 : .0),
+                  margin: EdgeInsets.symmetric(
+                    vertical: SettingsVariables.view == "detailed" ? 6.0 : .0,
+                  ),
                   decoration: BoxDecoration(
                     border: SettingsVariables.view == "detailed"
                         ? Border(
-                            top: BorderSide(color: Theme.of(context).dividerColor, width: 1.0),
-                            bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
+                            top: BorderSide(
+                              color: Theme.of(context).dividerColor,
+                              width: 1.0,
+                            ),
+                            bottom: BorderSide(
+                              color: Theme.of(context).dividerColor,
+                              width: 1.0,
+                            ),
+                          )
                         : null,
                   ),
                   child: Column(
@@ -211,7 +283,9 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                         value: "detailed",
                         isView: true,
                       ),
-                      SettingsVariables.view == "detailed" ? _buildDetailedOptions() : Container(),
+                      SettingsVariables.view == "detailed"
+                          ? _buildDetailedOptions()
+                          : Container(),
                     ],
                   ),
                 ),
@@ -226,7 +300,9 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                   hasSwitch: true,
                   onChanged: (bool value) async {
                     await SettingsVariables.setSortIsDescending(value);
-                    if (widget.currentConnectionPage != null) widget.currentConnectionPage.sort();
+                    if (widget.currentConnectionPage != null) {
+                      widget.currentConnectionPage.sort();
+                    }
                     setState(() {});
                   },
                 ),
@@ -253,14 +329,18 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                     customShowDialog(
                       context: context,
                       builder: (context) => CustomAlertDialog(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                            content: StatefulBuilder(builder: (context, setState) {
-                              return Consumer<CustomTheme>(builder: (context, model, child) {
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 12.0),
+                            content:
+                                StatefulBuilder(builder: (context, setState) {
+                              return Consumer<CustomTheme>(
+                                  builder: (context, model, child) {
                                 return Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     RadioListTile(
-                                      activeColor: Theme.of(context).accentColor,
+                                      activeColor:
+                                          Theme.of(context).accentColor,
                                       title: Text("Automatic"),
                                       value: "automatic",
                                       groupValue: model.themeValue,
@@ -270,7 +350,8 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                       },
                                     ),
                                     RadioListTile(
-                                      activeColor: Theme.of(context).accentColor,
+                                      activeColor:
+                                          Theme.of(context).accentColor,
                                       title: Text("Light"),
                                       value: "light",
                                       groupValue: model.themeValue,
@@ -280,7 +361,8 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                       },
                                     ),
                                     RadioListTile(
-                                      activeColor: Theme.of(context).accentColor,
+                                      activeColor:
+                                          Theme.of(context).accentColor,
                                       title: Text("Dark"),
                                       value: "dark",
                                       groupValue: model.themeValue,
@@ -297,46 +379,6 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                     );
                   },
                 ),
-                /*ListTile(
-                  title: Text("Font to use for headers"),
-                  onTap: () {
-                    customShowDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                            content: StatefulBuilder(builder: (context, setState2) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  RadioListTile(
-                                    activeColor: Theme.of(context).accentColor,
-                                    title: Text("System default"),
-                                    value: "default",
-                                    groupValue: SettingsVariables.accentFont,
-                                    onChanged: (String value) async {
-                                      await SettingsVariables.setAccentFont(value);
-                                      setState2(() {});
-                                      setState(() {});
-                                    },
-                                  ),
-                                  RadioListTile(
-                                    activeColor: Theme.of(context).accentColor,
-                                    title: Text("Overpass Mono", style: TextStyle(fontFamily: "OverpassMono")),
-                                    value: "OverpassMono",
-                                    groupValue: SettingsVariables.accentFont,
-                                    onChanged: (String value) async {
-                                      await SettingsVariables.setAccentFont(value);
-                                      setState2(() {});
-                                      setState(() {});
-                                    },
-                                  ),
-                                ],
-                              );
-                            }),
-                          ),
-                    );
-                  },
-                ),*/
                 _buildCheckboxListTile(
                   titleLabel: "Show connection address in app bar",
                   value: SettingsVariables.showAddressInAppBar,
@@ -361,8 +403,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                     customShowDialog(
                       context: context,
                       builder: (context) => CustomAlertDialog(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                            content: StatefulBuilder(builder: (context, setState) {
+                            contentPadding:
+                                EdgeInsets.symmetric(vertical: 12.0),
+                            content:
+                                StatefulBuilder(builder: (context, setState) {
                               return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
@@ -372,7 +416,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "automatic",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
+                                      if (widget.currentConnectionPage != null)
+                                        await SettingsVariables.setFilesizeUnit(
+                                            value,
+                                            widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -382,7 +429,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "B",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
+                                      if (widget.currentConnectionPage != null)
+                                        await SettingsVariables.setFilesizeUnit(
+                                            value,
+                                            widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -392,7 +442,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "KB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
+                                      if (widget.currentConnectionPage != null)
+                                        await SettingsVariables.setFilesizeUnit(
+                                            value,
+                                            widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -402,7 +455,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "MB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
+                                      if (widget.currentConnectionPage != null)
+                                        await SettingsVariables.setFilesizeUnit(
+                                            value,
+                                            widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -412,7 +468,10 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                                     value: "GB",
                                     groupValue: SettingsVariables.filesizeUnit,
                                     onChanged: (String value) async {
-                                      if (widget.currentConnectionPage != null) await SettingsVariables.setFilesizeUnit(value, widget.currentConnectionPage);
+                                      if (widget.currentConnectionPage != null)
+                                        await SettingsVariables.setFilesizeUnit(
+                                            value,
+                                            widget.currentConnectionPage);
                                       setState(() {});
                                     },
                                   ),
@@ -431,12 +490,20 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                       builder: (context) => CustomAlertDialog(
                             title: Text(
                               "Delete all connections?\nThis cannot be undone.",
-                              style: TextStyle(fontFamily: SettingsVariables.accentFont),
+                              style: TextStyle(
+                                fontFamily: SettingsVariables.accentFont,
+                              ),
                             ),
                             actions: <Widget>[
                               FlatButton(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                padding: EdgeInsets.only(
+                                    top: 8.5,
+                                    bottom: 8.0,
+                                    left: 14.0,
+                                    right: 14.0),
                                 child: Text("Cancel"),
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -445,15 +512,32 @@ class _SettingsPageState extends State<SettingsPage> with TickerProviderStateMix
                               RaisedButton(
                                 color: Theme.of(context).accentColor,
                                 splashColor: Colors.black12,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-                                child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                padding: EdgeInsets.only(
+                                    top: 8.5,
+                                    bottom: 8.0,
+                                    left: 14.0,
+                                    right: 14.0),
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(
+                                    color: Provider.of<CustomTheme>(context)
+                                            .isLightTheme()
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                                 elevation: .0,
                                 onPressed: () {
                                   HomePage.favoritesPage.removeAllFromJson();
-                                  HomePage.favoritesPage.setConnectionsFromJson();
-                                  HomePage.recentlyAddedPage.removeAllFromJson();
-                                  HomePage.recentlyAddedPage.setConnectionsFromJson();
+                                  HomePage.favoritesPage
+                                      .setConnectionsFromJson();
+                                  HomePage.recentlyAddedPage
+                                      .removeAllFromJson();
+                                  HomePage.recentlyAddedPage
+                                      .setConnectionsFromJson();
                                   Navigator.pop(context);
                                 },
                               ),

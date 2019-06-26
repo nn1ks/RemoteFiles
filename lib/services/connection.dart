@@ -72,5 +72,13 @@ class Connection {
   }
 
   @override
-  String toString() => "Connection [name:$name, address:$address, port:$port, username:$username, passwordOrKey:$passwordOrKey, path:$path]";
+  String toString() {
+    return "Connection [" +
+        "name:$name, " +
+        "address:$address, " +
+        "port:$port, " +
+        "username:$username, " +
+        "passwordOrKey:$passwordOrKey, " +
+        "path:$path]";
+  }
 }

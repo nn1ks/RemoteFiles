@@ -69,7 +69,9 @@ class ConnectionDialog extends StatelessWidget {
     }
     return CustomAlertDialog(
       title: Text(
-        page == "connection" ? "Current connection" : (values.name != "" ? values.name : values.address),
+        page == "connection"
+            ? "Current connection"
+            : (values.name != "" ? values.name : values.address),
         style: TextStyle(
           fontFamily: SettingsVariables.accentFont,
         ),
@@ -111,7 +113,9 @@ class ConnectionDialog extends StatelessWidget {
                   TableRow(
                     children: [
                       Text("Password/Key:"),
-                      values.passwordOrKey != "" ? _buildPasswordRow(values.passwordOrKey.length) : Text("-"),
+                      values.passwordOrKey != ""
+                          ? _buildPasswordRow(values.passwordOrKey.length)
+                          : Text("-"),
                     ],
                   ),
                   TableRow(children: [
@@ -139,9 +143,17 @@ class ConnectionDialog extends StatelessWidget {
                     Text(secondaryButtonLabel),
                   ],
                 ),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
-                onPressed: secondaryButtonOnPressed)
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                padding: EdgeInsets.only(
+                  top: 8.5,
+                  bottom: 8.0,
+                  left: 12.0,
+                  right: 14.0,
+                ),
+                onPressed: secondaryButtonOnPressed,
+              )
             : null,
         RaisedButton(
           color: Theme.of(context).accentColor,
@@ -153,17 +165,30 @@ class ConnectionDialog extends StatelessWidget {
                 child: Icon(
                   primaryButtonIconData,
                   size: 19.0,
-                  color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black,
+                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                      ? Colors.white
+                      : Colors.black,
                 ),
               ),
               Text(
                 primaryButtonLabel,
-                style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black),
+                style: TextStyle(
+                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                      ? Colors.white
+                      : Colors.black,
+                ),
               ),
             ],
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-          padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+          padding: EdgeInsets.only(
+            top: 8.5,
+            bottom: 8.0,
+            left: 12.0,
+            right: 14.0,
+          ),
           elevation: .0,
           onPressed: primaryButtonOnPressed,
         ),

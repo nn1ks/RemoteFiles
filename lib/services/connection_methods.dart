@@ -7,7 +7,13 @@ import '../shared/shared.dart';
 import 'services.dart';
 
 class ConnectionMethods {
-  static Future<bool> connectClient(BuildContext context, {@required String address, int port, String username, String passwordOrKey}) async {
+  static Future<bool> connectClient(
+    BuildContext context, {
+    @required String address,
+    int port,
+    String username,
+    String passwordOrKey,
+  }) async {
     try {
       var model = Provider.of<ConnectionModel>(context);
       model.client = SSHClient(
@@ -55,7 +61,12 @@ class ConnectionMethods {
       connectionPage.connection.path = path;
     }
 
-    if (openNewPage) Navigator.push(context, MaterialPageRoute(builder: (context) => connectionPage));
+    if (openNewPage) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => connectionPage),
+      );
+    }
     bool loadingDone = false;
     Future.delayed(Duration(milliseconds: 600)).then((_) {
       if (setIsLoading && !loadingDone) model.isLoading = true;
@@ -70,7 +81,8 @@ class ConnectionMethods {
         list[i].forEach((k, v) {
           connectionPage.fileInfos[i].addAll({k.toString(): v.toString()});
         });
-        connectionPage.fileInfos[i]["filename"] = _removeTrailingSlash(connectionPage.fileInfos[i]["filename"]);
+        connectionPage.fileInfos[i]["filename"] =
+            _removeTrailingSlash(connectionPage.fileInfos[i]["filename"]);
         connectionPage.fileInfos[i].addAll({"convertedFileSize": ""});
       }
     } catch (e) {
@@ -82,18 +94,28 @@ class ConnectionMethods {
         ),
       );
     }
-    SettingsVariables.setFilesizeUnit(SettingsVariables.filesizeUnit, connectionPage);
+    SettingsVariables.setFilesizeUnit(
+      SettingsVariables.filesizeUnit,
+      connectionPage,
+    );
     loadingDone = true;
     model.isLoading = false;
     connectionPage.sort();
   }
 
   static String _removeTrailingSlash(String path) {
-    if (path.length > 1 && path.substring(path.length - 1) == "/") return path.substring(0, path.length - 1);
+    if (path.length > 1 && path.substring(path.length - 1) == "/") {
+      return path.substring(0, path.length - 1);
+    }
     return path;
   }
 
-  static Future<void> connect(BuildContext context, Connection connection, {bool setIsLoading = true, bool openNewPage = true}) async {
+  static Future<void> connect(
+    BuildContext context,
+    Connection connection, {
+    bool setIsLoading = true,
+    bool openNewPage = true,
+  }) async {
     await connectIndividually(
       context,
       address: connection.address,
@@ -106,7 +128,11 @@ class ConnectionMethods {
     );
   }
 
-  static void goToDirectory(BuildContext context, String path, Connection currentConnection) {
+  static void goToDirectory(
+    BuildContext context,
+    String path,
+    Connection currentConnection,
+  ) {
     connect(
       context,
       Connection(
@@ -120,7 +146,10 @@ class ConnectionMethods {
     );
   }
 
-  static Future<void> goToDirectoryBefore(BuildContext context, Connection currentConnection) async {
+  static Future<void> goToDirectoryBefore(
+    BuildContext context,
+    Connection currentConnection,
+  ) async {
     int lastSlashIndex;
     for (int i = 0; i < currentConnection.path.length - 1; i++) {
       if (currentConnection.path[i] == "/") {
@@ -128,12 +157,25 @@ class ConnectionMethods {
       }
     }
     if (lastSlashIndex == 0) lastSlashIndex = 1;
-    goToDirectory(context, currentConnection.path.substring(0, lastSlashIndex), currentConnection);
+    goToDirectory(
+      context,
+      currentConnection.path.substring(0, lastSlashIndex),
+      currentConnection,
+    );
   }
 
-  static Future<void> refresh(BuildContext context, Connection currentConnection, {bool setIsLoading = true}) async {
+  static Future<void> refresh(
+    BuildContext context,
+    Connection currentConnection, {
+    bool setIsLoading = true,
+  }) async {
     Navigator.pop(context);
-    await connect(context, currentConnection, setIsLoading: setIsLoading, openNewPage: true);
+    await connect(
+      context,
+      currentConnection,
+      setIsLoading: setIsLoading,
+      openNewPage: true,
+    );
   }
 
   static void showDeleteConfirmDialog({
@@ -161,13 +203,22 @@ class ConnectionMethods {
       builder: (context) {
         return CustomAlertDialog(
           title: Text(
-            filenames.length == 1 ? "Delete '${filenames[0]}'?" : "Delete ${filenames.length} files?",
+            filenames.length == 1
+                ? "Delete '${filenames[0]}'?"
+                : "Delete ${filenames.length} files?",
             style: TextStyle(fontFamily: SettingsVariables.accentFont),
           ),
           actions: <Widget>[
             FlatButton(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              padding: EdgeInsets.only(
+                top: 8.5,
+                bottom: 8.0,
+                left: 14.0,
+                right: 14.0,
+              ),
               child: Text("Cancel"),
               onPressed: () {
                 Navigator.pop(context);
@@ -176,9 +227,23 @@ class ConnectionMethods {
             RaisedButton(
               color: Theme.of(context).accentColor,
               splashColor: Colors.black12,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-              child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+              padding: EdgeInsets.only(
+                top: 8.5,
+                bottom: 8.0,
+                left: 14.0,
+                right: 14.0,
+              ),
+              child: Text(
+                "OK",
+                style: TextStyle(
+                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ),
               elevation: .0,
               onPressed: () async {
                 for (int i = 0; i < filePaths.length; i++) {

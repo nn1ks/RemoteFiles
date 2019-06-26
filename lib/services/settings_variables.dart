@@ -20,7 +20,9 @@ class SettingsVariables {
     }
     Directory dirPrefs;
     if (prefs != null) {
-      if (prefs.getString("downloadDirectoryPath") != null) dirPrefs = Directory(prefs.getString("downloadDirectoryPath"));
+      if (prefs.getString("downloadDirectoryPath") != null) {
+        dirPrefs = Directory(prefs.getString("downloadDirectoryPath"));
+      }
     }
     if (dirPrefs != null) return dirPrefs;
     return dirDefault;
@@ -56,7 +58,9 @@ class SettingsVariables {
   static String detailedViewTimeInfo = "modificationDate";
   static String getDetailedViewTimeInfo() {
     String detailedViewTimeInfoPrefs;
-    if (prefs != null) detailedViewTimeInfoPrefs = prefs.getString("detailedViewTimeInfo");
+    if (prefs != null) {
+      detailedViewTimeInfoPrefs = prefs.getString("detailedViewTimeInfo");
+    }
     if (detailedViewTimeInfoPrefs != null) return detailedViewTimeInfoPrefs;
     return detailedViewTimeInfo;
   }
@@ -82,7 +86,9 @@ class SettingsVariables {
   static bool sortIsDescending = false;
   static bool getSortIsDescending() {
     bool sortIsDescendingPrefs;
-    if (prefs != null) sortIsDescendingPrefs = prefs.getBool("sortIsDescending");
+    if (prefs != null) {
+      sortIsDescendingPrefs = prefs.getBool("sortIsDescending");
+    }
     if (sortIsDescendingPrefs != null) return sortIsDescendingPrefs;
     return sortIsDescending;
   }
@@ -114,7 +120,10 @@ class SettingsVariables {
   }
 
   /// can be 'B', 'KB', 'MB', 'GB' and 'automatic'.
-  static Future<void> setFilesizeUnit(String value, ConnectionPage currentConnectionPage) async {
+  static Future<void> setFilesizeUnit(
+    String value,
+    ConnectionPage currentConnectionPage,
+  ) async {
     filesizeUnit = value;
     await prefs.setString("filesizeUnit", value);
 
@@ -150,13 +159,18 @@ class SettingsVariables {
         unitValue = "B";
       }
       if (unitDivisor != null) {
-        convertedFileSize = (double.parse(v["fileSize"]) / unitDivisor.toDouble());
+        convertedFileSize =
+            double.parse(v["fileSize"]) / unitDivisor.toDouble();
         unitValue = value;
       }
       for (int i = 0; i < convertedFileSize.toString().length; i++) {
         if (convertedFileSize.toString()[i] == ".") {
-          int substringLast = convertedFileSize.toString().length < (i + 3) ? convertedFileSize.toString().length : (i + 3);
-          convertedFileSize = double.parse(convertedFileSize.toString().substring(0, substringLast));
+          int substringLast = convertedFileSize.toString().length < (i + 3)
+              ? convertedFileSize.toString().length
+              : (i + 3);
+          convertedFileSize = double.parse(
+            convertedFileSize.toString().substring(0, substringLast),
+          );
           break;
         }
       }
@@ -167,7 +181,9 @@ class SettingsVariables {
   static bool showAddressInAppBar = true;
   static bool getShowAddressInAppBar() {
     bool showAddressInAppBarPrefs;
-    if (prefs != null) showAddressInAppBarPrefs = prefs.getBool("showAddressInAppBar");
+    if (prefs != null) {
+      showAddressInAppBarPrefs = prefs.getBool("showAddressInAppBar");
+    }
     if (showAddressInAppBarPrefs != null) return showAddressInAppBarPrefs;
     return showAddressInAppBar;
   }

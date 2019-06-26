@@ -5,14 +5,16 @@ import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
 import 'pages.dart';
 
 class HomePage extends StatefulWidget {
   static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
-  static TabViewPage recentlyAddedPage = TabViewPage("recently_added.json", false);
+  static TabViewPage recentlyAddedPage = TabViewPage(
+    "recently_added.json",
+    false,
+  );
 
   static var scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -42,236 +44,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode()];
-
-  void _showQuickConnection() {
-    Connection connection = Connection();
-    String mainTextInput;
-    bool mainInputIsValid = true;
-    bool showUsernameInput = true;
-    bool showError = false;
-
-    void setConnection() {
-      connection = Connection();
-      if (mainTextInput == null || mainTextInput == "") {
-        mainInputIsValid = false;
-      } else {
-        mainInputIsValid = true;
-        bool usernameIsValid = false;
-        String username;
-        int atSignsNumber = 0;
-        for (int i = 0; i < mainTextInput.length; i++) {
-          if (mainTextInput[i] == "@") {
-            atSignsNumber++;
-            username = mainTextInput.substring(0, i);
-            usernameIsValid = true;
-          }
-        }
-        if (atSignsNumber > 1) {
-          mainInputIsValid = false;
-        }
-        if (mainInputIsValid) {
-          if (usernameIsValid) {
-            for (int i = 0; i < username.length; i++) {
-              if (mainTextInput[i] == ":" || mainTextInput[i] == "/" || mainTextInput[i] == " ") {
-                username = username.substring(i + 1);
-              }
-            }
-          }
-          int addressStartIndex = username == null ? 0 : username.length + 1;
-          String address = mainTextInput.substring(addressStartIndex);
-          String port = "22";
-          int colonNumber = 0;
-          for (int i = addressStartIndex; i < mainTextInput.length; i++) {
-            if (mainTextInput[i] == ":") {
-              colonNumber++;
-              port = mainTextInput.substring(i + 1);
-              address = mainTextInput.substring(addressStartIndex, i);
-            }
-          }
-          if (colonNumber > 1) {
-            mainInputIsValid = false;
-          } else {
-            if (usernameIsValid) connection.username = username;
-            connection.address = address;
-            connection.port = port;
-          }
-        }
-      }
-    }
-
-    showCustomModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return SafeArea(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Container(
-                padding: EdgeInsets.all(16.0),
-                child: StatefulBuilder(builder: (context, setState2) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Quick connect",
-                        style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(height: 12.0),
-                      TextField(
-                        autofocus: true,
-                        autocorrect: false,
-                        focusNode: focusNodes[0],
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
-                          hintText: "[username@]address[:port]",
-                          errorText: showError ? "Input is not valid" : null,
-                        ),
-                        onChanged: (String value) {
-                          showError = false;
-                          mainTextInput = value;
-                          setConnection();
-                          if (mainInputIsValid) {
-                            if (connection.username == null || connection.username == "") {
-                              showUsernameInput = true;
-                            } else {
-                              showUsernameInput = false;
-                            }
-                          }
-                        },
-                        onSubmitted: (String value) => FocusScope.of(context).requestFocus(focusNodes[showUsernameInput ? 1 : 2]),
-                      ),
-                      Divider(height: 20.0),
-                      if (showUsernameInput)
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 16.0),
-                          child: TextField(
-                            autofocus: true,
-                            autocorrect: false,
-                            focusNode: focusNodes[1],
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(labelText: "Username"),
-                            onChanged: (String value) => connection.username = value,
-                            onSubmitted: (String value) => FocusScope.of(context).requestFocus(focusNodes[2]),
-                          ),
-                        ),
-                      TextField(
-                        autofocus: true,
-                        obscureText: true,
-                        focusNode: focusNodes[2],
-                        textInputAction: TextInputAction.done,
-                        decoration: InputDecoration(labelText: "Password"),
-                        onChanged: (String value) => connection.passwordOrKey = value,
-                      ),
-                      Divider(height: 20.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          Expanded(
-                            child: RaisedButton(
-                              color: Theme.of(context).accentColor,
-                              splashColor: Colors.black12,
-                              child: Padding(
-                                padding: EdgeInsets.all(5),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(right: 3.5, top: 1),
-                                      child: Icon(
-                                        Icons.flash_on,
-                                        size: 19.0,
-                                        color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Connect",
-                                      style: TextStyle(fontSize: 16.0, color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                              padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 12.0, right: 14.0),
-                              elevation: .0,
-                              onPressed: () {
-                                if (mainInputIsValid && connection.address != null) {
-                                  customShowDialog(
-                                    context: context,
-                                    builder: (context) => Center(
-                                          child: Container(
-                                            height: 80,
-                                            width: 80,
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context).dialogBackgroundColor,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Center(
-                                              child: CircularProgressIndicator(),
-                                            ),
-                                          ),
-                                        ),
-                                  );
-                                  HomePage.recentlyAddedPage.addToJson(connection);
-                                  HomePage.recentlyAddedPage.setConnectionsFromJson();
-                                  Navigator.pop(context);
-                                  ConnectionMethods.connectClient(
-                                    context,
-                                    address: connection.address,
-                                    port: int.parse(connection.port),
-                                    username: connection.username,
-                                    passwordOrKey: connection.passwordOrKey,
-                                  ).then((bool connected) {
-                                    Navigator.pop(context);
-                                    if (connected) {
-                                      ConnectionMethods.connect(context, connection);
-                                    } else {
-                                      Scaffold.of(context).showSnackBar(SnackBar(
-                                        duration: Duration(seconds: 5),
-                                        content: Text("Unable to connect to ${connection.address}"),
-                                      ));
-                                    }
-                                  });
-                                } else {
-                                  mainInputIsValid = false;
-                                  showError = true;
-                                }
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                }),
-              ),
-            ),
-          );
-        });
-  }
-
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_tabOnChange);
-    _rotationController1 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
-    _rotationController2 = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
+    _rotationController1 =
+        AnimationController(duration: Duration(milliseconds: 200), vsync: this);
+    _rotationController2 =
+        AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     getApplicationDocumentsDirectory().then((Directory dir) {
       setState(() {
         HomePage.favoritesPage.dir = dir;
         HomePage.recentlyAddedPage.dir = dir;
-        HomePage.favoritesPage.jsonFile = File(HomePage.favoritesPage.dir.path + "/" + HomePage.favoritesPage.jsonFileName);
-        HomePage.recentlyAddedPage.jsonFile = File(HomePage.recentlyAddedPage.dir.path + "/" + HomePage.recentlyAddedPage.jsonFileName);
-        HomePage.favoritesPage.jsonFileExists = HomePage.favoritesPage.jsonFile.existsSync();
-        HomePage.recentlyAddedPage.jsonFileExists = HomePage.recentlyAddedPage.jsonFile.existsSync();
+        HomePage.favoritesPage.jsonFile = File(
+          HomePage.favoritesPage.dir.path +
+              "/" +
+              HomePage.favoritesPage.jsonFileName,
+        );
+        HomePage.recentlyAddedPage.jsonFile = File(
+          HomePage.recentlyAddedPage.dir.path +
+              "/" +
+              HomePage.recentlyAddedPage.jsonFileName,
+        );
+        HomePage.favoritesPage.jsonFileExists =
+            HomePage.favoritesPage.jsonFile.existsSync();
+        HomePage.recentlyAddedPage.jsonFileExists =
+            HomePage.recentlyAddedPage.jsonFile.existsSync();
         if (HomePage.favoritesPage.jsonFileExists) {
           HomePage.favoritesPage.connections = [];
-          HomePage.favoritesPage.connections.addAll(HomePage.favoritesPage.getConnectionsFromJson());
+          HomePage.favoritesPage.connections
+              .addAll(HomePage.favoritesPage.getConnectionsFromJson());
         }
         if (HomePage.recentlyAddedPage.jsonFileExists) {
           HomePage.recentlyAddedPage.connections = [];
-          HomePage.recentlyAddedPage.connections.addAll(HomePage.recentlyAddedPage.getConnectionsFromJson());
+          HomePage.recentlyAddedPage.connections
+              .addAll(HomePage.recentlyAddedPage.getConnectionsFromJson());
         }
       });
     });
@@ -288,7 +95,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Provider.of<CustomTheme>(context).setThemeValue(await Provider.of<CustomTheme>(context).getThemeValue());
+      Provider.of<CustomTheme>(context).setThemeValue(
+        await Provider.of<CustomTheme>(context).getThemeValue(),
+      );
     });
     return Scaffold(
       key: HomePage.scaffoldKey,
@@ -307,13 +116,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             indicatorSize: TabBarIndicatorSize.label,
             indicatorWeight: 2.0,
             labelColor: Theme.of(context).accentColor,
-            unselectedLabelColor: Theme.of(context).brightness == Brightness.light ? Colors.grey[600] : Colors.grey[400],
-            labelStyle: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w600, fontSize: 14.0),
+            unselectedLabelColor:
+                Theme.of(context).brightness == Brightness.light
+                    ? Colors.grey[600]
+                    : Colors.grey[400],
+            labelStyle: TextStyle(
+              fontFamily: SettingsVariables.accentFont,
+              fontWeight: FontWeight.w600,
+              fontSize: 14.0,
+            ),
             controller: _tabController,
             tabs: <Widget>[
               Tab(
                 icon: RotationTransition(
-                  turns: Tween(begin: .0, end: .2).animate(_rotationController1),
+                  turns:
+                      Tween(begin: .0, end: .2).animate(_rotationController1),
                   child: Icon(Icons.star_border),
                 ),
                 text: "Favorites",
@@ -321,8 +138,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               Tab(
                 icon: RotationTransition(
                   turns: _tabBarWasAnimated
-                      ? Tween(begin: -.5, end: -1.0).animate(_rotationController2)
-                      : Tween(begin: .0, end: -1.0).animate(_rotationController2),
+                      ? Tween(begin: -.5, end: -1.0)
+                          .animate(_rotationController2)
+                      : Tween(begin: .0, end: -1.0)
+                          .animate(_rotationController2),
                   child: Padding(
                     padding: EdgeInsets.only(right: 2.0),
                     child: Icon(Icons.restore),
@@ -343,7 +162,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 padding: EdgeInsets.only(left: 8.0),
                 child: CustomIconButton(
                   icon: Icon(OMIcons.settings),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage())),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SettingsPage()),
+                    );
+                  },
                 ),
               ),
               Container(
@@ -355,121 +179,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               InkWell(
                 borderRadius: BorderRadius.circular(40.0),
                 child: Padding(
-                  padding: EdgeInsets.only(left: 14.0, right: 16.0, top: 8.0, bottom: 8.0),
+                  padding: EdgeInsets.only(
+                    left: 14.0,
+                    right: 16.0,
+                    top: 8.0,
+                    bottom: 8.0,
+                  ),
                   child: Row(
                     children: <Widget>[
-                      Image.asset(Provider.of<CustomTheme>(context).isLightTheme() ? "assets/app_icon_black.png" : "assets/app_icon_white.png", width: 24.0),
+                      Image.asset(
+                        Provider.of<CustomTheme>(context).isLightTheme()
+                            ? "assets/app_icon_black.png"
+                            : "assets/app_icon_white.png",
+                        width: 24.0,
+                      ),
                       SizedBox(width: 7.0),
                       Text(
                         "RemoteFiles",
-                        style: TextStyle(fontFamily: SettingsVariables.accentFont, fontWeight: FontWeight.w600, fontSize: 17.0),
+                        style: TextStyle(
+                          fontFamily: SettingsVariables.accentFont,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17.0,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-                  String version = packageInfo.version;
-                  customShowDialog(
-                    context: context,
-                    builder: (context) {
-                      return CustomAlertDialog(
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(top: 6.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18.0),
-                                color: Colors.white,
-                                boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, .2), blurRadius: 2.0, offset: Offset(.0, .8))],
-                              ),
-                              width: 90.0,
-                              height: 90.0,
-                              child: Padding(
-                                padding: EdgeInsets.all(15.79),
-                                child: Image.asset("assets/app_icon.png"),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 18.0, bottom: 6.0),
-                              child: Text(
-                                "RemoteFiles",
-                                style: TextStyle(fontWeight: FontWeight.w600, fontFamily: SettingsVariables.accentFont, fontSize: 19.0),
-                              ),
-                            ),
-                            Text(
-                              "Version: $version",
-                              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.6, color: Theme.of(context).hintColor),
-                            ),
-                            Divider(height: 30.0),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: RaisedButton(
-                                    color: Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(235, 240, 255, 1) : Color.fromRGBO(84, 88, 92, 1),
-                                    splashColor:
-                                        Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(215, 225, 250, 1) : Color.fromRGBO(100, 104, 110, 1),
-                                    elevation: .0,
-                                    highlightElevation: 2.8,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: .8),
-                                      child: Text(
-                                        "GitHub",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.body1.color, fontSize: 13.6, fontFamily: "Roboto"),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      const url = "https://github.com/niklas-8/RemoteFiles";
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
-                                      } else {
-                                        Navigator.pop(context);
-                                        HomePage.scaffoldKey.currentState.showSnackBar(
-                                          SnackBar(
-                                            content: Text("Could not launch $url"),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 14.0,
-                                ),
-                                Expanded(
-                                  child: RaisedButton(
-                                    color: Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(235, 240, 255, 1) : Color.fromRGBO(84, 88, 92, 1),
-                                    splashColor:
-                                        Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(215, 225, 250, 1) : Color.fromRGBO(100, 104, 110, 1),
-                                    elevation: .0,
-                                    highlightElevation: 2.8,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: .8),
-                                      child: Text(
-                                        "PlayStore",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.body1.color, fontSize: 13.6, fontFamily: "Roboto"),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      HomePage.scaffoldKey.currentState.showSnackBar(
-                                        SnackBar(
-                                          content: Text("App is not yet available in the Google PlayStore"),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
+                  AboutAppDialog(context, packageInfo.version).show();
                 },
               ),
             ],
@@ -484,14 +222,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             FloatingActionRowButton(
               icon: Icon(Icons.flash_on),
               onPressed: () {
-                _showQuickConnection();
+                QuickConnectionSheet(
+                  context,
+                  onFail: () {
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        duration: Duration(seconds: 5),
+                        content: Text(
+                          "Unable to connect",
+                        ),
+                      ),
+                    );
+                  },
+                ).show();
               },
             ),
             FloatingActionRowDivider(),
             FloatingActionRowButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EditConnectionPage(isNew: true)));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      EditConnectionPage(isNew: true);
+                    },
+                  ),
+                );
               },
             ),
           ],

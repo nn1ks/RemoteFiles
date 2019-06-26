@@ -29,9 +29,23 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
     "path": TextEditingController()
   };
 
-  List<FocusNode> focusNodes = [FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode(), FocusNode()];
+  List<FocusNode> focusNodes = [
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+    FocusNode(),
+  ];
 
-  Container _buildTextField({String label, String hint, String key, bool isPassword = false, FocusNode focusNode, int index}) {
+  Container _buildTextField({
+    String label,
+    String hint,
+    String key,
+    bool isPassword = false,
+    FocusNode focusNode,
+    int index,
+  }) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.0),
       child: TextField(
@@ -40,16 +54,27 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword,
         autocorrect: key == "name",
-        textInputAction: label == "Path" ? TextInputAction.done : TextInputAction.next,
+        textInputAction:
+            label == "Path" ? TextInputAction.done : TextInputAction.next,
         keyboardType: key == "port" ? TextInputType.numberWithOptions() : null,
         decoration: InputDecoration(
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).accentColor, width: 2.0)),
+          focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Theme.of(context).accentColor, width: 2.0),
+          ),
           labelText: label,
           hintText: hint,
-          errorText: !_addressIsEntered && label == "Address*" ? "Please enter an address" : null,
-          suffixIcon: key == "passwordOrKey" && !_passwordWasChanged && _textEditingController[key].text != ""
+          errorText: !_addressIsEntered && label == "Address*"
+              ? "Please enter an address"
+              : null,
+          suffixIcon: key == "passwordOrKey" &&
+                  !_passwordWasChanged &&
+                  _textEditingController[key].text != ""
               ? CustomIconButton(
-                  icon: Icon(Icons.clear, color: Theme.of(context).textTheme.body1.color),
+                  icon: Icon(
+                    Icons.clear,
+                    color: Theme.of(context).textTheme.body1.color,
+                  ),
                   onPressed: () {
                     _textEditingController[key].text = "";
                     _connection.setter(key, "");
@@ -65,7 +90,9 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           }
         },
         onSubmitted: (String value) {
-          if (index < focusNodes.length - 1) FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+          if (index < focusNodes.length - 1) {
+            FocusScope.of(context).requestFocus(focusNodes[index + 1]);
+          }
         },
       ),
     );
@@ -76,8 +103,10 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
     if (!widget.isNew) {
       Map<String, String> map = {};
       _textEditingController.forEach((k, v) {
-        map.addAll({k: HomePage.favoritesPage.connections[widget.index].toMap()[k]});
-        _textEditingController[k].text = HomePage.favoritesPage.connections[widget.index].toMap()[k];
+        map.addAll(
+            {k: HomePage.favoritesPage.connections[widget.index].toMap()[k]});
+        _textEditingController[k].text =
+            HomePage.favoritesPage.connections[widget.index].toMap()[k];
       });
       _connection = Connection.fromMap(map);
     }
@@ -102,8 +131,14 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                 },
               ),
               Text(
-                widget.isNew ? "Add a new SFTP connection" : "Edit SFTP connection",
-                style: TextStyle(fontFamily: SettingsVariables.accentFont, fontSize: 17.0, fontWeight: FontWeight.w600),
+                widget.isNew
+                    ? "Add a new SFTP connection"
+                    : "Edit SFTP connection",
+                style: TextStyle(
+                  fontFamily: SettingsVariables.accentFont,
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w600,
+                ),
               )
             ],
           ),
@@ -143,14 +178,45 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
             physics: BouncingScrollPhysics(),
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 4.0),
+                margin: EdgeInsets.only(
+                  left: 20.0,
+                  right: 20.0,
+                  top: 20.0,
+                  bottom: 4.0,
+                ),
                 child: Column(children: <Widget>[
-                  _buildTextField(label: "Name", key: "name", index: 0),
-                  _buildTextField(label: "Address*", key: "address", index: 1),
-                  _buildTextField(label: "Port", hint: "22", key: "port", index: 2),
-                  _buildTextField(label: "Username", key: "username", index: 3),
-                  _buildTextField(label: "Password or Key", key: "passwordOrKey", isPassword: true, index: 4),
-                  _buildTextField(label: "Path", key: "path", index: 5),
+                  _buildTextField(
+                    label: "Name",
+                    key: "name",
+                    index: 0,
+                  ),
+                  _buildTextField(
+                    label: "Address*",
+                    key: "address",
+                    index: 1,
+                  ),
+                  _buildTextField(
+                    label: "Port",
+                    hint: "22",
+                    key: "port",
+                    index: 2,
+                  ),
+                  _buildTextField(
+                    label: "Username",
+                    key: "username",
+                    index: 3,
+                  ),
+                  _buildTextField(
+                    label: "Password or Key",
+                    key: "passwordOrKey",
+                    isPassword: true,
+                    index: 4,
+                  ),
+                  _buildTextField(
+                    label: "Path",
+                    key: "path",
+                    index: 5,
+                  ),
                 ]),
               ),
               widget.isNew
@@ -161,7 +227,10 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                         padding: EdgeInsets.only(top: 2.0),
                         child: Text(
                           "Add to Favorites",
-                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16.4),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.4,
+                          ),
                         ),
                       ),
                       value: _addToFavorites,

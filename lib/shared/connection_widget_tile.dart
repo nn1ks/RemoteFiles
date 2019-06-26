@@ -46,11 +46,19 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
         height: widget.view == "grid" ? 18 : 21,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: widget.isSelected ? Theme.of(context).accentColor : Colors.transparent,
-          border: Border.all(color: Theme.of(context).textTheme.body1.color.withOpacity(.6), width: widget.isSelected ? 0 : 1),
+          color: widget.isSelected
+              ? Theme.of(context).accentColor
+              : Colors.transparent,
+          border: Border.all(
+            color: Theme.of(context).textTheme.body1.color.withOpacity(.6),
+            width: widget.isSelected ? 0 : 1,
+          ),
         ),
-        child:
-            Icon(Icons.check, size: widget.view == "grid" ? 16 : 18, color: widget.isSelected ? Theme.of(context).accentIconTheme.color : Colors.transparent),
+        child: Icon(Icons.check,
+            size: widget.view == "grid" ? 16 : 18,
+            color: widget.isSelected
+                ? Theme.of(context).accentIconTheme.color
+                : Colors.transparent),
       );
     } else if (widget.fileInfos[widget.index]["isDirectory"] == "true") {
       result = CustomIconButton(
@@ -62,6 +70,22 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
     return result;
   }
 
+  Widget _getSubtitle() {
+    String result;
+    if (widget.fileInfos[widget.index]["isDirectory"] == "true") {
+      result = "Folder, ";
+    } else {
+      if (widget.fileInfos[widget.index]["convertedFileSize"] == "") {
+        result = "Loading... ";
+      } else {
+        result = widget.fileInfos[widget.index]["convertedFileSize"] + ", ";
+      }
+    }
+    result +=
+        widget.fileInfos[widget.index][SettingsVariables.detailedViewTimeInfo];
+    return Text(result);
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget result;
@@ -70,7 +94,9 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
       if (widget.view == "list") {
         result = ListTile(
           leading: Icon(
-            widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
+            widget.fileInfos[widget.index]["isDirectory"] == "true"
+                ? Icons.folder_open
+                : Icons.insert_drive_file,
             color: Theme.of(context).hintColor,
           ),
           title: Text(widget.fileInfos[widget.index]["filename"]),
@@ -84,7 +110,9 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
           decoration: BoxDecoration(
             color: widget.isSelected
                 ? Theme.of(context).accentColor.withOpacity(.16)
-                : (Provider.of<CustomTheme>(context).isLightTheme() ? Color.fromRGBO(0, 0, 0, .07) : Color.fromRGBO(255, 255, 255, .04)),
+                : (Provider.of<CustomTheme>(context).isLightTheme()
+                    ? Color.fromRGBO(0, 0, 0, .07)
+                    : Color.fromRGBO(255, 255, 255, .04)),
             borderRadius: BorderRadius.circular(6.0),
           ),
           child: InkWell(
@@ -105,7 +133,9 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                         borderRadius: BorderRadius.circular(3.0),
                       ),
                       child: Icon(
-                        widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
+                        widget.fileInfos[widget.index]["isDirectory"] == "true"
+                            ? Icons.folder_open
+                            : Icons.insert_drive_file,
                         size: 32.0,
                         color: Colors.grey[600],
                       ),
@@ -118,7 +148,10 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                       Flexible(
                         child: Text(
                           widget.fileInfos[widget.index]["filename"],
-                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.4),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 15.4,
+                          ),
                           maxLines: 3,
                           overflow: TextOverflow.fade,
                         ),
@@ -136,15 +169,14 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
           leading: Padding(
             padding: EdgeInsets.only(top: 8.0),
             child: Icon(
-              widget.fileInfos[widget.index]["isDirectory"] == "true" ? Icons.folder_open : Icons.insert_drive_file,
+              widget.fileInfos[widget.index]["isDirectory"] == "true"
+                  ? Icons.folder_open
+                  : Icons.insert_drive_file,
               color: Theme.of(context).hintColor,
             ),
           ),
           title: Text(widget.fileInfos[widget.index]["filename"]),
-          subtitle: Text((widget.fileInfos[widget.index]["isDirectory"] == "true"
-                  ? "Folder, "
-                  : (widget.fileInfos[widget.index]["convertedFileSize"] == "" ? "Loading... " : widget.fileInfos[widget.index]["convertedFileSize"] + ", ")) +
-              widget.fileInfos[widget.index][SettingsVariables.detailedViewTimeInfo]),
+          subtitle: _getSubtitle(),
           trailing: _getTrailingButton(),
           onTap: widget.onTap,
           onLongPress: widget.onLongPress,
@@ -166,7 +198,9 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
     if (widget.view != "grid") {
       result = AnimatedContainer(
         duration: _animationDuration,
-        color: widget.isSelected ? Theme.of(context).accentColor.withOpacity(.16) : Colors.transparent,
+        color: widget.isSelected
+            ? Theme.of(context).accentColor.withOpacity(.16)
+            : Colors.transparent,
         child: result,
       );
     }

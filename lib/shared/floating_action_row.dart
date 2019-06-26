@@ -8,12 +8,22 @@ class FloatingActionRow extends StatelessWidget {
   final String heroTag;
 
   /// The first and the last item must be a `FloatingActionRowButton`
-  FloatingActionRow({@required this.children, this.elevation = 6.0, this.color, this.height = 56.0, this.heroTag});
+  FloatingActionRow({
+    @required this.children,
+    this.elevation = 6.0,
+    this.color,
+    this.height = 56.0,
+    this.heroTag,
+  });
 
   List<Widget> _addPadding(List<Widget> widgets) {
-    List<FloatingActionRowButton> buttons = [widgets[0], widgets[widgets.length - 1]];
+    List<FloatingActionRowButton> buttons = [
+      widgets[0],
+      widgets[widgets.length - 1]
+    ];
     widgets[0] = buttons[0].copyWith(padding: EdgeInsets.only(left: 4.0));
-    widgets[widgets.length - 1] = buttons[1].copyWith(padding: EdgeInsets.only(right: 4.0));
+    widgets[widgets.length - 1] =
+        buttons[1].copyWith(padding: EdgeInsets.only(right: 4.0));
     return widgets;
   }
 
@@ -59,9 +69,21 @@ class FloatingActionRowButton extends StatelessWidget {
   final EdgeInsets padding;
   final GestureTapCallback onPressed;
 
-  FloatingActionRowButton({@required this.icon, this.color, this.size = 56.0, this.padding, @required this.onPressed}) : super();
+  FloatingActionRowButton({
+    @required this.icon,
+    this.color,
+    this.size = 56.0,
+    this.padding,
+    @required this.onPressed,
+  }) : super();
 
-  copyWith({Icon icon, Color color, double size, EdgeInsets padding, GestureTapCallback onPressed}) {
+  copyWith({
+    Icon icon,
+    Color color,
+    double size,
+    EdgeInsets padding,
+    GestureTapCallback onPressed,
+  }) {
     return FloatingActionRowButton(
       icon: icon ?? this.icon,
       color: color ?? this.color,

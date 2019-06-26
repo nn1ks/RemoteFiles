@@ -14,11 +14,14 @@ import 'services.dart';
 class LoadFile {
   static Future<bool> _handlePermission() async {
     if (Platform.isIOS) return true;
-    PermissionStatus permissionStatus = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+    PermissionStatus permissionStatus = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
     if (permissionStatus == PermissionStatus.granted) {
       return true;
     } else {
-      Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      Map<PermissionGroup, PermissionStatus> permissions =
+          await PermissionHandler()
+              .requestPermissions([PermissionGroup.storage]);
       if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
         return true;
       }
@@ -26,7 +29,12 @@ class LoadFile {
     return false;
   }
 
-  static Future<void> download(BuildContext context, String filePath, ConnectionPage currentConnectionPage, {bool isRedownloading = false}) async {
+  static Future<void> download(
+    BuildContext context,
+    String filePath,
+    ConnectionPage currentConnectionPage, {
+    bool isRedownloading = false,
+  }) async {
     var model = Provider.of<ConnectionModel>(context);
     try {
       if (await _handlePermission()) {
@@ -64,7 +72,8 @@ class LoadFile {
                 model.loadFilename = filename;
                 model.progressType = "download";
               } else if (progress == 100) {
-                _downloadCompleted(context, currentConnectionPage, dir.path + "/" + filename);
+                _downloadCompleted(
+                    context, currentConnectionPage, dir.path + "/" + filename);
               }
             },
           );
@@ -74,13 +83,21 @@ class LoadFile {
               builder: (context) {
                 return CustomAlertDialog(
                   title: Text(
-                    "There is already a file with the same name. Replace $filename?",
+                    "There is already a file with the same name. " +
+                        "Replace $filename?",
                     style: TextStyle(fontFamily: "GoogleSans"),
                   ),
                   actions: <Widget>[
                     FlatButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                      padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      padding: EdgeInsets.only(
+                        top: 8.5,
+                        bottom: 8.0,
+                        left: 14.0,
+                        right: 14.0,
+                      ),
                       child: Text("Cancel"),
                       onPressed: () {
                         Navigator.pop(context);
@@ -89,12 +106,32 @@ class LoadFile {
                     RaisedButton(
                       color: Theme.of(context).accentColor,
                       splashColor: Colors.black12,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                      padding: EdgeInsets.only(top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-                      child: Text("OK", style: TextStyle(color: Provider.of<CustomTheme>(context).isLightTheme() ? Colors.white : Colors.black)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      padding: EdgeInsets.only(
+                        top: 8.5,
+                        bottom: 8.0,
+                        left: 14.0,
+                        right: 14.0,
+                      ),
+                      child: Text(
+                        "OK",
+                        style: TextStyle(
+                          color:
+                              Provider.of<CustomTheme>(context).isLightTheme()
+                                  ? Colors.white
+                                  : Colors.black,
+                        ),
+                      ),
                       elevation: .0,
                       onPressed: () {
-                        download(context, filePath, currentConnectionPage, isRedownloading: true);
+                        download(
+                          context,
+                          filePath,
+                          currentConnectionPage,
+                          isRedownloading: true,
+                        );
                         Navigator.pop(context);
                       },
                     ),
@@ -115,7 +152,12 @@ class LoadFile {
     }
   }
 
-  static Future<void> upload(BuildContext context, ConnectionPage currentConnectionPage, {bool isReuploading = false, String pathFromReuploading}) async {
+  static Future<void> upload(
+    BuildContext context,
+    ConnectionPage currentConnectionPage, {
+    bool isReuploading = false,
+    String pathFromReuploading,
+  }) async {
     var model = Provider.of<ConnectionModel>(context);
     model.progressValue = 0;
     String path;
@@ -171,8 +213,15 @@ class LoadFile {
               ),
               actions: <Widget>[
                 FlatButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                  padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  padding: EdgeInsets.only(
+                    top: 8.0,
+                    bottom: 6.5,
+                    left: 14.0,
+                    right: 14.0,
+                  ),
                   child: Row(
                     children: <Widget>[
                       Text("Cancel"),
@@ -185,8 +234,15 @@ class LoadFile {
                 RaisedButton(
                   color: Theme.of(context).accentColor,
                   splashColor: Colors.black12,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-                  padding: EdgeInsets.only(top: 8.0, bottom: 6.5, left: 14.0, right: 14.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                  padding: EdgeInsets.only(
+                    top: 8.0,
+                    bottom: 6.5,
+                    left: 14.0,
+                    right: 14.0,
+                  ),
                   child: Row(
                     children: <Widget>[
                       Text(
@@ -197,7 +253,12 @@ class LoadFile {
                   ),
                   elevation: .0,
                   onPressed: () {
-                    upload(context, currentConnectionPage, isReuploading: true, pathFromReuploading: path);
+                    upload(
+                      context,
+                      currentConnectionPage,
+                      isReuploading: true,
+                      pathFromReuploading: path,
+                    );
                     Navigator.pop(context);
                   },
                 ),
@@ -208,13 +269,20 @@ class LoadFile {
     }
   }
 
-  static void _downloadCompleted(BuildContext context, ConnectionPage currentConnectionPage, String saveLocation) {
+  static void _downloadCompleted(
+    BuildContext context,
+    ConnectionPage currentConnectionPage,
+    String saveLocation,
+  ) {
     var model = Provider.of<ConnectionModel>(context);
     model.showProgress = false;
     currentConnectionPage.scaffoldKey.currentState.showSnackBar(
       SnackBar(
         duration: Duration(seconds: 6),
-        content: Text("Download completed" + (Platform.isIOS ? "" : "\nSaved file to $saveLocation")),
+        content: Text(
+          "Download completed" +
+              (Platform.isIOS ? "" : "\nSaved file to $saveLocation"),
+        ),
         action: SnackBarAction(
           label: "Show file",
           textColor: Colors.white,
@@ -230,7 +298,10 @@ class LoadFile {
     );
   }
 
-  static void _uploadCompleted(BuildContext context, ConnectionPage currentConnectionPage) {
+  static void _uploadCompleted(
+    BuildContext context,
+    ConnectionPage currentConnectionPage,
+  ) {
     var model = Provider.of<ConnectionModel>(context);
     model.showProgress = false;
     currentConnectionPage.scaffoldKey.currentState.showSnackBar(
@@ -241,7 +312,10 @@ class LoadFile {
     ConnectionMethods.refresh(context, currentConnectionPage.connection);
   }
 
-  static Future<String> saveInCache(String filePath, ConnectionModel model) async {
+  static Future<String> saveInCache(
+    String filePath,
+    ConnectionModel model,
+  ) async {
     Directory cacheDir = await getTemporaryDirectory();
     await cacheDir.list().forEach((v) async {
       await v.delete();

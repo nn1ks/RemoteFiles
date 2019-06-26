@@ -118,7 +118,8 @@ class _TabViewPageState extends State<TabViewPage> {
 
   void _addKeys() {
     setState(() => _reorderableKeys = []);
-    int itemCount = widget.connections.length > 0 ? widget.connections.length : 1;
+    int itemCount =
+        widget.connections.length > 0 ? widget.connections.length : 1;
     for (int i = 0; i < itemCount; i++) {
       setState(() => _reorderableKeys.add(GlobalKey()));
     }
@@ -127,15 +128,18 @@ class _TabViewPageState extends State<TabViewPage> {
   List<Widget> _getWidgetList() {
     _addKeys();
     List<Widget> widgets = [];
-    int itemCount = widget.connections.length > 0 ? widget.connections.length : 1;
+    int itemCount =
+        widget.connections.length > 0 ? widget.connections.length : 1;
     for (int index = 0; index < itemCount; index++) {
       widgets.add(
         Container(
           key: _reorderableKeys[index],
           child: widget.connections.length > 0
               ? ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                  title: widget.connections[index].name != "" && widget.connections[index].name != "-"
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                  title: widget.connections[index].name != "" &&
+                          widget.connections[index].name != "-"
                       ? Text(widget.connections[index].name)
                       : Text(widget.connections[index].address),
                   subtitle: Text(_getSubtitle(index)),
@@ -148,20 +152,26 @@ class _TabViewPageState extends State<TabViewPage> {
                       ConnectionDialog(
                         context: context,
                         index: index,
-                        page: widget.isFavorites ? "favorites" : "recentlyAdded",
-                        primaryButtonIconData: widget.isFavorites ? OMIcons.edit : Icons.star_border,
-                        primaryButtonLabel: widget.isFavorites ? "Edit" : "Add to favorites",
+                        page:
+                            widget.isFavorites ? "favorites" : "recentlyAdded",
+                        primaryButtonIconData: widget.isFavorites
+                            ? OMIcons.edit
+                            : Icons.star_border,
+                        primaryButtonLabel:
+                            widget.isFavorites ? "Edit" : "Add to favorites",
                         primaryButtonOnPressed: () {
                           if (widget.isFavorites) {
                             Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditConnectionPage(index: index),
+                                builder: (context) =>
+                                    EditConnectionPage(index: index),
                               ),
                             );
                           } else {
-                            HomePage.favoritesPage.addToJson(widget.connections[index]);
+                            HomePage.favoritesPage
+                                .addToJson(widget.connections[index]);
                             HomePage.favoritesPage.setConnectionsFromJson();
                             Navigator.pop(context);
                           }
@@ -205,11 +215,17 @@ class _TabViewPageState extends State<TabViewPage> {
                     ).then((bool connected) {
                       Navigator.pop(context);
                       if (connected) {
-                        ConnectionMethods.connect(context, widget.connections[index]);
+                        ConnectionMethods.connect(
+                          context,
+                          widget.connections[index],
+                        );
                       } else {
                         Scaffold.of(context).showSnackBar(SnackBar(
                           duration: Duration(seconds: 5),
-                          content: Text("Unable to connect to ${widget.connections[index].address}"),
+                          content: Text(
+                            "Unable to connect to " +
+                                widget.connections[index].address,
+                          ),
                         ));
                       }
                     });
@@ -233,7 +249,10 @@ class _TabViewPageState extends State<TabViewPage> {
 
   @override
   void initState() {
-    (Platform.isIOS ? getApplicationSupportDirectory() : getApplicationDocumentsDirectory()).then((Directory dir) {
+    (Platform.isIOS
+            ? getApplicationSupportDirectory()
+            : getApplicationDocumentsDirectory())
+        .then((Directory dir) {
       setState(() {
         widget.dir = dir;
         widget.jsonFile = File(widget.dir.path + "/" + widget.jsonFileName);
