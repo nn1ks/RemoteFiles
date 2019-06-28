@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage>
                   activeThumbImage: AssetImage("assets/arrow_drop_down.png"),
                   activeColor: Provider.of<CustomTheme>(context).isLightTheme()
                       ? Colors.grey[50]
-                      : Colors.grey[500],
+                      : Colors.grey[400],
                   activeTrackColor:
                       Provider.of<CustomTheme>(context).isLightTheme()
                           ? Colors.grey[300]
@@ -60,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage>
                   inactiveThumbColor:
                       Provider.of<CustomTheme>(context).isLightTheme()
                           ? Colors.grey[50]
-                          : Colors.grey[500],
+                          : Colors.grey[400],
                   value: SettingsVariables.sortIsDescending,
                   onChanged: onChanged,
                 )
@@ -318,16 +318,6 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 _buildCheckboxListTile(
-                  titleLabel: "Show connection address in app bar",
-                  value: SettingsVariables.showAddressInAppBar,
-                  onChanged: (bool value) async {
-                    await SettingsVariables.setShowAddressInAppBar(value);
-                    setState(() {});
-                  },
-                ),
-                Divider(),
-                _buildHeadline("Other"),
-                _buildCheckboxListTile(
                   titleLabel: "Show hidden files",
                   value: SettingsVariables.showHiddenFiles,
                   onChanged: (bool value) async {
@@ -420,6 +410,8 @@ class _SettingsPageState extends State<SettingsPage>
                     );
                   },
                 ),
+                Divider(),
+                _buildHeadline("Other"),
                 ListTile(
                   title: Text("Delete all connections"),
                   onTap: () {

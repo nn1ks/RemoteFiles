@@ -153,21 +153,6 @@ class SettingsVariables {
     });
   }
 
-  static bool showAddressInAppBar = true;
-  static bool getShowAddressInAppBar() {
-    bool showAddressInAppBarPrefs;
-    if (prefs != null) {
-      showAddressInAppBarPrefs = prefs.getBool("showAddressInAppBar");
-    }
-    if (showAddressInAppBarPrefs != null) return showAddressInAppBarPrefs;
-    return showAddressInAppBar;
-  }
-
-  static Future<void> setShowAddressInAppBar(bool value) async {
-    showAddressInAppBar = value;
-    await prefs.setBool("showAddressInAppBar", value);
-  }
-
   static String accentFont = "default";
   static String getAccentFont() {
     String accentFontPrefs;
@@ -189,7 +174,6 @@ class SettingsVariables {
       sortIsDescending = getSortIsDescending();
       showHiddenFiles = getShowHiddenFiles();
       filesizeUnit = getFilesizeUnit();
-      showAddressInAppBar = getShowAddressInAppBar();
       accentFont = getAccentFont();
     });
   }
