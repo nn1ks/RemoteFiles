@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../services/services.dart';
 import '../shared/shared.dart';
+import 'pages.dart';
 
 class ConnectionPage extends StatefulWidget {
   final Connection connection;
@@ -256,7 +257,6 @@ class _ConnectionPageState extends State<ConnectionPage>
             ),
           ),
           child: ConnectionBottomAppBar(
-            context,
             currentConnectionPage: widget,
             isSelectionMode: _isSelectionMode,
             cancelSelection: () {

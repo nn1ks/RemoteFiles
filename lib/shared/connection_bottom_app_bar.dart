@@ -9,13 +9,11 @@ import '../services/services.dart';
 import 'shared.dart';
 
 class ConnectionBottomAppBar extends StatelessWidget {
-  final BuildContext context;
   final ConnectionPage currentConnectionPage;
   final bool isSelectionMode;
   final GestureTapCallback cancelSelection;
   final GestureTapCallback deleteSelectedFiles;
-  ConnectionBottomAppBar(
-    this.context, {
+  ConnectionBottomAppBar({
     @required this.currentConnectionPage,
     @required this.isSelectionMode,
     this.cancelSelection,
@@ -173,7 +171,9 @@ class ConnectionBottomAppBar extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  SettingsPage(currentConnectionPage: currentConnectionPage);
+                  return SettingsPage(
+                    currentConnectionPage: currentConnectionPage,
+                  );
                 },
               ),
             );
