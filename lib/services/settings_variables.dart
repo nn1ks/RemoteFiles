@@ -55,21 +55,6 @@ class SettingsVariables {
     await prefs.setString("view", value);
   }
 
-  static String detailedViewTimeInfo = "modificationDate";
-  static String getDetailedViewTimeInfo() {
-    String detailedViewTimeInfoPrefs;
-    if (prefs != null) {
-      detailedViewTimeInfoPrefs = prefs.getString("detailedViewTimeInfo");
-    }
-    if (detailedViewTimeInfoPrefs != null) return detailedViewTimeInfoPrefs;
-    return detailedViewTimeInfo;
-  }
-
-  static Future<void> setDetailedViewTimeInfo(String value) async {
-    detailedViewTimeInfo = value;
-    await prefs.setString("detailedViewTimeInfo", value);
-  }
-
   static String sort = "name";
   static String getSort() {
     String sortPrefs;
@@ -200,7 +185,6 @@ class SettingsVariables {
     setSharedPreferences().then((_) {
       getDownloadDirectory().then((Directory dir) => downloadDirectory = dir);
       view = getView();
-      detailedViewTimeInfo = getDetailedViewTimeInfo();
       sort = getSort();
       sortIsDescending = getSortIsDescending();
       showHiddenFiles = getShowHiddenFiles();

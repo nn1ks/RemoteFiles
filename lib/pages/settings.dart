@@ -110,41 +110,6 @@ class _SettingsPageState extends State<SettingsPage>
     );
   }
 
-  Widget _buildDetailedOptions() {
-    return Padding(
-      padding: EdgeInsets.only(left: 40.0),
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 1.0,
-            margin: EdgeInsets.symmetric(horizontal: 18.0),
-            color: Theme.of(context).dividerColor,
-          ),
-          RadioListTile(
-            activeColor: Theme.of(context).accentColor,
-            title: Text("Show modification date"),
-            value: "modificationDate",
-            groupValue: SettingsVariables.detailedViewTimeInfo,
-            onChanged: (String value) async {
-              await SettingsVariables.setDetailedViewTimeInfo(value);
-              setState(() {});
-            },
-          ),
-          RadioListTile(
-            activeColor: Theme.of(context).accentColor,
-            title: Text("Show last access"),
-            value: "lastAccess",
-            groupValue: SettingsVariables.detailedViewTimeInfo,
-            onChanged: (String value) async {
-              await SettingsVariables.setDetailedViewTimeInfo(value);
-              setState(() {});
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSaveToWidget() {
     if (Platform.isIOS) {
       return Container();
@@ -257,37 +222,10 @@ class _SettingsPageState extends State<SettingsPage>
                   value: "list",
                   isView: true,
                 ),
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 100),
-                  margin: EdgeInsets.symmetric(
-                    vertical: SettingsVariables.view == "detailed" ? 6.0 : .0,
-                  ),
-                  decoration: BoxDecoration(
-                    border: SettingsVariables.view == "detailed"
-                        ? Border(
-                            top: BorderSide(
-                              color: Theme.of(context).dividerColor,
-                              width: 1.0,
-                            ),
-                            bottom: BorderSide(
-                              color: Theme.of(context).dividerColor,
-                              width: 1.0,
-                            ),
-                          )
-                        : null,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      _buildRadioListTile(
-                        titleLabel: "Detailed",
-                        value: "detailed",
-                        isView: true,
-                      ),
-                      SettingsVariables.view == "detailed"
-                          ? _buildDetailedOptions()
-                          : Container(),
-                    ],
-                  ),
+                _buildRadioListTile(
+                  titleLabel: "Detailed",
+                  value: "detailed",
+                  isView: true,
                 ),
                 _buildRadioListTile(
                   titleLabel: "Grid",

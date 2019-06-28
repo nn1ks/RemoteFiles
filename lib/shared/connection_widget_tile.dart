@@ -81,8 +81,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
         result = widget.fileInfos[widget.index].convertedSize + ", ";
       }
     }
-    result += widget.fileInfos[widget.index]
-        .toMap()[SettingsVariables.detailedViewTimeInfo];
+    result += widget.fileInfos[widget.index].modificationDate;
     return Text(result);
   }
 
