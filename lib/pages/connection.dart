@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import '../services/services.dart';
 import '../shared/shared.dart';
-import 'pages.dart';
 
 class ConnectionPage extends StatefulWidget {
   final Connection connection;
