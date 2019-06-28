@@ -39,8 +39,7 @@ class ConnectionMethods {
     String passwordOrKey,
     String path,
     bool setIsLoading = true,
-    bool openNewPage = true,
-    bool hasPageBefore = true,
+    bool closePageBefore = false,
   }) async {
     var model = Provider.of<ConnectionModel>(context);
 
@@ -61,12 +60,13 @@ class ConnectionMethods {
       connectionPage.connection.path = path;
     }
 
-    if (openNewPage) {
+    if (!closePageBefore) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => connectionPage),
       );
     }
+
     bool loadingDone = false;
     Future.delayed(Duration(milliseconds: 600)).then((_) {
       if (setIsLoading && !loadingDone) model.isLoading = true;
@@ -98,6 +98,13 @@ class ConnectionMethods {
       });
     }
 
+    if (closePageBefore) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRouteWithoutAnimation(builder: (context) => connectionPage),
+      );
+    }
+
     SettingsVariables.setFilesizeUnit(
       SettingsVariables.filesizeUnit,
       connectionPage,
@@ -111,7 +118,7 @@ class ConnectionMethods {
     BuildContext context,
     Connection connection, {
     bool setIsLoading = true,
-    bool openNewPage = true,
+    bool closePageBefore = false,
   }) async {
     await connectIndividually(
       context,
@@ -121,7 +128,7 @@ class ConnectionMethods {
       passwordOrKey: connection.passwordOrKey,
       path: connection.path,
       setIsLoading: setIsLoading,
-      openNewPage: openNewPage,
+      closePageBefore: closePageBefore,
     );
   }
 
@@ -166,12 +173,11 @@ class ConnectionMethods {
     Connection currentConnection, {
     bool setIsLoading = true,
   }) async {
-    Navigator.pop(context);
     await connect(
       context,
       currentConnection,
       setIsLoading: setIsLoading,
-      openNewPage: true,
+      closePageBefore: true,
     );
   }
 
@@ -260,5 +266,24 @@ class ConnectionMethods {
         );
       },
     );
+  }
+}
+
+class MaterialPageRouteWithoutAnimation<T> extends MaterialPageRoute<T> {
+  MaterialPageRouteWithoutAnimation({
+    @required WidgetBuilder builder,
+    RouteSettings settings,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+  }) : super(
+            builder: builder,
+            maintainState: maintainState,
+            settings: settings,
+            fullscreenDialog: fullscreenDialog);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return child;
   }
 }
