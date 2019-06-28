@@ -22,6 +22,22 @@ class _SettingsPageState extends State<SettingsPage>
     bool hasSwitch = false,
     Function onChanged,
   }) {
+    String sortLabel;
+    if (hasSwitch) {
+      if (SettingsVariables.sort == "name") {
+        if (SettingsVariables.sortIsDescending) {
+          sortLabel = "(Z-A)";
+        } else {
+          sortLabel = "(A-Z)";
+        }
+      } else {
+        if (SettingsVariables.sortIsDescending) {
+          sortLabel = "Newest";
+        } else {
+          sortLabel = "Oldest";
+        }
+      }
+    }
     return Padding(
       padding: EdgeInsets.only(
         top: hasSwitch ? 8.0 : 19.0,
@@ -43,26 +59,44 @@ class _SettingsPageState extends State<SettingsPage>
             ),
           ),
           hasSwitch
-              ? Switch(
-                  activeThumbImage: AssetImage("assets/arrow_drop_down.png"),
-                  activeColor: Provider.of<CustomTheme>(context).isLightTheme()
-                      ? Colors.grey[50]
-                      : Colors.grey[400],
-                  activeTrackColor:
-                      Provider.of<CustomTheme>(context).isLightTheme()
-                          ? Colors.grey[300]
-                          : Colors.grey[700],
-                  inactiveThumbImage: AssetImage("assets/arrow_drop_up.png"),
-                  inactiveTrackColor:
-                      Provider.of<CustomTheme>(context).isLightTheme()
-                          ? Colors.grey[300]
-                          : Colors.grey[700],
-                  inactiveThumbColor:
-                      Provider.of<CustomTheme>(context).isLightTheme()
-                          ? Colors.grey[50]
-                          : Colors.grey[400],
-                  value: SettingsVariables.sortIsDescending,
-                  onChanged: onChanged,
+              ? Row(
+                  children: <Widget>[
+                    Text(
+                      sortLabel.toUpperCase(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14.5,
+                        fontFamily: SettingsVariables.accentFont,
+                        letterSpacing: 1.0,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ),
+                    SizedBox(width: 6.0),
+                    Switch(
+                      activeThumbImage:
+                          AssetImage("assets/arrow_drop_down.png"),
+                      activeColor:
+                          Provider.of<CustomTheme>(context).isLightTheme()
+                              ? Colors.grey[50]
+                              : Colors.grey[400],
+                      activeTrackColor:
+                          Provider.of<CustomTheme>(context).isLightTheme()
+                              ? Colors.grey[300]
+                              : Colors.grey[700],
+                      inactiveThumbImage:
+                          AssetImage("assets/arrow_drop_up.png"),
+                      inactiveTrackColor:
+                          Provider.of<CustomTheme>(context).isLightTheme()
+                              ? Colors.grey[300]
+                              : Colors.grey[700],
+                      inactiveThumbColor:
+                          Provider.of<CustomTheme>(context).isLightTheme()
+                              ? Colors.grey[50]
+                              : Colors.grey[400],
+                      value: SettingsVariables.sortIsDescending,
+                      onChanged: onChanged,
+                    ),
+                  ],
                 )
               : Container(),
         ],
