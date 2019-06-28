@@ -72,19 +72,10 @@ class ConnectionMethods {
       if (setIsLoading && !loadingDone) model.isLoading = true;
     });
 
-    connectionPage.fileInfos = List<Map<String, String>>();
+    connectionPage.fileInfos = [];
+    var list;
     try {
-      var list = await model.client.sftpLs(path);
-      connectionPage.fileInfos.length = list.length;
-      for (int i = 0; i < list.length; i++) {
-        connectionPage.fileInfos[i] = {};
-        list[i].forEach((k, v) {
-          connectionPage.fileInfos[i].addAll({k.toString(): v.toString()});
-        });
-        connectionPage.fileInfos[i]["filename"] =
-            _removeTrailingSlash(connectionPage.fileInfos[i]["filename"]);
-        connectionPage.fileInfos[i].addAll({"convertedFileSize": ""});
-      }
+      list = await model.client.sftpLs(path);
     } catch (e) {
       print(e);
       connectionPage.scaffoldKey.currentState.showSnackBar(
@@ -94,20 +85,26 @@ class ConnectionMethods {
         ),
       );
     }
+    for (int i = 0; i < list.length; i++) {
+      connectionPage.fileInfos.add(FileInfo());
+      list[i].forEach((k, v) {
+        if (k == "filename") {
+          if (v[v.length - 1] == "/") {
+            v = v.toString().substring(0, v.length - 1);
+          }
+        }
+        connectionPage.fileInfos[i] =
+            connectionPage.fileInfos[i].copyWith(FileInfo.fromMap({k: v}));
+      });
+    }
+
     SettingsVariables.setFilesizeUnit(
       SettingsVariables.filesizeUnit,
       connectionPage,
     );
     loadingDone = true;
     model.isLoading = false;
-    connectionPage.sort();
-  }
-
-  static String _removeTrailingSlash(String path) {
-    if (path.length > 1 && path.substring(path.length - 1) == "/") {
-      return path.substring(0, path.length - 1);
-    }
-    return path;
+    connectionPage.sortFileInfos();
   }
 
   static Future<void> connect(

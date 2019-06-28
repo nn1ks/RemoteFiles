@@ -8,25 +8,28 @@ import '../shared/shared.dart';
 
 class ConnectionPage extends StatefulWidget {
   final Connection connection;
-  List<Map<String, String>> fileInfos;
+  List<FileInfo> fileInfos;
 
   ConnectionPage(this.connection);
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
-  sort() {
+  sortFileInfos() {
     try {
+      // TODO: fix bug when calling fileInfos.sort()
       fileInfos.sort((a, b) {
-        a[SettingsVariables.sort].compareTo(b[SettingsVariables.sort]);
+        a
+            .toMap()[SettingsVariables.sort]
+            .compareTo(b.toMap()[SettingsVariables.sort]);
       });
-      if (SettingsVariables.sortIsDescending) {
-        fileInfos = fileInfos.reversed.toList();
-      }
-      if (SettingsVariables.sort != "filename") {
-        fileInfos = fileInfos.reversed.toList();
-      }
     } catch (e) {
       print(e);
+    }
+    if (SettingsVariables.sortIsDescending) {
+      fileInfos = fileInfos.reversed.toList();
+    }
+    if (SettingsVariables.sort != "name") {
+      fileInfos = fileInfos.reversed.toList();
     }
   }
 
@@ -149,7 +152,7 @@ class _ConnectionPageState extends State<ConnectionPage>
     if (widget.fileInfos.length > 0) {
       for (int i = 0; i < _connectionsNum; i++) {
         if (SettingsVariables.showHiddenFiles ||
-            widget.fileInfos[i]["filename"][0] != ".") {
+            widget.fileInfos[i].name[0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
             fileInfos: widget.fileInfos,
@@ -167,12 +170,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                   }
                 });
               } else {
-                if (widget.fileInfos[i]["isDirectory"] == "true") {
+                if (widget.fileInfos[i].isDirectory) {
                   ConnectionMethods.goToDirectory(
                     context,
-                    widget.connection.path +
-                        "/" +
-                        widget.fileInfos[i]["filename"],
+                    widget.connection.path + "/" + widget.fileInfos[i].name,
                     widget.connection,
                   );
                 } else {
@@ -271,10 +272,9 @@ class _ConnectionPageState extends State<ConnectionPage>
               List<bool> isDirectory = [];
               for (int i = 0; i < widget.fileInfos.length; i++) {
                 if (_isSelected[i]) {
-                  filePaths.add(widget.connection.path +
-                      "/" +
-                      widget.fileInfos[i]["filename"]);
-                  isDirectory.add(widget.fileInfos[i]["isDirectory"] == "true");
+                  filePaths.add(
+                      widget.connection.path + "/" + widget.fileInfos[i].name);
+                  isDirectory.add(widget.fileInfos[i].isDirectory);
                 }
               }
               ConnectionMethods.showDeleteConfirmDialog(

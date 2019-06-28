@@ -70,7 +70,7 @@ class SettingsVariables {
     await prefs.setString("detailedViewTimeInfo", value);
   }
 
-  static String sort = "filename";
+  static String sort = "name";
   static String getSort() {
     String sortPrefs;
     if (prefs != null) sortPrefs = prefs.getString("sort");
@@ -143,38 +143,28 @@ class SettingsVariables {
         break;
     }
     currentConnectionPage.fileInfos.forEach((v) {
-      double convertedFileSize;
+      int convertedSize;
       String unitValue;
-      if (v["fileSize"].length > 9) {
-        convertedFileSize = (double.parse(v["fileSize"]) / 1000000000);
-        unitValue = "GB";
-      } else if (v["fileSize"].length > 6) {
-        convertedFileSize = (double.parse(v["fileSize"]) / 1000000);
-        unitValue = "MB";
-      } else if (v["fileSize"].length > 3) {
-        convertedFileSize = (double.parse(v["fileSize"]) / 1000);
-        unitValue = "KB";
-      } else {
-        convertedFileSize = double.parse(v["fileSize"]);
-        unitValue = "B";
-      }
-      if (unitDivisor != null) {
-        convertedFileSize =
-            double.parse(v["fileSize"]) / unitDivisor.toDouble();
-        unitValue = value;
-      }
-      for (int i = 0; i < convertedFileSize.toString().length; i++) {
-        if (convertedFileSize.toString()[i] == ".") {
-          int substringLast = convertedFileSize.toString().length < (i + 3)
-              ? convertedFileSize.toString().length
-              : (i + 3);
-          convertedFileSize = double.parse(
-            convertedFileSize.toString().substring(0, substringLast),
-          );
-          break;
+      if (v.size != null) {
+        if (v.size.toString().length > 9) {
+          convertedSize = v.size ~/ 1000000000;
+          unitValue = "GB";
+        } else if (v.size.toString().length > 6) {
+          convertedSize = v.size ~/ 1000000;
+          unitValue = "MB";
+        } else if (v.size.toString().length > 3) {
+          convertedSize = v.size ~/ 1000;
+          unitValue = "KB";
+        } else {
+          convertedSize = v.size;
+          unitValue = "B";
         }
+        if (unitDivisor != null) {
+          convertedSize = v.size ~/ unitDivisor;
+          unitValue = value;
+        }
+        v.convertedSize = convertedSize.toString() + " $unitValue";
       }
-      v["convertedFileSize"] = convertedFileSize.toString() + " $unitValue";
     });
   }
 

@@ -8,7 +8,7 @@ import 'shared.dart';
 
 class FileBottomSheet extends StatelessWidget {
   final BuildContext context;
-  final Map<String, String> fileInfo;
+  final FileInfo fileInfo;
   final ConnectionPage current;
 
   FileBottomSheet(this.context, this.fileInfo, this.current);
@@ -29,10 +29,10 @@ class FileBottomSheet extends StatelessWidget {
       filePath += "/";
     }
     filePath += widget.fileInfo["filename"];*/
-    String filePath = current.connection.path + "/" + fileInfo["filename"];
+    String filePath = current.connection.path + "/" + fileInfo.name;
 
     double tableFontSize = 16.0;
-    var renameController = TextEditingController(text: fileInfo["filename"]);
+    var renameController = TextEditingController(text: fileInfo.name);
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -42,7 +42,7 @@ class FileBottomSheet extends StatelessWidget {
               Container(
                 height: 56.0,
                 child: ListTile(
-                  leading: Icon(fileInfo["isDirectory"] == "true"
+                  leading: Icon(fileInfo.isDirectory
                       ? Icons.folder_open
                       : Icons.insert_drive_file),
                   title: SingleChildScrollView(
@@ -51,7 +51,7 @@ class FileBottomSheet extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.only(top: 2.0),
                       child: Text(
-                        fileInfo["filename"],
+                        fileInfo.name,
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                         ),
@@ -80,7 +80,7 @@ class FileBottomSheet extends StatelessWidget {
                           child: Table(
                             columnWidths: {0: FixedColumnWidth(158.0)},
                             children: <TableRow>[
-                              if (fileInfo["isDirectory"] == "false")
+                              if (!fileInfo.isDirectory)
                                 TableRow(children: [
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 2.0),
@@ -90,7 +90,7 @@ class FileBottomSheet extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    fileInfo["convertedFileSize"],
+                                    fileInfo.convertedSize,
                                     style: TextStyle(fontSize: tableFontSize),
                                   ),
                                 ]),
@@ -103,7 +103,7 @@ class FileBottomSheet extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["permissions"],
+                                  fileInfo.permissions,
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -116,7 +116,7 @@ class FileBottomSheet extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["modificationDate"],
+                                  fileInfo.modificationDate,
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -129,7 +129,7 @@ class FileBottomSheet extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  fileInfo["lastAccess"],
+                                  fileInfo.lastAccess,
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -142,9 +142,7 @@ class FileBottomSheet extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  current.connection.path +
-                                      "/" +
-                                      fileInfo["filename"],
+                                  current.connection.path + "/" + fileInfo.name,
                                   style: TextStyle(fontSize: tableFontSize),
                                 ),
                               ]),
@@ -157,7 +155,7 @@ class FileBottomSheet extends StatelessWidget {
                         margin: EdgeInsets.only(bottom: 8.0),
                         color: Theme.of(context).dividerColor,
                       ),
-                      fileInfo["isDirectory"] == "true"
+                      fileInfo.isDirectory
                           ? Container()
                           : ListTile(
                               leading: Icon(
@@ -178,7 +176,7 @@ class FileBottomSheet extends StatelessWidget {
                                 );
                               },
                             ),
-                      fileInfo["isDirectory"] == "true"
+                      fileInfo.isDirectory
                           ? Container()
                           : Column(
                               children: <Widget>[
@@ -225,7 +223,7 @@ class FileBottomSheet extends StatelessWidget {
                             builder: (context) {
                               return CustomAlertDialog(
                                 title: Text(
-                                  "Rename '${fileInfo["filename"]}'",
+                                  "Rename '${fileInfo.name}'",
                                   style: TextStyle(
                                     fontFamily: SettingsVariables.accentFont,
                                   ),
@@ -244,16 +242,6 @@ class FileBottomSheet extends StatelessWidget {
                                   cursorColor: Theme.of(context).accentColor,
                                   autofocus: true,
                                   onSubmitted: (String value) async {
-                                    /*String newFilePath =
-                                        widget.current.connection.path;
-                                    if (widget.current.connection.path
-                                            .substring(widget.current.connection
-                                                    .path.length -
-                                                2) !=
-                                        "/") {
-                                      newFilePath += "/";
-                                    }
-                                    newFilePath += value;*/
                                     String newFilePath =
                                         current.connection.path + "/" + value;
                                     await model.client.sftpRename(
@@ -285,7 +273,7 @@ class FileBottomSheet extends StatelessWidget {
                           ConnectionMethods.showDeleteConfirmDialog(
                             context: context,
                             filePaths: [filePath],
-                            isDirectory: [fileInfo["isDirectory"] == "true"],
+                            isDirectory: [fileInfo.isDirectory],
                             currentConnection: current.connection,
                             calledFromFileBottomSheet: true,
                           );

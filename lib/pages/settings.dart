@@ -86,7 +86,7 @@ class _SettingsPageState extends State<SettingsPage>
         } else {
           await SettingsVariables.setSort(value);
           if (widget.currentConnectionPage != null) {
-            widget.currentConnectionPage.sort();
+            widget.currentConnectionPage.sortFileInfos();
           }
         }
         setState(() {});
@@ -301,14 +301,14 @@ class _SettingsPageState extends State<SettingsPage>
                   onChanged: (bool value) async {
                     await SettingsVariables.setSortIsDescending(value);
                     if (widget.currentConnectionPage != null) {
-                      widget.currentConnectionPage.sort();
+                      widget.currentConnectionPage.sortFileInfos();
                     }
                     setState(() {});
                   },
                 ),
                 _buildRadioListTile(
                   titleLabel: "Name",
-                  value: "filename",
+                  value: "name",
                   isView: false,
                 ),
                 _buildRadioListTile(

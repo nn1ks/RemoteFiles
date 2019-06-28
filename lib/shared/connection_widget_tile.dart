@@ -6,7 +6,7 @@ import 'custom_icon_button.dart';
 
 class ConnectionWidgetTile extends StatefulWidget {
   final int index;
-  final List<Map<String, String>> fileInfos;
+  final List<FileInfo> fileInfos;
   final bool isLoading;
   final bool isSelected;
   final bool isSelectionMode;
@@ -60,7 +60,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                 ? Theme.of(context).accentIconTheme.color
                 : Colors.transparent),
       );
-    } else if (widget.fileInfos[widget.index]["isDirectory"] == "true") {
+    } else if (widget.fileInfos[widget.index].isDirectory) {
       result = CustomIconButton(
         icon: Icon(Icons.more_vert, size: widget.view == "view" ? 22 : null),
         size: widget.view == "view" ? 24 : 44,
@@ -72,17 +72,17 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
 
   Widget _getSubtitle() {
     String result;
-    if (widget.fileInfos[widget.index]["isDirectory"] == "true") {
+    if (widget.fileInfos[widget.index].isDirectory) {
       result = "Folder, ";
     } else {
-      if (widget.fileInfos[widget.index]["convertedFileSize"] == "") {
+      if (widget.fileInfos[widget.index].convertedSize == null) {
         result = "Loading... ";
       } else {
-        result = widget.fileInfos[widget.index]["convertedFileSize"] + ", ";
+        result = widget.fileInfos[widget.index].convertedSize + ", ";
       }
     }
-    result +=
-        widget.fileInfos[widget.index][SettingsVariables.detailedViewTimeInfo];
+    result += widget.fileInfos[widget.index]
+        .toMap()[SettingsVariables.detailedViewTimeInfo];
     return Text(result);
   }
 
@@ -94,12 +94,12 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
       if (widget.view == "list") {
         result = ListTile(
           leading: Icon(
-            widget.fileInfos[widget.index]["isDirectory"] == "true"
+            widget.fileInfos[widget.index].isDirectory
                 ? Icons.folder_open
                 : Icons.insert_drive_file,
             color: Theme.of(context).hintColor,
           ),
-          title: Text(widget.fileInfos[widget.index]["filename"]),
+          title: Text(widget.fileInfos[widget.index].name),
           trailing: _getTrailingButton(),
           onTap: widget.onTap,
           onLongPress: widget.onLongPress,
@@ -133,7 +133,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                         borderRadius: BorderRadius.circular(3.0),
                       ),
                       child: Icon(
-                        widget.fileInfos[widget.index]["isDirectory"] == "true"
+                        widget.fileInfos[widget.index].isDirectory
                             ? Icons.folder_open
                             : Icons.insert_drive_file,
                         size: 32.0,
@@ -147,7 +147,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
                     children: <Widget>[
                       Flexible(
                         child: Text(
-                          widget.fileInfos[widget.index]["filename"],
+                          widget.fileInfos[widget.index].name,
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 15.4,
@@ -169,13 +169,13 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
           leading: Padding(
             padding: EdgeInsets.only(top: 8.0),
             child: Icon(
-              widget.fileInfos[widget.index]["isDirectory"] == "true"
+              widget.fileInfos[widget.index].isDirectory
                   ? Icons.folder_open
                   : Icons.insert_drive_file,
               color: Theme.of(context).hintColor,
             ),
           ),
-          title: Text(widget.fileInfos[widget.index]["filename"]),
+          title: Text(widget.fileInfos[widget.index].name),
           subtitle: _getSubtitle(),
           trailing: _getTrailingButton(),
           onTap: widget.onTap,
