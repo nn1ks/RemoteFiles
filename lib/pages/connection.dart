@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -44,6 +46,7 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   bool _isSelectionMode = false;
   List<bool> _isSelected = [];
+  bool _selectedItemsAreFiles = true;
 
   List<Widget> _getCurrentPathWidgets() {
     List<Widget> widgets = [
@@ -140,7 +143,17 @@ class _ConnectionPageState extends State<ConnectionPage>
     return widgets;
   }
 
+  void _setDownloadEnable() {
+    _selectedItemsAreFiles = true;
+    for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+      if (_isSelected[i] && widget.visibleFileInfos[i].isDirectory) {
+        _selectedItemsAreFiles = false;
+      }
+    }
+  }
+
   List<Widget> _getItemList(ConnectionModel model) {
+    if (widget.visibleFileInfos == null) widget.visibleFileInfos = [];
     _isSelected.length = widget.visibleFileInfos.length;
     for (int i = 0; i < _isSelected.length; i++) {
       if (_isSelected[i] != true) {
@@ -170,6 +183,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                     _isSelectionMode = false;
                   }
                 });
+                _setDownloadEnable();
               } else {
                 if (widget.visibleFileInfos[i].isDirectory) {
                   ConnectionMethods.goToDirectory(
@@ -194,6 +208,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                 _isSelected[i] = !_isSelected[i];
                 if (_isSelected.contains(true)) {
                   _isSelectionMode = true;
+                  _setDownloadEnable();
                 } else {
                   _isSelectionMode = false;
                 }
@@ -347,6 +362,111 @@ class _ConnectionPageState extends State<ConnectionPage>
                 _searchController.clear();
                 widget.visibleFileInfos = List.from(widget.fileInfos);
               });
+            },
+            downloadIsEnabled: _selectedItemsAreFiles,
+            download: () async {
+              List<String> filenames = [];
+              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                if (_isSelected[i]) {
+                  filenames.add(widget.visibleFileInfos[i].name);
+                }
+              }
+              void download(int i) {
+                if (i >= filenames.length - 1) {
+                  LoadFile.download(
+                    context,
+                    widget.connection.path + "/" + filenames[i],
+                    widget,
+                    ignoreExistingFiles: true,
+                  );
+                } else {
+                  LoadFile.download(
+                    context,
+                    widget.connection.path + "/" + filenames[i],
+                    widget,
+                    ignoreExistingFiles: true,
+                  ).then((_) {
+                    download(i + 1);
+                  });
+                }
+              }
+
+              bool filenameExists = false;
+              Directory dir = await SettingsVariables.getDownloadDirectory();
+              var ls = await dir.list().toList();
+              for (int i = 0; i < ls.length; i++) {
+                String filename;
+                for (int j = ls[i].path.length - 1; j >= 0; j--) {
+                  if (ls[i].path[j] == "/") {
+                    filename = ls[i].path.substring(j + 1);
+                    break;
+                  }
+                }
+                if (filenames.contains(filename)) filenameExists = true;
+              }
+
+              print("exist done");
+
+              if (filenameExists) {
+                customShowDialog(
+                    context: context,
+                    builder: (context) {
+                      return CustomAlertDialog(
+                        title: Text(
+                          "There are already files with the same name. " +
+                              "Replace files?",
+                          style: TextStyle(fontFamily: "GoogleSans"),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            padding: EdgeInsets.only(
+                              top: 8.5,
+                              bottom: 8.0,
+                              left: 14.0,
+                              right: 14.0,
+                            ),
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            splashColor: Colors.black12,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            padding: EdgeInsets.only(
+                              top: 8.5,
+                              bottom: 8.0,
+                              left: 14.0,
+                              right: 14.0,
+                            ),
+                            child: Text(
+                              "OK",
+                              style: TextStyle(
+                                color: Provider.of<CustomTheme>(context)
+                                        .isLightTheme()
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            elevation: .0,
+                            onPressed: () {
+                              download(0);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          SizedBox(width: .0),
+                        ],
+                      );
+                    });
+              } else {
+                download(0);
+              }
             },
           ),
         ),

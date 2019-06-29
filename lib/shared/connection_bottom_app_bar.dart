@@ -13,12 +13,16 @@ class ConnectionBottomAppBar extends StatelessWidget {
   final bool isSelectionMode;
   final GestureTapCallback cancelSelection;
   final GestureTapCallback deleteSelectedFiles;
+  final GestureTapCallback download;
+  final bool downloadIsEnabled;
   final GestureTapCallback searchOnTap;
   ConnectionBottomAppBar({
     @required this.currentConnectionPage,
     @required this.isSelectionMode,
     this.cancelSelection,
     this.deleteSelectedFiles,
+    this.download,
+    this.downloadIsEnabled = false,
     this.searchOnTap,
   });
 
@@ -27,9 +31,11 @@ class ConnectionBottomAppBar extends StatelessWidget {
     Widget buildIconButton({
       @required IconData iconData,
       @required String label,
+      bool enabled = true,
       GestureTapCallback onTap,
     }) {
-      return Container(
+      return Opacity(
+        opacity: enabled ? 1 : .42,
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
@@ -39,11 +45,12 @@ class ConnectionBottomAppBar extends StatelessWidget {
                 Icon(iconData, size: 24),
                 SizedBox(height: 4),
                 Opacity(
-                  opacity: .86,
+                  opacity: enabled ? .86 : 1,
                   child: Text(
                     label,
                     style: TextStyle(
                       fontSize: 13,
+                      fontWeight: FontWeight.w500,
                       color: isSelectionMode
                           ? Theme.of(context).accentIconTheme.color
                           : Theme.of(context).primaryIconTheme.color,
@@ -59,7 +66,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
                   width: 80,
                   height: 80,
                 ),
-                onTap: onTap,
+                onTap: enabled ? onTap : null,
               ),
             ),
           ],
@@ -70,8 +77,13 @@ class ConnectionBottomAppBar extends StatelessWidget {
     var model = Provider.of<ConnectionModel>(context);
     Widget loadProgressWidget = AnimatedContainer(
       duration: Duration(milliseconds: 200),
-      height: model.showProgress ? 50.0 : 0,
+      height: model.showProgress ? 50 : 0,
       alignment: Alignment.topLeft,
+      color: isSelectionMode
+          ? (Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.grey[800])
+          : Theme.of(context).bottomAppBarColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
@@ -119,7 +131,16 @@ class ConnectionBottomAppBar extends StatelessWidget {
           SizedBox(
             height: 3.0,
             child: LinearProgressIndicator(
-              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isSelectionMode
+                    ? (Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey[700]
+                        : Colors.grey[200])
+                    : Theme.of(context).accentColor,
+              ),
+              backgroundColor: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[300]
+                  : Colors.grey[600],
               value: model.progressValue.toDouble() * .01,
             ),
           ),
@@ -140,6 +161,14 @@ class ConnectionBottomAppBar extends StatelessWidget {
         iconData: OMIcons.delete,
         label: "Delete",
         onTap: deleteSelectedFiles,
+      ),
+    );
+    selectionModeItems.add(
+      buildIconButton(
+        iconData: OMIcons.getApp,
+        label: "Download",
+        enabled: downloadIsEnabled,
+        onTap: download,
       ),
     );
 
@@ -260,10 +289,14 @@ class ConnectionBottomAppBar extends StatelessWidget {
                   margin: EdgeInsets.only(top: model.showProgress ? 50 : 0),
                   alignment: Alignment.bottomCenter,
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 700),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: isSelectionMode ? selectionModeItems : items,
+                    constraints: BoxConstraints(maxWidth: 800),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: BouncingScrollPhysics(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: isSelectionMode ? selectionModeItems : items,
+                      ),
                     ),
                   ),
                 ),
