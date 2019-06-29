@@ -13,11 +13,13 @@ class ConnectionBottomAppBar extends StatelessWidget {
   final bool isSelectionMode;
   final GestureTapCallback cancelSelection;
   final GestureTapCallback deleteSelectedFiles;
+  final GestureTapCallback searchOnTap;
   ConnectionBottomAppBar({
     @required this.currentConnectionPage,
     @required this.isSelectionMode,
     this.cancelSelection,
     this.deleteSelectedFiles,
+    this.searchOnTap,
   });
 
   @override
@@ -51,11 +53,11 @@ class ConnectionBottomAppBar extends StatelessWidget {
               ],
             ),
             Transform.scale(
-              scale: 1.6,
+              scale: 1.3,
               child: InkResponse(
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: 80,
+                  height: 80,
                 ),
                 onTap: onTap,
               ),
@@ -153,7 +155,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
     );
     items.add(
       buildIconButton(
-        iconData: Icons.youtube_searched_for,
+        iconData: OMIcons.forward,
         label: "Go to folder",
         onTap: () {
           customShowDialog(
@@ -200,6 +202,13 @@ class ConnectionBottomAppBar extends StatelessWidget {
     );
     items.add(
       buildIconButton(
+        iconData: Icons.search,
+        label: "Search",
+        onTap: searchOnTap,
+      ),
+    );
+    items.add(
+      buildIconButton(
         iconData: OMIcons.settings,
         label: "Settings",
         onTap: () {
@@ -217,7 +226,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
       ),
     );
     items.add(buildIconButton(
-      iconData: Icons.flash_on,
+      iconData: Icons.info_outline,
       label: "Connection",
       onTap: () {
         ConnectionDialog(

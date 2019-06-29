@@ -103,6 +103,7 @@ class ConnectionMethods {
             connectionPage.fileInfos[i].copyWith(FileInfo.fromMap({k: v}));
       });
     }
+    connectionPage.visibleFileInfos = connectionPage.fileInfos;
 
     if (closePageBefore) {
       Navigator.pushReplacement(

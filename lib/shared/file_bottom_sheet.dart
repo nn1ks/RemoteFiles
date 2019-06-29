@@ -22,13 +22,6 @@ class FileBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*String filePath = widget.currentConnectionPage.connection.path;
-    if (widget.currentConnectionPage.connection
-            .path[widget.currentConnectionPage.connection.path.length - 1] !=
-        "/") {
-      filePath += "/";
-    }
-    filePath += widget.fileInfo["filename"];*/
     String filePath = current.connection.path + "/" + fileInfo.name;
 
     double tableFontSize = 16.0;
@@ -182,8 +175,9 @@ class FileBottomSheet extends StatelessWidget {
                               children: <Widget>[
                                 ListTile(
                                   leading: Icon(
-                                    Icons.file_download,
+                                    OMIcons.getApp,
                                     color: Theme.of(context).accentColor,
+                                    size: 27,
                                   ),
                                   title: Padding(
                                     padding: EdgeInsets.only(top: 2.0),

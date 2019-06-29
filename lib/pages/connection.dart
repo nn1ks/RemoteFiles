@@ -9,6 +9,7 @@ import '../shared/shared.dart';
 class ConnectionPage extends StatefulWidget {
   final Connection connection;
   List<FileInfo> fileInfos;
+  List<FileInfo> visibleFileInfos;
 
   ConnectionPage(this.connection);
 
@@ -140,22 +141,22 @@ class _ConnectionPageState extends State<ConnectionPage>
   }
 
   List<Widget> _getItemList(ConnectionModel model) {
-    _isSelected.length = widget.fileInfos.length;
+    _isSelected.length = widget.visibleFileInfos.length;
     for (int i = 0; i < _isSelected.length; i++) {
       if (_isSelected[i] != true) {
         _isSelected[i] = false;
       }
     }
     int _connectionsNum =
-        widget.fileInfos == null ? 0 : widget.fileInfos.length;
+        widget.visibleFileInfos == null ? 0 : widget.visibleFileInfos.length;
     List<Widget> list = [];
-    if (widget.fileInfos.length > 0) {
+    if (widget.visibleFileInfos.length > 0) {
       for (int i = 0; i < _connectionsNum; i++) {
         if (SettingsVariables.showHiddenFiles ||
-            widget.fileInfos[i].name[0] != ".") {
+            widget.visibleFileInfos[i].name[0] != ".") {
           list.add(ConnectionWidgetTile(
             index: i,
-            fileInfos: widget.fileInfos,
+            fileInfos: widget.visibleFileInfos,
             isLoading: model.isLoading,
             isSelected: _isSelected[i],
             isSelectionMode: _isSelectionMode,
@@ -170,19 +171,23 @@ class _ConnectionPageState extends State<ConnectionPage>
                   }
                 });
               } else {
-                if (widget.fileInfos[i].isDirectory) {
+                if (widget.visibleFileInfos[i].isDirectory) {
                   ConnectionMethods.goToDirectory(
                     context,
-                    widget.connection.path + "/" + widget.fileInfos[i].name,
+                    widget.connection.path +
+                        "/" +
+                        widget.visibleFileInfos[i].name,
                     widget.connection,
                   );
                 } else {
-                  FileBottomSheet(context, widget.fileInfos[i], widget).show();
+                  FileBottomSheet(context, widget.visibleFileInfos[i], widget)
+                      .show();
                 }
               }
             },
             onSecondaryTap: () {
-              FileBottomSheet(context, widget.fileInfos[i], widget).show();
+              FileBottomSheet(context, widget.visibleFileInfos[i], widget)
+                  .show();
             },
             onLongPress: () {
               setState(() {
@@ -202,6 +207,9 @@ class _ConnectionPageState extends State<ConnectionPage>
     return list;
   }
 
+  var _searchController = TextEditingController();
+  bool _showSearch = false;
+
   AnimationController _rotationController;
 
   @override
@@ -216,7 +224,7 @@ class _ConnectionPageState extends State<ConnectionPage>
     return Scaffold(
       key: widget.scaffoldKey,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(48.0),
+        preferredSize: Size.fromHeight(48),
         child: AppBar(
           backgroundColor: Theme.of(context).bottomAppBarColor,
           elevation: 1.6,
@@ -229,6 +237,54 @@ class _ConnectionPageState extends State<ConnectionPage>
               margin: EdgeInsets.only(right: 10.0),
               child: Row(
                 children: _getCurrentPathWidgets(),
+              ),
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(48),
+            child: Visibility(
+              visible: _showSearch,
+              child: SizedBox(
+                height: 48,
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    icon: Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: CustomIconButton(
+                        icon: Icon(
+                          Icons.clear,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _showSearch = false;
+                            _searchController.clear();
+                            widget.visibleFileInfos =
+                                List.from(widget.fileInfos);
+                          });
+                        },
+                      ),
+                    ),
+                    hintText: "Search",
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  onChanged: (String value) {
+                    if (value.isEmpty) {
+                      widget.visibleFileInfos = List.from(widget.fileInfos);
+                    } else {
+                      widget.visibleFileInfos = [];
+                      widget.fileInfos.forEach((v) {
+                        if (v.name.contains(value)) {
+                          widget.visibleFileInfos.add(v);
+                        }
+                      });
+                    }
+                    setState(() {});
+                  },
+                ),
               ),
             ),
           ),
@@ -269,11 +325,12 @@ class _ConnectionPageState extends State<ConnectionPage>
             deleteSelectedFiles: () {
               List<String> filePaths = [];
               List<bool> isDirectory = [];
-              for (int i = 0; i < widget.fileInfos.length; i++) {
+              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
                 if (_isSelected[i]) {
-                  filePaths.add(
-                      widget.connection.path + "/" + widget.fileInfos[i].name);
-                  isDirectory.add(widget.fileInfos[i].isDirectory);
+                  filePaths.add(widget.connection.path +
+                      "/" +
+                      widget.visibleFileInfos[i].name);
+                  isDirectory.add(widget.visibleFileInfos[i].isDirectory);
                 }
               }
               ConnectionMethods.showDeleteConfirmDialog(
@@ -283,6 +340,13 @@ class _ConnectionPageState extends State<ConnectionPage>
                 currentConnection: widget.connection,
                 calledFromFileBottomSheet: false,
               );
+            },
+            searchOnTap: () {
+              setState(() {
+                _showSearch = !_showSearch;
+                _searchController.clear();
+                widget.visibleFileInfos = List.from(widget.fileInfos);
+              });
             },
           ),
         ),
@@ -392,39 +456,42 @@ class _ConnectionPageState extends State<ConnectionPage>
                 );
               },
             ),
-      body: SafeArea(
-        child: Scrollbar(
-          child: Consumer<ConnectionModel>(
-            builder: (context, model, child) {
-              return RefreshIndicator(
-                key: _refreshKey,
-                onRefresh: () async {
-                  await ConnectionMethods.refresh(context, widget.connection);
-                },
-                child: model.isLoading
-                    ? Container(
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
-                    : SettingsVariables.view == "list" ||
-                            SettingsVariables.view == "detailed"
-                        ? ListView(
-                            children: <Widget>[
-                              Column(children: _getItemList(model)),
-                              SizedBox(height: 84.0),
-                            ],
-                          )
-                        : GridView(
-                            padding: EdgeInsets.all(3.0),
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 160.0,
-                            ),
-                            children: _getItemList(model),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).detach(),
+        child: SafeArea(
+          child: Scrollbar(
+            child: Consumer<ConnectionModel>(
+              builder: (context, model, child) {
+                return RefreshIndicator(
+                  key: _refreshKey,
+                  onRefresh: () async {
+                    await ConnectionMethods.refresh(context, widget.connection);
+                  },
+                  child: model.isLoading
+                      ? Container(
+                          child: Center(
+                            child: CircularProgressIndicator(),
                           ),
-              );
-            },
+                        )
+                      : SettingsVariables.view == "list" ||
+                              SettingsVariables.view == "detailed"
+                          ? ListView(
+                              children: <Widget>[
+                                Column(children: _getItemList(model)),
+                                SizedBox(height: 84.0),
+                              ],
+                            )
+                          : GridView(
+                              padding: EdgeInsets.all(3.0),
+                              gridDelegate:
+                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 160.0,
+                              ),
+                              children: _getItemList(model),
+                            ),
+                );
+              },
+            ),
           ),
         ),
       ),
