@@ -26,9 +26,9 @@ class _SettingsPageState extends State<SettingsPage>
     if (hasSwitch) {
       if (SettingsVariables.sort == "name") {
         if (SettingsVariables.sortIsDescending) {
-          sortLabel = "(Z-A)";
-        } else {
           sortLabel = "(A-Z)";
+        } else {
+          sortLabel = "(Z-A)";
         }
       } else {
         if (SettingsVariables.sortIsDescending) {

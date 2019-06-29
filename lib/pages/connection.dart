@@ -18,22 +18,18 @@ class ConnectionPage extends StatefulWidget {
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   sortFileInfos() {
-    try {
-      // TODO: fix bug when calling fileInfos.sort()
-      fileInfos.sort((a, b) {
-        a
-            .toMap()[SettingsVariables.sort]
-            .compareTo(b.toMap()[SettingsVariables.sort]);
-      });
-    } catch (e) {
-      print(e);
-    }
+    fileInfos.sort((a, b) {
+      String n1 = a.toMap()[SettingsVariables.sort].toLowerCase();
+      String n2 = b.toMap()[SettingsVariables.sort].toLowerCase();
+      return n1.compareTo(n2);
+    });
     if (SettingsVariables.sortIsDescending) {
       fileInfos = fileInfos.reversed.toList();
     }
-    if (SettingsVariables.sort != "name") {
+    if (SettingsVariables.sort == "name") {
       fileInfos = fileInfos.reversed.toList();
     }
+    visibleFileInfos = fileInfos;
   }
 
   @override
