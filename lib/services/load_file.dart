@@ -33,7 +33,7 @@ class LoadFile {
     BuildContext context,
     String filePath,
     ConnectionPage currentConnectionPage, {
-    bool isRedownloading = false,
+    bool ignoreExistingFiles = false,
   }) async {
     var model = Provider.of<ConnectionModel>(context);
     try {
@@ -60,7 +60,7 @@ class LoadFile {
           }
           if (filename == lsFilenames) fileNameExists = true;
         }
-        if (!fileNameExists || isRedownloading) {
+        if (!fileNameExists || ignoreExistingFiles) {
           await model.client
               .sftpDownload(
             path: filePath,
@@ -129,7 +129,7 @@ class LoadFile {
                           context,
                           filePath,
                           currentConnectionPage,
-                          isRedownloading: true,
+                          ignoreExistingFiles: true,
                         );
                         Navigator.pop(context);
                       },

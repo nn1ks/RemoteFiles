@@ -51,7 +51,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
               : Colors.transparent,
           border: Border.all(
             color: Theme.of(context).textTheme.body1.color.withOpacity(.6),
-            width: widget.isSelected ? 0 : 1,
+            width: widget.isSelected ? 0 : 2,
           ),
         ),
         child: Icon(Icons.check,

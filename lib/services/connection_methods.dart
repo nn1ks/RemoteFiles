@@ -91,19 +91,21 @@ class ConnectionMethods {
         ),
       );
     }
-    for (int i = 0; i < list.length; i++) {
-      connectionPage.fileInfos.add(FileInfo());
-      list[i].forEach((k, v) {
-        if (k == "filename") {
-          if (v[v.length - 1] == "/") {
-            v = v.toString().substring(0, v.length - 1);
+    if (list != null) {
+      for (int i = 0; i < list.length; i++) {
+        connectionPage.fileInfos.add(FileInfo());
+        list[i].forEach((k, v) {
+          if (k == "filename") {
+            if (v[v.length - 1] == "/") {
+              v = v.toString().substring(0, v.length - 1);
+            }
           }
-        }
-        connectionPage.fileInfos[i] =
-            connectionPage.fileInfos[i].copyWith(FileInfo.fromMap({k: v}));
-      });
+          connectionPage.fileInfos[i] =
+              connectionPage.fileInfos[i].copyWith(FileInfo.fromMap({k: v}));
+        });
+      }
+      connectionPage.visibleFileInfos = connectionPage.fileInfos;
     }
-    connectionPage.visibleFileInfos = connectionPage.fileInfos;
 
     if (closePageBefore) {
       Navigator.pushReplacement(
