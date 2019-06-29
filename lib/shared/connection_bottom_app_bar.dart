@@ -22,15 +22,45 @@ class ConnectionBottomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget _buildIconButtonLabel(String label) {
-      return Opacity(
-        opacity: .86,
-        child: Text(
-          label,
-          style: TextStyle(
-              color: isSelectionMode
-                  ? Theme.of(context).accentIconTheme.color
-                  : Theme.of(context).primaryIconTheme.color),
+    Widget buildIconButton({
+      @required IconData iconData,
+      @required String label,
+      GestureTapCallback onTap,
+    }) {
+      return Container(
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(iconData, size: 24),
+                SizedBox(height: 4),
+                Opacity(
+                  opacity: .86,
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isSelectionMode
+                          ? Theme.of(context).accentIconTheme.color
+                          : Theme.of(context).primaryIconTheme.color,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Transform.scale(
+              scale: 1.6,
+              child: InkResponse(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                ),
+                onTap: onTap,
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -97,140 +127,113 @@ class ConnectionBottomAppBar extends StatelessWidget {
 
     List<Widget> selectionModeItems = [];
     selectionModeItems.add(
-      Column(
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.clear),
-            onPressed: cancelSelection,
-          ),
-          _buildIconButtonLabel("Cancel"),
-        ],
+      buildIconButton(
+        iconData: Icons.clear,
+        label: "Cancel",
+        onTap: cancelSelection,
       ),
     );
     selectionModeItems.add(
-      Column(
-        children: <Widget>[
-          IconButton(
-            icon: Icon(OMIcons.delete),
-            onPressed: deleteSelectedFiles,
-          ),
-          _buildIconButtonLabel("Delete"),
-        ],
+      buildIconButton(
+        iconData: OMIcons.delete,
+        label: "Delete",
+        onTap: deleteSelectedFiles,
       ),
     );
 
     List<Widget> items = [];
     items.add(
-      Column(
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.chevron_left),
-            onPressed: () => Navigator.pop(context),
-          ),
-          _buildIconButtonLabel("Back"),
-        ],
+      buildIconButton(
+        iconData: Icons.chevron_left,
+        label: "Back",
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
     items.add(
-      Column(
-        children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.youtube_searched_for),
-            onPressed: () {
-              customShowDialog(
-                context: context,
-                builder: (context) {
-                  return CustomAlertDialog(
-                    title: Text(
-                      "Go to directory",
-                      style: TextStyle(
-                        fontFamily: SettingsVariables.accentFont,
-                        fontSize: 18.0,
-                      ),
-                    ),
-                    content: Container(
-                      width: 260.0,
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: "Path",
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).accentColor,
-                              width: 2.0,
-                            ),
-                          ),
+      buildIconButton(
+        iconData: Icons.youtube_searched_for,
+        label: "Go to folder",
+        onTap: () {
+          customShowDialog(
+            context: context,
+            builder: (context) {
+              return CustomAlertDialog(
+                title: Text(
+                  "Go to folder",
+                  style: TextStyle(
+                    fontFamily: SettingsVariables.accentFont,
+                    fontSize: 18.0,
+                  ),
+                ),
+                content: Container(
+                  width: 260.0,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Path",
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).accentColor,
+                          width: 2.0,
                         ),
-                        cursorColor: Theme.of(context).accentColor,
-                        autofocus: true,
-                        autocorrect: false,
-                        onSubmitted: (String value) {
-                          ConnectionMethods.goToDirectory(
-                            context,
-                            value,
-                            currentConnectionPage.connection,
-                          );
-                          Navigator.pop(context);
-                        },
                       ),
                     ),
-                  );
-                },
-              );
-            },
-          ),
-          _buildIconButtonLabel("Go to directory"),
-        ],
-      ),
-    );
-    items.add(
-      Column(
-        children: <Widget>[
-          IconButton(
-            icon: Icon(OMIcons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SettingsPage(
-                      currentConnectionPage: currentConnectionPage,
-                    );
-                  },
+                    cursorColor: Theme.of(context).accentColor,
+                    autofocus: true,
+                    autocorrect: false,
+                    onSubmitted: (String value) {
+                      ConnectionMethods.goToDirectory(
+                        context,
+                        value,
+                        currentConnectionPage.connection,
+                      );
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
               );
             },
-          ),
-          _buildIconButtonLabel("Settings"),
-        ],
+          );
+        },
       ),
     );
     items.add(
-      Column(
-        children: <Widget>[
-          IconButton(
-            icon: Padding(
-              padding: EdgeInsets.only(top: 1.0),
-              child: Icon(OMIcons.flashOn),
+      buildIconButton(
+        iconData: OMIcons.settings,
+        label: "Settings",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return SettingsPage(
+                  currentConnectionPage: currentConnectionPage,
+                );
+              },
             ),
-            onPressed: () {
-              ConnectionDialog(
-                context: context,
-                currentConnectionPage: currentConnectionPage,
-                page: "connection",
-                primaryButtonIconData: Icons.remove_circle_outline,
-                primaryButtonLabel: "Disconnect",
-                primaryButtonOnPressed: () {
-                  if (!Platform.isIOS) model.client.disconnectSFTP();
-                  model.client.disconnect();
-                  Navigator.popUntil(context, ModalRoute.withName('/'));
-                },
-              ).show();
-            },
-          ),
-          _buildIconButtonLabel("Connection"),
-        ],
+          );
+        },
       ),
     );
+    items.add(buildIconButton(
+      iconData: Icons.flash_on,
+      label: "Connection",
+      onTap: () {
+        ConnectionDialog(
+          context: context,
+          currentConnectionPage: currentConnectionPage,
+          page: "connection",
+          primaryButtonIconData: Icons.remove_circle_outline,
+          primaryButtonLabel: "Disconnect",
+          primaryButtonOnPressed: () {
+            if (!Platform.isIOS) model.client.disconnectSFTP();
+            model.client.disconnect();
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+          },
+        ).show();
+      },
+    ));
 
     return BottomAppBar(
       child: Consumer<ConnectionModel>(
