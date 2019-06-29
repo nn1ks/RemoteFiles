@@ -311,164 +311,226 @@ class _ConnectionPageState extends State<ConnectionPage>
             )
           ],
         ),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            bottomAppBarColor: _isSelectionMode
-                ? Theme.of(context).accentColor
-                : Theme.of(context).bottomAppBarColor,
-            iconTheme: IconThemeData(
-              color: _isSelectionMode
-                  ? Theme.of(context).accentIconTheme.color
-                  : Theme.of(context).primaryIconTheme.color,
+        child: Consumer<ConnectionModel>(builder: (context, model, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              bottomAppBarColor: _isSelectionMode || model.isPasteMode
+                  ? Theme.of(context).accentColor
+                  : Theme.of(context).bottomAppBarColor,
+              iconTheme: IconThemeData(
+                color: _isSelectionMode || model.isPasteMode
+                    ? Theme.of(context).accentIconTheme.color
+                    : Theme.of(context).primaryIconTheme.color,
+              ),
             ),
-          ),
-          child: ConnectionBottomAppBar(
-            currentConnectionPage: widget,
-            isSelectionMode: _isSelectionMode,
-            cancelSelection: () {
-              setState(() {
-                for (int i = 0; i < _isSelected.length; i++) {
-                  _isSelected[i] = false;
-                }
+            child: ConnectionBottomAppBar(
+              currentConnectionPage: widget,
+              isPasteMode: model.isPasteMode,
+              isCopyMode: model.isCopyMode,
+              copy: () {
                 _isSelectionMode = false;
-              });
-            },
-            deleteSelectedFiles: () {
-              List<String> filePaths = [];
-              List<bool> isDirectory = [];
-              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
-                if (_isSelected[i]) {
-                  filePaths.add(widget.connection.path +
-                      "/" +
-                      widget.visibleFileInfos[i].name);
-                  isDirectory.add(widget.visibleFileInfos[i].isDirectory);
-                }
-              }
-              ConnectionMethods.showDeleteConfirmDialog(
-                context: context,
-                filePaths: filePaths,
-                isDirectory: isDirectory,
-                currentConnection: widget.connection,
-                calledFromFileBottomSheet: false,
-              );
-            },
-            searchOnTap: () {
-              setState(() {
-                _showSearch = !_showSearch;
-                _searchController.clear();
-                widget.visibleFileInfos = List.from(widget.fileInfos);
-              });
-            },
-            downloadIsEnabled: _selectedItemsAreFiles,
-            download: () async {
-              List<String> filenames = [];
-              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
-                if (_isSelected[i]) {
-                  filenames.add(widget.visibleFileInfos[i].name);
-                }
-              }
-              void download(int i) {
-                if (i >= filenames.length - 1) {
-                  LoadFile.download(
-                    context,
-                    widget.connection.path + "/" + filenames[i],
-                    widget,
-                    ignoreExistingFiles: true,
-                  );
-                } else {
-                  LoadFile.download(
-                    context,
-                    widget.connection.path + "/" + filenames[i],
-                    widget,
-                    ignoreExistingFiles: true,
-                  ).then((_) {
-                    download(i + 1);
-                  });
-                }
-              }
-
-              bool filenameExists = false;
-              Directory dir = await SettingsVariables.getDownloadDirectory();
-              var ls = await dir.list().toList();
-              for (int i = 0; i < ls.length; i++) {
-                String filename;
-                for (int j = ls[i].path.length - 1; j >= 0; j--) {
-                  if (ls[i].path[j] == "/") {
-                    filename = ls[i].path.substring(j + 1);
-                    break;
+                model.isPasteMode = true;
+                model.isCopyMode = true;
+                model.savedFilePaths = [];
+                model.savedFileInfos = [];
+                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                  if (_isSelected[i]) {
+                    model.savedFilePaths.add(widget.connection.path +
+                        "/" +
+                        widget.visibleFileInfos[i].name);
+                    model.savedFileInfos.add(widget.visibleFileInfos[i]);
                   }
                 }
-                if (filenames.contains(filename)) filenameExists = true;
-              }
-
-              print("exist done");
-
-              if (filenameExists) {
-                customShowDialog(
-                    context: context,
-                    builder: (context) {
-                      return CustomAlertDialog(
-                        title: Text(
-                          "There are already files with the same name. " +
-                              "Replace files?",
-                          style: TextStyle(fontFamily: "GoogleSans"),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                              top: 8.5,
-                              bottom: 8.0,
-                              left: 14.0,
-                              right: 14.0,
-                            ),
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            splashColor: Colors.black12,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                              top: 8.5,
-                              bottom: 8.0,
-                              left: 14.0,
-                              right: 14.0,
-                            ),
-                            child: Text(
-                              "OK",
-                              style: TextStyle(
-                                color: Provider.of<CustomTheme>(context)
-                                        .isLightTheme()
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                            elevation: .0,
-                            onPressed: () {
-                              download(0);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          SizedBox(width: .0),
-                        ],
-                      );
+                _isSelected = [];
+                setState(() {});
+              },
+              move: () {
+                _isSelectionMode = false;
+                model.isPasteMode = true;
+                model.isCopyMode = false;
+                model.savedFilePaths = [];
+                model.savedFileInfos = [];
+                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                  if (_isSelected[i]) {
+                    model.savedFilePaths.add(widget.connection.path +
+                        "/" +
+                        widget.visibleFileInfos[i].name);
+                    model.savedFileInfos.add(widget.visibleFileInfos[i]);
+                  }
+                }
+                _isSelected = [];
+                setState(() {});
+              },
+              paste: () async {
+                for (int i = 0; i < model.savedFileInfos.length; i++) {
+                  String cmd;
+                  if (model.isCopyMode) {
+                    cmd = "cp";
+                    if (model.savedFileInfos[i].isDirectory) cmd += " -r";
+                  } else {
+                    cmd = "mv";
+                  }
+                  print(cmd);
+                  String toPath = widget.connection.path + "/";
+                  if (model.isCopyMode) toPath += model.savedFileInfos[i].name;
+                  await model.client.execute(
+                      cmd + " " + model.savedFilePaths[i] + " " + toPath);
+                }
+                model.isPasteMode = false;
+                ConnectionMethods.refresh(context, widget.connection);
+              },
+              cancelPasteMode: () {
+                setState(() {
+                  model.isPasteMode = false;
+                });
+              },
+              isSelectionMode: _isSelectionMode,
+              cancelSelection: () {
+                setState(() {
+                  for (int i = 0; i < _isSelected.length; i++) {
+                    _isSelected[i] = false;
+                  }
+                  _isSelectionMode = false;
+                });
+              },
+              deleteSelectedFiles: () {
+                List<String> filePaths = [];
+                List<bool> isDirectory = [];
+                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                  if (_isSelected[i]) {
+                    filePaths.add(widget.connection.path +
+                        "/" +
+                        widget.visibleFileInfos[i].name);
+                    isDirectory.add(widget.visibleFileInfos[i].isDirectory);
+                  }
+                }
+                ConnectionMethods.showDeleteConfirmDialog(
+                  context: context,
+                  filePaths: filePaths,
+                  isDirectory: isDirectory,
+                  currentConnection: widget.connection,
+                  calledFromFileBottomSheet: false,
+                );
+              },
+              searchOnTap: () {
+                setState(() {
+                  _showSearch = !_showSearch;
+                  _searchController.clear();
+                  widget.visibleFileInfos = List.from(widget.fileInfos);
+                });
+              },
+              downloadIsEnabled: _selectedItemsAreFiles,
+              download: () async {
+                List<String> filenames = [];
+                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                  if (_isSelected[i]) {
+                    filenames.add(widget.visibleFileInfos[i].name);
+                  }
+                }
+                void download(int i) {
+                  if (i >= filenames.length - 1) {
+                    LoadFile.download(
+                      context,
+                      widget.connection.path + "/" + filenames[i],
+                      widget,
+                      ignoreExistingFiles: true,
+                    );
+                  } else {
+                    LoadFile.download(
+                      context,
+                      widget.connection.path + "/" + filenames[i],
+                      widget,
+                      ignoreExistingFiles: true,
+                    ).then((_) {
+                      download(i + 1);
                     });
-              } else {
-                download(0);
-              }
-            },
-          ),
-        ),
+                  }
+                }
+
+                bool filenameExists = false;
+                Directory dir = await SettingsVariables.getDownloadDirectory();
+                var ls = await dir.list().toList();
+                for (int i = 0; i < ls.length; i++) {
+                  String filename;
+                  for (int j = ls[i].path.length - 1; j >= 0; j--) {
+                    if (ls[i].path[j] == "/") {
+                      filename = ls[i].path.substring(j + 1);
+                      break;
+                    }
+                  }
+                  if (filenames.contains(filename)) filenameExists = true;
+                }
+
+                print("exist done");
+
+                if (filenameExists) {
+                  customShowDialog(
+                      context: context,
+                      builder: (context) {
+                        return CustomAlertDialog(
+                          title: Text(
+                            "There are already files with the same name. " +
+                                "Replace files?",
+                            style: TextStyle(fontFamily: "GoogleSans"),
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              padding: EdgeInsets.only(
+                                top: 8.5,
+                                bottom: 8.0,
+                                left: 14.0,
+                                right: 14.0,
+                              ),
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            RaisedButton(
+                              color: Theme.of(context).accentColor,
+                              splashColor: Colors.black12,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              padding: EdgeInsets.only(
+                                top: 8.5,
+                                bottom: 8.0,
+                                left: 14.0,
+                                right: 14.0,
+                              ),
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: Provider.of<CustomTheme>(context)
+                                          .isLightTheme()
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                              elevation: .0,
+                              onPressed: () {
+                                download(0);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            SizedBox(width: .0),
+                          ],
+                        );
+                      });
+                } else {
+                  download(0);
+                }
+              },
+            ),
+          );
+        }),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: _isSelectionMode
+      floatingActionButton: _isSelectionMode ||
+              Provider.of<ConnectionModel>(context).isPasteMode
           ? Container()
           : Consumer<ConnectionModel>(
               builder: (context, model, child) {
@@ -500,7 +562,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                           Provider.of<CustomTheme>(context).isLightTheme()
                               ? Colors.white
                               : Colors.grey[800],
-                      child: Icon(OMIcons.cloudUpload),
+                      child: Icon(OMIcons.publish),
                       backgroundColor:
                           Provider.of<CustomTheme>(context).isLightTheme()
                               ? Colors.white

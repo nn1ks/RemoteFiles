@@ -10,14 +10,27 @@ import 'shared.dart';
 
 class ConnectionBottomAppBar extends StatelessWidget {
   final ConnectionPage currentConnectionPage;
+  final bool isPasteMode;
+  final bool isCopyMode;
+  final GestureTapCallback copy;
+  final GestureTapCallback move;
+  final GestureTapCallback paste;
+  final GestureTapCallback cancelPasteMode;
   final bool isSelectionMode;
   final GestureTapCallback cancelSelection;
   final GestureTapCallback deleteSelectedFiles;
   final GestureTapCallback download;
   final bool downloadIsEnabled;
   final GestureTapCallback searchOnTap;
+
   ConnectionBottomAppBar({
     @required this.currentConnectionPage,
+    @required this.isPasteMode,
+    this.isCopyMode,
+    this.copy,
+    this.move,
+    this.paste,
+    this.cancelPasteMode,
     @required this.isSelectionMode,
     this.cancelSelection,
     this.deleteSelectedFiles,
@@ -51,7 +64,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: isSelectionMode
+                      color: isSelectionMode || isPasteMode
                           ? Theme.of(context).accentIconTheme.color
                           : Theme.of(context).primaryIconTheme.color,
                     ),
@@ -79,7 +92,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
       duration: Duration(milliseconds: 200),
       height: model.showProgress ? 50 : 0,
       alignment: Alignment.topLeft,
-      color: isSelectionMode
+      color: isSelectionMode || isPasteMode
           ? (Theme.of(context).brightness == Brightness.light
               ? Colors.white
               : Colors.grey[800])
@@ -132,7 +145,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
             height: 3.0,
             child: LinearProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
-                isSelectionMode
+                isSelectionMode || isPasteMode
                     ? (Theme.of(context).brightness == Brightness.light
                         ? Colors.grey[700]
                         : Colors.grey[200])
@@ -151,9 +164,10 @@ class ConnectionBottomAppBar extends StatelessWidget {
     List<Widget> selectionModeItems = [];
     selectionModeItems.add(
       buildIconButton(
-        iconData: Icons.clear,
-        label: "Cancel",
-        onTap: cancelSelection,
+        iconData: OMIcons.getApp,
+        label: "Download",
+        enabled: downloadIsEnabled,
+        onTap: download,
       ),
     );
     selectionModeItems.add(
@@ -165,10 +179,102 @@ class ConnectionBottomAppBar extends StatelessWidget {
     );
     selectionModeItems.add(
       buildIconButton(
-        iconData: OMIcons.getApp,
-        label: "Download",
-        enabled: downloadIsEnabled,
-        onTap: download,
+        iconData: OMIcons.fileCopy,
+        label: "Copy to",
+        onTap: copy,
+      ),
+    );
+    selectionModeItems.add(
+      buildIconButton(
+        iconData: OMIcons.keyboardTab,
+        label: "Move to",
+        onTap: move,
+      ),
+    );
+    selectionModeItems.add(
+      buildIconButton(
+        iconData: Icons.clear,
+        label: "Cancel",
+        onTap: cancelSelection,
+      ),
+    );
+
+    List<Widget> pasteModeItems = [];
+    pasteModeItems.add(
+      buildIconButton(
+        iconData: Icons.chevron_left,
+        label: "Back",
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+    pasteModeItems.add(
+      buildIconButton(
+        iconData: OMIcons.forward,
+        label: "Go to folder",
+        onTap: () {
+          customShowDialog(
+            context: context,
+            builder: (context) {
+              return CustomAlertDialog(
+                title: Text(
+                  "Go to folder",
+                  style: TextStyle(
+                    fontFamily: SettingsVariables.accentFont,
+                    fontSize: 18.0,
+                  ),
+                ),
+                content: Container(
+                  width: 260.0,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      labelText: "Path",
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).accentColor,
+                          width: 2.0,
+                        ),
+                      ),
+                    ),
+                    cursorColor: Theme.of(context).accentColor,
+                    autofocus: true,
+                    autocorrect: false,
+                    onSubmitted: (String value) {
+                      ConnectionMethods.goToDirectory(
+                        context,
+                        value,
+                        currentConnectionPage.connection,
+                      );
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+    pasteModeItems.add(
+      buildIconButton(
+        iconData: Icons.search,
+        label: "Search",
+        onTap: searchOnTap,
+      ),
+    );
+    pasteModeItems.add(
+      buildIconButton(
+        iconData: OMIcons.saveAlt,
+        label: "Paste",
+        onTap: paste,
+      ),
+    );
+    pasteModeItems.add(
+      buildIconButton(
+        iconData: Icons.clear,
+        label: "Cancel",
+        onTap: cancelPasteMode,
       ),
     );
 
@@ -295,7 +401,9 @@ class ConnectionBottomAppBar extends StatelessWidget {
                       physics: BouncingScrollPhysics(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: isSelectionMode ? selectionModeItems : items,
+                        children: isSelectionMode
+                            ? selectionModeItems
+                            : (isPasteMode ? pasteModeItems : items),
                       ),
                     ),
                   ),
