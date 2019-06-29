@@ -32,9 +32,9 @@ class _SettingsPageState extends State<SettingsPage>
         }
       } else {
         if (SettingsVariables.sortIsDescending) {
-          sortLabel = "Newest";
+          sortLabel = "(New-Old)";
         } else {
-          sortLabel = "Oldest";
+          sortLabel = "(Old-New)";
         }
       }
     }
