@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      EditConnectionPage(isNew: true);
+                      return EditConnectionPage(isNew: true);
                     },
                   ),
                 );
