@@ -61,22 +61,21 @@ class LoadFile {
           if (filename == lsFilenames) fileNameExists = true;
         }
         if (!fileNameExists || isRedownloading) {
-          await model.client.sftpDownload(
+          await model.client
+              .sftpDownload(
             path: filePath,
             toPath: dir.path,
             callback: (progress) {
               print(progress);
               model.progressValue = progress;
-              if (progress != 100) {
-                model.showProgress = true;
-                model.loadFilename = filename;
-                model.progressType = "download";
-              } else if (progress == 100) {
-                _downloadCompleted(
-                    context, currentConnectionPage, dir.path + "/" + filename);
-              }
+              model.showProgress = true;
+              model.loadFilename = filename;
+              model.progressType = "download";
             },
-          );
+          )
+              .then((String saveLocation) {
+            _downloadCompleted(model, currentConnectionPage, saveLocation);
+          });
         } else {
           customShowDialog(
               context: context,
@@ -185,96 +184,100 @@ class LoadFile {
     }
     if (!fileNameExisting || isReuploading) {
       try {
-        model.client.sftpUpload(
+        model.client
+            .sftpUpload(
           path: path,
           toPath: currentConnectionPage.connection.path,
           callback: (progress) {
             model.progressValue = progress;
-            if (progress != 100) {
-              model.showProgress = true;
-              model.loadFilename = filename;
-              model.progressType = "upload";
-            } else if (progress == 100) {
-              _uploadCompleted(context, currentConnectionPage);
-            }
+            model.showProgress = true;
+            model.loadFilename = filename;
+            model.progressType = "upload";
           },
-        );
+        )
+            .then((_) {
+          _uploadCompleted(context, model, currentConnectionPage);
+        });
       } catch (e) {
         print("Uploading failed");
       }
     } else {
       customShowDialog(
-          context: context,
-          builder: (context) {
-            return CustomAlertDialog(
-              title: Text(
-                "There is already a file with the same name. Replace $filename?",
-                style: TextStyle(fontFamily: "GoogleSans"),
+        context: context,
+        builder: (context) {
+          return CustomAlertDialog(
+            title: Text(
+              "There is already a file with the same name. Replace $filename?",
+              style: TextStyle(fontFamily: "GoogleSans"),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                padding: EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 6.5,
+                  left: 14.0,
+                  right: 14.0,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text("Cancel"),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
-              actions: <Widget>[
-                FlatButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  padding: EdgeInsets.only(
-                    top: 8.0,
-                    bottom: 6.5,
-                    left: 14.0,
-                    right: 14.0,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Text("Cancel"),
-                    ],
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+              RaisedButton(
+                color: Theme.of(context).accentColor,
+                splashColor: Colors.black12,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
                 ),
-                RaisedButton(
-                  color: Theme.of(context).accentColor,
-                  splashColor: Colors.black12,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  padding: EdgeInsets.only(
-                    top: 8.0,
-                    bottom: 6.5,
-                    left: 14.0,
-                    right: 14.0,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Text(
-                        "OK",
-                        style: TextStyle(color: Colors.white),
+                padding: EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 6.5,
+                  left: 14.0,
+                  right: 14.0,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "OK",
+                      style: TextStyle(
+                        color: Provider.of<CustomTheme>(context).isLightTheme()
+                            ? Colors.white
+                            : Colors.black,
                       ),
-                    ],
-                  ),
-                  elevation: .0,
-                  onPressed: () {
-                    upload(
-                      context,
-                      currentConnectionPage,
-                      isReuploading: true,
-                      pathFromReuploading: path,
-                    );
-                    Navigator.pop(context);
-                  },
+                    ),
+                  ],
                 ),
-                SizedBox(width: .0),
-              ],
-            );
-          });
+                elevation: .0,
+                onPressed: () {
+                  upload(
+                    context,
+                    currentConnectionPage,
+                    isReuploading: true,
+                    pathFromReuploading: path,
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(width: .0),
+            ],
+          );
+        },
+      );
     }
   }
 
   static void _downloadCompleted(
-    BuildContext context,
+    ConnectionModel model,
     ConnectionPage currentConnectionPage,
     String saveLocation,
   ) {
-    var model = Provider.of<ConnectionModel>(context);
     model.showProgress = false;
     currentConnectionPage.scaffoldKey.currentState.showSnackBar(
       SnackBar(
@@ -300,9 +303,9 @@ class LoadFile {
 
   static void _uploadCompleted(
     BuildContext context,
+    ConnectionModel model,
     ConnectionPage currentConnectionPage,
   ) {
-    var model = Provider.of<ConnectionModel>(context);
     model.showProgress = false;
     currentConnectionPage.scaffoldKey.currentState.showSnackBar(
       SnackBar(

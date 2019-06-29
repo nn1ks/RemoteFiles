@@ -78,6 +78,12 @@ class ConnectionMethods {
       list = await model.client.sftpLs(path);
     } catch (e) {
       print(e);
+      if (closePageBefore) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => connectionPage),
+        );
+      }
       connectionPage.scaffoldKey.currentState.showSnackBar(
         SnackBar(
           duration: Duration(seconds: 5),

@@ -327,7 +327,9 @@ class _ConnectionPageState extends State<ConnectionPage>
                               : Colors.grey[800],
                       foregroundColor: Theme.of(context).accentColor,
                       elevation: 3.0,
-                      onTap: () async => LoadFile.upload(context, widget),
+                      onTap: () async {
+                        await LoadFile.upload(context, widget);
+                      },
                     ),
                     SpeedDialChild(
                       label: "Create Folder",
