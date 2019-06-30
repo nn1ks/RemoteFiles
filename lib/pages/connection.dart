@@ -597,13 +597,14 @@ class _ConnectionPageState extends State<ConnectionPage>
                           builder: (context) {
                             return CustomAlertDialog(
                               title: Text(
-                                "Folder Name",
+                                "Create Folder",
                                 style: TextStyle(
                                   fontFamily: SettingsVariables.accentFont,
                                 ),
                               ),
                               content: TextField(
                                 decoration: InputDecoration(
+                                  labelText: "Name",
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Theme.of(context).accentColor,

@@ -241,12 +241,12 @@ class ConnectionBottomAppBar extends StatelessWidget {
                     autofocus: true,
                     autocorrect: false,
                     onSubmitted: (String value) {
+                      Navigator.pop(context);
                       ConnectionMethods.goToDirectory(
                         context,
                         value,
                         currentConnectionPage.connection,
                       );
-                      Navigator.pop(context);
                     },
                   ),
                 ),
@@ -320,12 +320,12 @@ class ConnectionBottomAppBar extends StatelessWidget {
                     autofocus: true,
                     autocorrect: false,
                     onSubmitted: (String value) {
+                      Navigator.pop(context);
                       ConnectionMethods.goToDirectory(
                         context,
                         value,
                         currentConnectionPage.connection,
                       );
-                      Navigator.pop(context);
                     },
                   ),
                 ),
