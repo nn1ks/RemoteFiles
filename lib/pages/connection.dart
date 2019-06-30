@@ -461,8 +461,6 @@ class _ConnectionPageState extends State<ConnectionPage>
                   if (filenames.contains(filename)) filenameExists = true;
                 }
 
-                print("exist done");
-
                 if (filenameExists) {
                   customShowDialog(
                       context: context,
