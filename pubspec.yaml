@@ -41,15 +41,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.7.1
+  flutter_launcher_icons: ^0.7.2+1
 
 flutter_icons:
   image_path_android: "assets/app_icon_round.png"
   image_path_ios: "assets/app_icon_square.png"
-  android: "ic_launcher"
+  android: true
   ios: true
-  adaptive_icon_background: "assets/app_icon.png"
-  adaptive_icon_foreground: "assets/white.png"
+  adaptive_icon_foreground: "assets/app_icon_foreground.png"
+  adaptive_icon_background: "#ffffff"
 
 
 # For information on the generic Dart part of this file, see the
