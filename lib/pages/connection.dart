@@ -288,7 +288,9 @@ class _ConnectionPageState extends State<ConnectionPage>
                     } else {
                       widget.visibleFileInfos = [];
                       widget.fileInfos.forEach((v) {
-                        if (v.name.contains(value)) {
+                        if (v.name
+                            .toLowerCase()
+                            .contains(value.toLowerCase())) {
                           widget.visibleFileInfos.add(v);
                         }
                       });
