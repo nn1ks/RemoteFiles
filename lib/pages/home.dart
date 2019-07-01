@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:package_info/package_info.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
@@ -52,36 +50,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         AnimationController(duration: Duration(milliseconds: 200), vsync: this);
     _rotationController2 =
         AnimationController(duration: Duration(milliseconds: 200), vsync: this);
-    getApplicationDocumentsDirectory().then((Directory dir) {
-      setState(() {
-        HomePage.favoritesPage.dir = dir;
-        HomePage.recentlyAddedPage.dir = dir;
-        HomePage.favoritesPage.jsonFile = File(
-          HomePage.favoritesPage.dir.path +
-              "/" +
-              HomePage.favoritesPage.jsonFileName,
-        );
-        HomePage.recentlyAddedPage.jsonFile = File(
-          HomePage.recentlyAddedPage.dir.path +
-              "/" +
-              HomePage.recentlyAddedPage.jsonFileName,
-        );
-        HomePage.favoritesPage.jsonFileExists =
-            HomePage.favoritesPage.jsonFile.existsSync();
-        HomePage.recentlyAddedPage.jsonFileExists =
-            HomePage.recentlyAddedPage.jsonFile.existsSync();
-        if (HomePage.favoritesPage.jsonFileExists) {
-          HomePage.favoritesPage.connections = [];
-          HomePage.favoritesPage.connections
-              .addAll(HomePage.favoritesPage.getConnectionsFromJson());
-        }
-        if (HomePage.recentlyAddedPage.jsonFileExists) {
-          HomePage.recentlyAddedPage.connections = [];
-          HomePage.recentlyAddedPage.connections
-              .addAll(HomePage.recentlyAddedPage.getConnectionsFromJson());
-        }
-      });
-    });
     SettingsVariables.initState();
     super.initState();
   }

@@ -128,6 +128,9 @@ class _TabViewPageState extends State<TabViewPage> {
   List<Widget> _getWidgetList() {
     _addKeys();
     List<Widget> widgets = [];
+    if (widget.connections == null) {
+      widget.connections = [];
+    }
     int itemCount =
         widget.connections.length > 0 ? widget.connections.length : 1;
     for (int index = 0; index < itemCount; index++) {
@@ -213,7 +216,7 @@ class _TabViewPageState extends State<TabViewPage> {
                       username: widget.connections[index].username,
                       passwordOrKey: widget.connections[index].passwordOrKey,
                     ).then((bool connected) {
-                      Navigator.pop(context);
+                      Navigator.popUntil(context, ModalRoute.withName("/"));
                       if (connected) {
                         ConnectionMethods.connect(
                           context,
