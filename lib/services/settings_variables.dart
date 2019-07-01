@@ -68,7 +68,7 @@ class SettingsVariables {
     await prefs.setString("sort", value);
   }
 
-  static bool sortIsDescending = false;
+  static bool sortIsDescending = true;
   static bool getSortIsDescending() {
     bool sortIsDescendingPrefs;
     if (prefs != null) {
