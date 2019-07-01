@@ -366,8 +366,8 @@ class ConnectionBottomAppBar extends StatelessWidget {
       onTap: () {
         ConnectionDialog(
           context: context,
-          currentConnectionPage: currentConnectionPage,
-          page: "connection",
+          connection: currentConnectionPage.connection,
+          isConnectionPage: true,
           primaryButtonIconData: Icons.remove_circle_outline,
           primaryButtonLabel: "Disconnect",
           primaryButtonOnPressed: () {

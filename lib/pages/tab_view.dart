@@ -154,9 +154,7 @@ class _TabViewPageState extends State<TabViewPage> {
                     onPressed: () {
                       ConnectionDialog(
                         context: context,
-                        index: index,
-                        page:
-                            widget.isFavorites ? "favorites" : "recentlyAdded",
+                        connection: widget.connections[index],
                         primaryButtonIconData: widget.isFavorites
                             ? OMIcons.edit
                             : Icons.star_border,

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../pages/pages.dart';
 import '../services/services.dart';
 import 'shared.dart';
 
 class ConnectionDialog extends StatelessWidget {
   final BuildContext context;
-  final ConnectionPage currentConnectionPage;
-  final int index;
-  final String page;
+  final Connection connection;
+  final bool isConnectionPage;
   final IconData primaryButtonIconData;
   final String primaryButtonLabel;
   final GestureTapCallback primaryButtonOnPressed;
@@ -19,9 +17,8 @@ class ConnectionDialog extends StatelessWidget {
 
   ConnectionDialog({
     @required this.context,
-    this.currentConnectionPage,
-    this.index,
-    @required this.page,
+    @required this.connection,
+    this.isConnectionPage = false,
     @required this.primaryButtonIconData,
     @required this.primaryButtonLabel,
     @required this.primaryButtonOnPressed,
@@ -59,19 +56,11 @@ class ConnectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Connection values = Connection();
-    if (page == "favorites") {
-      values = HomePage.favoritesPage.connections[index];
-    } else if (page == "recentlyAdded") {
-      values = HomePage.recentlyAddedPage.connections[index];
-    } else if (page == "connection") {
-      values = currentConnectionPage.connection;
-    }
     return CustomAlertDialog(
       title: Text(
-        page == "connection"
+        isConnectionPage
             ? "Current connection"
-            : (values.name != "" ? values.name : values.address),
+            : (connection.name != "" ? connection.name : connection.address),
         style: TextStyle(
           fontFamily: SettingsVariables.accentFont,
         ),
@@ -86,41 +75,41 @@ class ConnectionDialog extends StatelessWidget {
               child: Table(
                 columnWidths: {0: FixedColumnWidth(120.0)},
                 children: [
-                  page == "connection"
+                  isConnectionPage
                       ? TableRow(children: [
                           Container(),
                           Container(),
                         ])
                       : TableRow(children: [
                           Text("Name:"),
-                          Text(values.name != "" ? values.name : "-"),
+                          Text(connection.name != "" ? connection.name : "-"),
                         ]),
                   TableRow(children: [
                     Text("Address:"),
-                    Text(values.address),
+                    Text(connection.address),
                   ]),
                   TableRow(children: [
                     Text("Port:"),
-                    Text(values.port),
+                    Text(connection.port),
                   ]),
                   TableRow(children: [
                     Text("Username:"),
                     Text(
-                      values.username != "" ? values.username : "-",
+                      connection.username != "" ? connection.username : "-",
                       style: TextStyle(),
                     )
                   ]),
                   TableRow(
                     children: [
                       Text("Password/Key:"),
-                      values.passwordOrKey != ""
-                          ? _buildPasswordRow(values.passwordOrKey.length)
+                      connection.passwordOrKey != ""
+                          ? _buildPasswordRow(connection.passwordOrKey.length)
                           : Text("-"),
                     ],
                   ),
                   TableRow(children: [
                     Text("Path:"),
-                    Text(values.path),
+                    Text(connection.path),
                   ]),
                 ],
               ),
