@@ -58,18 +58,6 @@ flutter_icons:
 # The following section is specific to Flutter.
 flutter:
 
-  fonts:
-    - family: OverpassMono
-      fonts:
-        - asset: fonts/OverpassMono-Light.ttf
-          weight: 300
-        - asset: fonts/OverpassMono-Regular.ttf
-          weight: 400
-        - asset: fonts/OverpassMono-SemiBold.ttf
-          weight: 500
-        - asset: fonts/OverpassMono-Bold.ttf
-          weight: 600
-
   assets:
     - assets/app_icon.png
     - assets/app_icon_black.png
