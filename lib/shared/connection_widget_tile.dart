@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../shared/shared.dart';
 import '../services/services.dart';
-import 'custom_icon_button.dart';
+import 'shared.dart';
 
 class ConnectionWidgetTile extends StatefulWidget {
   final int index;

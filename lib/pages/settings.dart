@@ -1,10 +1,11 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../shared/shared.dart';
-import '../services/services.dart';
+
 import 'pages.dart';
+import '../services/services.dart';
+import '../shared/shared.dart';
 
 class SettingsPage extends StatefulWidget {
   final ConnectionPage currentConnectionPage;

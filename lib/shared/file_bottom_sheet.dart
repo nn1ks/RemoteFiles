@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:open_file/open_file.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
+
 import '../pages/pages.dart';
 import '../services/services.dart';
 import 'shared.dart';

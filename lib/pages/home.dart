@@ -1,13 +1,13 @@
+import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
-import 'package:floating_action_row/floating_action_row.dart';
 
+import 'pages.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
-import 'pages.dart';
 
 class HomePage extends StatefulWidget {
   static TabViewPage favoritesPage = TabViewPage("favorites.json", true);

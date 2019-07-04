@@ -1,15 +1,16 @@
 import 'dart:io';
-import 'package:RemoteFiles/services/connection_methods.dart';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../pages/pages.dart';
-import '../shared/shared.dart';
 import 'services.dart';
+import '../shared/shared.dart';
 
 class LoadFile {
   static Future<bool> _handlePermission() async {

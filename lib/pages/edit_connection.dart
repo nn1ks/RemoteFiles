@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
+import 'pages.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
-import 'pages.dart';
 
 class EditConnectionPage extends StatefulWidget {
   final bool isNew;

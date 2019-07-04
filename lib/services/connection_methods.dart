@@ -1,10 +1,12 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ssh/ssh.dart';
+
 import '../pages/pages.dart';
-import '../shared/shared.dart';
 import 'services.dart';
+import '../shared/shared.dart';
 
 class ConnectionMethods {
   static Future<bool> connectClient(
