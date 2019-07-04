@@ -3,6 +3,8 @@ import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:floating_action_row/floating_action_row.dart';
+
 import '../services/services.dart';
 import '../shared/shared.dart';
 import 'pages.dart';
@@ -186,10 +188,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       floatingActionButton: StatefulBuilder(builder: (context, setState) {
         return FloatingActionRow(
           heroTag: "fab",
+          color: Theme.of(context).accentColor,
           children: <Widget>[
             FloatingActionRowButton(
               icon: Icon(Icons.flash_on),
-              onPressed: () {
+              onTap: () {
                 QuickConnectionSheet(
                   context,
                   onFail: () {
@@ -208,7 +211,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             FloatingActionRowDivider(),
             FloatingActionRowButton(
               icon: Icon(Icons.add),
-              onPressed: () {
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

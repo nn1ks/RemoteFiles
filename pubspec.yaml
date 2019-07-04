@@ -36,6 +36,7 @@ dependencies:
   shared_preferences: ^0.5.2+1
   open_file: ^2.0.1+2
   provider: ^2.0.0
+  floating_action_row: ^0.1.0
 
 dev_dependencies:
   flutter_test:

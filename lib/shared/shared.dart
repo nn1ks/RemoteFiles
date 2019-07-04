@@ -8,5 +8,4 @@ export 'custom_show_dialog.dart';
 export 'custom_theme.dart';
 export 'custom_tooltip.dart';
 export 'file_bottom_sheet.dart';
-export 'floating_action_row.dart';
 export 'quick_connection_sheet.dart';
