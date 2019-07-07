@@ -65,7 +65,10 @@ class ConnectionMethods {
     if (!closePageBefore) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => connectionPage),
+        MaterialPageRoute(
+          builder: (context) => connectionPage,
+          settings: RouteSettings(name: "connect"),
+        ),
       );
     }
 
@@ -112,7 +115,10 @@ class ConnectionMethods {
     if (closePageBefore) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRouteWithoutAnimation(builder: (context) => connectionPage),
+        MaterialPageRouteWithoutAnimation(
+          builder: (context) => connectionPage,
+          settings: RouteSettings(name: "reload"),
+        ),
       );
     }
 

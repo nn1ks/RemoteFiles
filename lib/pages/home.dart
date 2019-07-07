@@ -135,7 +135,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SettingsPage()),
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                        settings: RouteSettings(name: "settings"),
+                      ),
                     );
                   },
                 ),
@@ -218,6 +221,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     builder: (BuildContext context) {
                       return EditConnectionPage(isNew: true);
                     },
+                    settings: RouteSettings(name: "new-connection"),
                   ),
                 );
               },

@@ -170,6 +170,8 @@ class _TabViewPageState extends State<TabViewPage> {
                               MaterialPageRoute(
                                 builder: (context) =>
                                     EditConnectionPage(index: index),
+                                settings:
+                                    RouteSettings(name: "edit-connection"),
                               ),
                             );
                           } else {
