@@ -160,6 +160,7 @@ class _SettingsPageState extends State<SettingsPage>
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Divider(),
           _buildHeadline("Save files to:"),
           Padding(
             padding: EdgeInsets.symmetric(
@@ -217,7 +218,6 @@ class _SettingsPageState extends State<SettingsPage>
               ),
             ),
           ),
-          Divider(),
         ],
       );
     }
@@ -258,7 +258,6 @@ class _SettingsPageState extends State<SettingsPage>
               physics: BouncingScrollPhysics(),
               children: <Widget>[
                 SizedBox(height: 14.0),
-                _buildSaveToWidget(),
                 _buildHeadline("View"),
                 _buildRadioListTile(
                   titleLabel: "List",
@@ -532,6 +531,7 @@ class _SettingsPageState extends State<SettingsPage>
                     );
                   },
                 ),
+                _buildSaveToWidget(),
                 SizedBox(height: 16.0),
               ],
             ),
