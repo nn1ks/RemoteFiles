@@ -198,6 +198,7 @@ class QuickConnectionSheet extends StatelessWidget {
                               _connection.address != null) {
                             customShowDialog(
                               context: context,
+                              barrierDismissible: false,
                               builder: (context) => Center(
                                     child: Container(
                                       height: 80,

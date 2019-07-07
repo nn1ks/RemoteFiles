@@ -197,6 +197,7 @@ class _TabViewPageState extends State<TabViewPage> {
                   onTap: () {
                     customShowDialog(
                       context: context,
+                      barrierDismissible: false,
                       builder: (context) => Center(
                             child: Container(
                               height: 80,
