@@ -2,7 +2,6 @@ import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
 import 'pages.dart';
@@ -179,8 +178,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 onTap: () async {
-                  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-                  AboutAppDialog(context, packageInfo.version).show();
+                  customShowDialog(
+                    context: context,
+                    builder: (context) => AboutAppDialog(context),
+                  );
                 },
               ),
             ],

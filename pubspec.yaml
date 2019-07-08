@@ -25,6 +25,7 @@ dependencies:
   firebase_core: ^0.4.0+6
   flutter_speed_dial: ^1.1.1
   floating_action_row: ^0.1.0
+  http: ^0.12.0+2
   md2_tab_indicator: ^1.0.2
   open_file: ^2.0.1+2
   outline_material_icons: ^0.1.0
