@@ -449,19 +449,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                   }
                 }
 
-                bool filenameExists = false;
-                Directory dir = await SettingsVariables.getDownloadDirectory();
-                var ls = await dir.list().toList();
-                for (int i = 0; i < ls.length; i++) {
-                  String filename;
-                  for (int j = ls[i].path.length - 1; j >= 0; j--) {
-                    if (ls[i].path[j] == "/") {
-                      filename = ls[i].path.substring(j + 1);
-                      break;
-                    }
-                  }
-                  if (filenames.contains(filename)) filenameExists = true;
-                }
+                bool filenameExists = await LoadFile.filenameExistsIn(
+                  directory: await SettingsVariables.getDownloadDirectory(),
+                  filenames: filenames,
+                );
 
                 if (filenameExists) {
                   customShowDialog(

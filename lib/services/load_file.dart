@@ -13,6 +13,7 @@ import 'services.dart';
 import '../shared/shared.dart';
 
 class LoadFile {
+  /// Wheter permission to save files to external storage is granted
   static Future<bool> _handlePermission() async {
     if (Platform.isIOS) return true;
     PermissionStatus permissionStatus = await PermissionHandler()
@@ -25,6 +26,42 @@ class LoadFile {
               .requestPermissions([PermissionGroup.storage]);
       if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  /// Wheter file with same name as [filename] exists in [directory]
+  static Future<bool> filenameExistsIn({
+    Directory directory,
+    List<Map<String, dynamic>> fileInfos,
+    List<String> filenames,
+  }) async {
+    bool exists = false;
+    if (fileInfos == null) {
+      var filesInDirectory = await directory.list().toList();
+      for (int i = 0; i < filesInDirectory.length; i++) {
+        String tempFilename = "";
+        String path = filesInDirectory[i].path;
+        for (int j = path.length - 1; j >= 0; j--) {
+          if (path[j] == "/") break;
+          tempFilename = path[j] + tempFilename;
+        }
+        filenames.forEach((v) {
+          if (tempFilename == v) {
+            exists = true;
+          }
+        });
+        if (exists) return true;
+      }
+    } else {
+      for (int i = 0; i < filenames.length; i++) {
+        fileInfos.forEach((v) {
+          if (filenames[i] == v["filename"]) {
+            exists = true;
+          }
+        });
+        if (exists) return true;
       }
     }
     return false;
@@ -48,20 +85,11 @@ class LoadFile {
         }
         Directory dir = await SettingsVariables.getDownloadDirectory();
         dir = await dir.create(recursive: true);
-        bool fileNameExists = false;
-        var ls = await dir.list().toList();
-        for (int i = 0; i < ls.length; i++) {
-          String lsFilenames = "";
-          String path = ls[i].path;
-          for (int i = 0; i < path.length; i++) {
-            lsFilenames += path[i];
-            if (path[i] == "/") {
-              lsFilenames = "";
-            }
-          }
-          if (filename == lsFilenames) fileNameExists = true;
-        }
-        if (!fileNameExists || ignoreExistingFiles) {
+        bool exists = await filenameExistsIn(
+          directory: dir,
+          filenames: [filename],
+        );
+        if (!exists || ignoreExistingFiles) {
           await model.client
               .sftpDownload(
             path: filePath,
@@ -178,18 +206,20 @@ class LoadFile {
         filename = "";
       }
     }
-    bool fileNameExisting = false;
-    var ls = await model.client.sftpLs(currentConnectionPage.connection.path);
-    for (int i = 0; i < ls.length; i++) {
-      if (filename == ls[i]["filename"]) fileNameExisting = true;
-    }
-    if (!fileNameExisting || isReuploading) {
+    var fileInfos =
+        await model.client.sftpLs(currentConnectionPage.connection.path);
+    bool exists = await filenameExistsIn(
+      fileInfos: fileInfos,
+      filenames: [filename],
+    );
+    if (!exists || isReuploading) {
       try {
         model.client
             .sftpUpload(
           path: path,
           toPath: currentConnectionPage.connection.path,
           callback: (progress) {
+            print(progress);
             model.progressValue = progress;
             model.showProgress = true;
             model.loadFilename = filename;
