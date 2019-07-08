@@ -12,8 +12,15 @@
 
 ---
 
+## Downloads
+
+- [APK file](https://github.com/niklas-8/RemoteFiles/releases)
+- Google PlayStore (not yet available)
+
+## Information
+
 #### SFTP connection
-The [ssh package](https://pub.dev/packages/ssh) is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
+The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
 
 #### Connection data
 The connections are saved in two JSON files (favorites.json & recentlyAdded.json).<br/>
@@ -25,19 +32,16 @@ On Android the downloaded files are saved to external storage (default: /storage
 On iOS the downloaded files are saved in the ApplicationDocumentsDirectory.
 
 #### Get directories
-The [path_provider package](https://pub.dev/packages/path_provider) is used to get the directories listed above.
+The [path_provider](https://pub.dev/packages/path_provider) package is used to get the directories listed above.
 
 #### Permissions
-To save files to external storage, the `WRITE_EXTERNAL_STORAGE` permission is needed on Android. To request and check this permission the [permission_handler package](https://pub.dev/packages/permission_handler) is used.
+To save files to external storage, the `WRITE_EXTERNAL_STORAGE` permission is needed on Android. To request and check this permission the [permission_handler](https://pub.dev/packages/permission_handler) package is used.
 
----
+#### Analytics
+User data is tracked with the [firebase_analytics](https://pub.dev/packages/firebase_analytics) package.
 
-## Downloads
-
-- [APK file](https://github.com/niklas-8/RemoteFiles/releases)
-- Google PlayStore (not yet available)
-
----
+#### Get latest available version
+The releases on GitHub are received with the GitHub API and the [http](https://pub.dev/packages/http) package in the JSON format. To get the latest version the releases are compared with the `published_at` key. Then the version numbers of the latest available version and the currently used version are compared. The version number of the latest available version is determined by the `tag_name`. The version number of the currently used version is determined by the pubspec.yaml file. To get this version number the [package_info](https://pub.dev/packages/package_info) package is used.
 
 ## Screenshots
 
