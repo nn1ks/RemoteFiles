@@ -90,7 +90,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ? Colors.grey[600]
                     : Colors.grey[400],
             labelStyle: TextStyle(
-              fontFamily: SettingsVariables.accentFont,
               fontWeight: FontWeight.w600,
               fontSize: 14.0,
             ),
@@ -169,7 +168,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       Text(
                         "RemoteFiles",
                         style: TextStyle(
-                          fontFamily: SettingsVariables.accentFont,
                           fontWeight: FontWeight.w600,
                           fontSize: 17.0,
                         ),

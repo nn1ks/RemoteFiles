@@ -136,7 +136,6 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                     ? "Add a new SFTP connection"
                     : "Edit SFTP connection",
                 style: TextStyle(
-                  fontFamily: SettingsVariables.accentFont,
                   fontSize: 17.0,
                   fontWeight: FontWeight.w600,
                 ),

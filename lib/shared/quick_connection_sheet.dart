@@ -91,7 +91,6 @@ class QuickConnectionSheet extends StatelessWidget {
                 Text(
                   "Quick connect",
                   style: TextStyle(
-                    fontFamily: SettingsVariables.accentFont,
                     fontSize: 17.0,
                     fontWeight: FontWeight.w600,
                   ),

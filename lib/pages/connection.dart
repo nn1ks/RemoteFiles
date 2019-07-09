@@ -53,7 +53,6 @@ class _ConnectionPageState extends State<ConnectionPage>
           child: Text(
             "/",
             style: TextStyle(
-              fontFamily: SettingsVariables.accentFont,
               fontWeight: FontWeight.w500,
               fontSize: 16.0,
             ),
@@ -99,7 +98,6 @@ class _ConnectionPageState extends State<ConnectionPage>
             child: Text(
               temp,
               style: TextStyle(
-                fontFamily: SettingsVariables.accentFont,
                 fontWeight: FontWeight.w500,
                 fontSize: 16.0,
               ),
@@ -545,7 +543,6 @@ class _ConnectionPageState extends State<ConnectionPage>
                     SpeedDialChild(
                       label: "Upload File",
                       labelStyle: TextStyle(
-                        fontFamily: SettingsVariables.accentFont,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).textTheme.body1.color,
                       ),
@@ -567,7 +564,6 @@ class _ConnectionPageState extends State<ConnectionPage>
                     SpeedDialChild(
                       label: "Create Folder",
                       labelStyle: TextStyle(
-                        fontFamily: SettingsVariables.accentFont,
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).textTheme.body1.color,
                       ),
@@ -587,12 +583,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                           context: context,
                           builder: (context) {
                             return CustomAlertDialog(
-                              title: Text(
-                                "Create Folder",
-                                style: TextStyle(
-                                  fontFamily: SettingsVariables.accentFont,
-                                ),
-                              ),
+                              title: Text("Create Folder"),
                               content: TextField(
                                 decoration: InputDecoration(
                                   labelText: "Name",

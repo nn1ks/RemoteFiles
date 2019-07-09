@@ -220,10 +220,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
               return CustomAlertDialog(
                 title: Text(
                   "Go to folder",
-                  style: TextStyle(
-                    fontFamily: SettingsVariables.accentFont,
-                    fontSize: 18.0,
-                  ),
+                  style: TextStyle(fontSize: 18.0),
                 ),
                 content: Container(
                   width: 260.0,
@@ -299,10 +296,7 @@ class ConnectionBottomAppBar extends StatelessWidget {
               return CustomAlertDialog(
                 title: Text(
                   "Go to folder",
-                  style: TextStyle(
-                    fontFamily: SettingsVariables.accentFont,
-                    fontSize: 18.0,
-                  ),
+                  style: TextStyle(fontSize: 18.0),
                 ),
                 content: Container(
                   width: 260.0,

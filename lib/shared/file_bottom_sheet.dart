@@ -217,12 +217,7 @@ class FileBottomSheet extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return CustomAlertDialog(
-                                title: Text(
-                                  "Rename '${fileInfo.name}'",
-                                  style: TextStyle(
-                                    fontFamily: SettingsVariables.accentFont,
-                                  ),
-                                ),
+                                title: Text("Rename '${fileInfo.name}'"),
                                 content: TextField(
                                   controller: renameController,
                                   decoration: InputDecoration(

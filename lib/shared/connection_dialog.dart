@@ -62,9 +62,6 @@ class ConnectionDialog extends StatelessWidget {
         isConnectionPage
             ? "Current connection"
             : (connection.name != "" ? connection.name : connection.address),
-        style: TextStyle(
-          fontFamily: SettingsVariables.accentFont,
-        ),
       ),
       content: Container(
         width: 400.0,

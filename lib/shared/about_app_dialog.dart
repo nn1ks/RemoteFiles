@@ -146,7 +146,6 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
               "RemoteFiles",
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontFamily: SettingsVariables.accentFont,
                 fontSize: 19.0,
               ),
             ),

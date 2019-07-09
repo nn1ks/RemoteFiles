@@ -226,7 +226,6 @@ class ConnectionMethods {
             filenames.length == 1
                 ? "Delete '${filenames[0]}'?"
                 : "Delete ${filenames.length} files?",
-            style: TextStyle(fontFamily: SettingsVariables.accentFont),
           ),
           actions: <Widget>[
             FlatButton(
