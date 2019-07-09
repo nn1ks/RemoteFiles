@@ -34,7 +34,7 @@ class LoadFile {
   /// Wheter file with same name as [filename] exists in [directory]
   static Future<bool> filenameExistsIn({
     Directory directory,
-    List<Map<String, dynamic>> fileInfos,
+    List<FileInfo> fileInfos,
     List<String> filenames,
   }) async {
     bool exists = false;
@@ -57,7 +57,7 @@ class LoadFile {
     } else {
       for (int i = 0; i < filenames.length; i++) {
         fileInfos.forEach((v) {
-          if (filenames[i] == v["filename"]) {
+          if (filenames[i] == v.name) {
             exists = true;
           }
         });
@@ -206,8 +206,10 @@ class LoadFile {
         filename = "";
       }
     }
-    var fileInfos =
+    var fileInfosMap =
         await model.client.sftpLs(currentConnectionPage.connection.path);
+    List<FileInfo> fileInfos = [];
+    fileInfosMap.forEach((v) => fileInfos.add(FileInfo.fromMap(v)));
     bool exists = await filenameExistsIn(
       fileInfos: fileInfos,
       filenames: [filename],
