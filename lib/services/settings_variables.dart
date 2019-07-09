@@ -155,17 +155,40 @@ class SettingsVariables {
     });
   }
 
-  static String accentFont = "default";
-  static String getAccentFont() {
-    String accentFontPrefs;
-    if (prefs != null) accentFontPrefs = prefs.getString("accentFont");
-    if (accentFontPrefs != null) return accentFontPrefs;
-    return accentFont;
+  static String moveCommand = "mv";
+  static String getMoveCommand() {
+    String moveCommandPrefs;
+    if (prefs != null) moveCommandPrefs = prefs.getString("moveCommand");
+    if (moveCommandPrefs != null) return moveCommandPrefs;
+    return moveCommand;
   }
 
-  static Future<void> setAccentFont(String value) async {
-    accentFont = value;
-    await prefs.setString("accentFont", value);
+  static Future<void> setMoveCommand(String value) async {
+    moveCommand = value;
+    await prefs.setString("moveCommand", value);
+  }
+
+  static Future<String> setMoveCommandToDefault() async {
+    await setMoveCommand("mv");
+    return moveCommand;
+  }
+
+  static String copyCommand = "cp";
+  static String getCopyCommand() {
+    String copyCommandPrefs;
+    if (prefs != null) copyCommandPrefs = prefs.getString("copyCommand");
+    if (copyCommandPrefs != null) return copyCommandPrefs;
+    return copyCommand;
+  }
+
+  static Future<void> setCopyCommand(String value) async {
+    copyCommand = value;
+    await prefs.setString("copyCommand", value);
+  }
+
+  static Future<String> setCopyCommandToDefault() async {
+    await setCopyCommand("cp");
+    return copyCommand;
   }
 
   static initState() {
@@ -176,7 +199,8 @@ class SettingsVariables {
       sortIsDescending = getSortIsDescending();
       showHiddenFiles = getShowHiddenFiles();
       filesizeUnit = getFilesizeUnit();
-      accentFont = getAccentFont();
+      moveCommand = getMoveCommand();
+      copyCommand = getCopyCommand();
     });
   }
 }

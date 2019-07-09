@@ -618,7 +618,7 @@ class _ConnectionPageState extends State<ConnectionPage>
               },
             ),
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).detach(),
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: SafeArea(
           child: Scrollbar(
             child: Consumer<ConnectionModel>(
