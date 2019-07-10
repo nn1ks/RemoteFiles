@@ -365,8 +365,8 @@ class ConnectionBottomAppBar extends StatelessWidget {
           primaryButtonIconData: Icons.remove_circle_outline,
           primaryButtonLabel: "Disconnect",
           primaryButtonOnPressed: () {
-            if (!Platform.isIOS) model.client.disconnectSFTP();
-            model.client.disconnect();
+            //model.client.disconnectSFTP();
+            //model.client.disconnect();
             Navigator.popUntil(context, ModalRoute.withName('/'));
           },
         ).show();
