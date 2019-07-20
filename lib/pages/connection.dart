@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -183,7 +181,11 @@ class _ConnectionPageState extends State<ConnectionPage>
                   ConnectionMethods.goToDirectory(
                     context,
                     widget.connection.path +
-                        "/" +
+                        (widget.connection
+                                    .path[widget.connection.path.length - 1] ==
+                                "/"
+                            ? ""
+                            : "/") +
                         widget.visibleFileInfos[i].name,
                     widget.connection,
                   );
@@ -366,10 +368,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                   for (int i = 0; i < model.savedFileInfos.length; i++) {
                     String cmd;
                     if (model.isCopyMode) {
-                      cmd = "cp";
+                      cmd = SettingsVariables.copyCommand;
                       if (model.savedFileInfos[i].isDirectory) cmd += " -r";
                     } else {
-                      cmd = "mv";
+                      cmd = SettingsVariables.moveCommand;
                     }
                     String toPath = widget.connection.path + "/";
                     if (model.isCopyMode)
@@ -379,9 +381,13 @@ class _ConnectionPageState extends State<ConnectionPage>
                   }
                 }
 
+                List<String> filenames = [];
+                model.savedFileInfos.forEach((v) {
+                  filenames.add(v.name);
+                });
                 bool filenameExists = await LoadFile.filenameExistsIn(
                   fileInfos: widget.fileInfos,
-                  filenames: model.savedFileInfos.map((v) => v.name),
+                  filenames: filenames,
                 );
 
                 if (filenameExists) {
