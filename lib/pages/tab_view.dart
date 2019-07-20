@@ -36,10 +36,15 @@ class TabViewPage extends StatefulWidget {
     connections = getConnectionsFromJson();
   }
 
-  File createJsonFile(Connection connection) {
-    File file;
-    file = jsonFile;
-    file.createSync();
+  Future<File> createJsonFile(Connection connection) async {
+    File file = jsonFile;
+    if (jsonFile == null) {
+      dir = await (Platform.isIOS
+          ? getApplicationSupportDirectory()
+          : getApplicationDocumentsDirectory());
+      file = File(dir.path + "/" + jsonFileName);
+    }
+    await file.create();
     jsonFileExists = true;
     file.writeAsStringSync(json.encode([connection.toMap()]));
     return file;
