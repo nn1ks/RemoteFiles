@@ -125,8 +125,9 @@ class _TabViewPageState extends State<TabViewPage> {
 
   void _addKeys() {
     setState(() => _reorderableKeys = []);
-    int itemCount =
-        widget.connections.length > 0 ? widget.connections.length : 1;
+    int connectionsLength =
+        widget.connections == null ? 0 : widget.connections.length;
+    int itemCount = connectionsLength > 0 ? connectionsLength : 1;
     for (int i = 0; i < itemCount; i++) {
       setState(() => _reorderableKeys.add(GlobalKey()));
     }
@@ -204,18 +205,18 @@ class _TabViewPageState extends State<TabViewPage> {
                       context: context,
                       barrierDismissible: false,
                       builder: (context) => Center(
-                            child: Container(
-                              height: 80,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).dialogBackgroundColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
+                        child: Container(
+                          height: 80,
+                          width: 80,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).dialogBackgroundColor,
+                            shape: BoxShape.circle,
                           ),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ),
                     );
                     ConnectionMethods.connectClient(
                       context,
@@ -247,7 +248,9 @@ class _TabViewPageState extends State<TabViewPage> {
                   child: Opacity(
                     opacity: .7,
                     child: Text(
-                      "No favorites",
+                      widget.isFavorites
+                          ? "No favorites"
+                          : "No recently added connections",
                       style: TextStyle(fontSize: 16.0),
                     ),
                   ),
