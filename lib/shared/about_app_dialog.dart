@@ -167,8 +167,8 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         SizedBox(
-                          width: 13,
-                          height: 13,
+                          width: 12,
+                          height: 12,
                           child: CircularProgressIndicator(
                             strokeWidth: 1.4,
                             valueColor: AlwaysStoppedAnimation(
@@ -176,7 +176,7 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 6),
+                        SizedBox(width: 8),
                         Text(
                           "Checking for updates...",
                           style: TextStyle(
