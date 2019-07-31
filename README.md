@@ -20,7 +20,8 @@
 ## Information
 
 #### SFTP connection
-The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
+The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).<br/>
+The package is modified and located at `./ssh_package` to fix [this issue](https://github.com/shaqian/flutter_ssh/issues/10).
 
 #### Connection data
 The connections are saved in two JSON files (favorites.json & recentlyAdded.json).<br/>
