@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -63,6 +65,11 @@ class CustomThemes {
     ),
     primaryColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
+    snackBarTheme: SnackBarThemeData(
+      // When using SnackBarBehavior.floating on iOS the SnackBar is not visible
+      behavior:
+          Platform.isIOS ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
+    ),
     textSelectionHandleColor: _lightAccentColor,
   );
 
@@ -91,6 +98,11 @@ class CustomThemes {
     ),
     primaryColor: Color.fromRGBO(22, 22, 22, 1),
     scaffoldBackgroundColor: Color.fromRGBO(22, 22, 22, 1),
+    snackBarTheme: SnackBarThemeData(
+      // When using SnackBarBehavior.floating on iOS the SnackBar is not visible
+      behavior:
+          Platform.isIOS ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
+    ),
     textSelectionHandleColor: _darkAccentColor,
   );
 }
