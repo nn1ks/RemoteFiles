@@ -457,71 +457,93 @@ class _SettingsPageState extends State<SettingsPage>
                 Divider(),
                 _buildHeadline("Shell commands"),
                 ListTile(
-                  title: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text("Moving files:"),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: TextField(
-                          controller: _moveCommandTextController,
-                          decoration: InputDecoration(
-                            suffixIcon: CustomTooltip(
-                              message: "Set to default",
-                              child: CustomIconButton(
-                                icon: Icon(
-                                  Icons.settings_backup_restore,
-                                  color: Theme.of(context).iconTheme.color,
+                  title: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: constraints.maxWidth / 2.8,
+                            ),
+                            child: Text("Moving files:"),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: _moveCommandTextController,
+                              decoration: InputDecoration(
+                                suffixIcon: CustomTooltip(
+                                  message: "Set to default",
+                                  child: CustomIconButton(
+                                    icon: Icon(
+                                      Icons.settings_backup_restore,
+                                      color: Theme.of(context).iconTheme.color,
+                                    ),
+                                    onPressed: () {
+                                      SettingsVariables
+                                              .setMoveCommandToDefault()
+                                          .then((String command) {
+                                        _moveCommandTextController.text =
+                                            command;
+                                      });
+                                    },
+                                  ),
                                 ),
-                                onPressed: () {
-                                  SettingsVariables.setMoveCommandToDefault()
-                                      .then((String command) {
-                                    _moveCommandTextController.text = command;
-                                  });
-                                },
                               ),
+                              onChanged: (String value) async {
+                                await SettingsVariables.setMoveCommand(value);
+                              },
                             ),
                           ),
-                          onChanged: (String value) async {
-                            await SettingsVariables.setMoveCommand(value);
-                          },
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ),
                 ListTile(
-                  title: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text("Copying files:"),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: TextField(
-                          controller: _copyCommandTextController,
-                          decoration: InputDecoration(
-                            suffixIcon: CustomTooltip(
-                              message: "Set to default",
-                              child: CustomIconButton(
-                                icon: Icon(
-                                  Icons.settings_backup_restore,
-                                  color: Theme.of(context).iconTheme.color,
+                  title: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: constraints.maxWidth / 2.8,
+                            ),
+                            child: Text("Copying files:"),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: _copyCommandTextController,
+                              decoration: InputDecoration(
+                                suffixIcon: CustomTooltip(
+                                  message: "Set to default",
+                                  child: CustomIconButton(
+                                    icon: Icon(
+                                      Icons.settings_backup_restore,
+                                      color: Theme.of(context).iconTheme.color,
+                                    ),
+                                    onPressed: () {
+                                      SettingsVariables
+                                              .setCopyCommandToDefault()
+                                          .then((String command) {
+                                        _copyCommandTextController.text =
+                                            command;
+                                      });
+                                    },
+                                  ),
                                 ),
-                                onPressed: () {
-                                  SettingsVariables.setCopyCommandToDefault()
-                                      .then((String command) {
-                                    _copyCommandTextController.text = command;
-                                  });
-                                },
                               ),
+                              onChanged: (String value) async {
+                                await SettingsVariables.setCopyCommand(value);
+                              },
                             ),
                           ),
-                          onChanged: (String value) async {
-                            await SettingsVariables.setCopyCommand(value);
-                          },
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ),
                 _buildSaveToWidget(),
