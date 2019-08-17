@@ -34,8 +34,7 @@ dependencies:
   permission_handler: ^2.2.0
   provider: ^2.0.0
   shared_preferences: ^0.5.2+1
-  ssh:
-    path: ./ssh_package
+  ssh: ^0.0.4
   url_launcher: ^5.0.2
 
 dev_dependencies:

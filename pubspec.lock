@@ -243,10 +243,10 @@ packages:
   ssh:
     dependency: "direct main"
     description:
-      path: ssh_package
-      relative: true
-    source: path
-    version: "0.0.2"
+      name: ssh
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
   stack_trace:
     dependency: transitive
     description:
