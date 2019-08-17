@@ -232,25 +232,20 @@ class _SettingsPageState extends State<SettingsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          height: 55.0,
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.chevron_left),
-                onPressed: () => Navigator.pop(context),
-              ),
-              Text(
-                "Settings",
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).bottomAppBarColor,
+        leading: Padding(
+          padding: EdgeInsets.all(7),
+          child: CustomIconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
+        title: Text("Settings", style: TextStyle(fontSize: 19)),
+        titleSpacing: 4,
+        elevation: 2,
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
