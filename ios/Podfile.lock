@@ -72,7 +72,7 @@ PODS:
     - Flutter
   - shared_preferences (0.0.1):
     - Flutter
-  - ssh (0.0.3):
+  - ssh (0.0.2):
     - Flutter
     - NMSSH
   - url_launcher (0.0.1):
@@ -144,7 +144,7 @@ SPEC CHECKSUMS:
   path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
   permission_handler: 0fc6d6641c09e4bfd5541dd39b0f44c7e369aa6b
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
-  ssh: 20eae3f4ebddfb958d4e3b8134f86829f2bf569d
+  ssh: c949ce197d9cdd23d3d8718d9aee734f87c3380b
   url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
 
 PODFILE CHECKSUM: 78ea9d50fe7faa36dd792fda499bed16000901a2
