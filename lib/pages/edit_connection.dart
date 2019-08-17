@@ -19,6 +19,8 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
 
   bool _addToFavorites = false;
   bool _addressIsEntered = true;
+  bool _usernameIsEntered = true;
+  bool _passwordIsEntered = true;
   bool _passwordWasChanged = false;
 
   Map<String, TextEditingController> _textEditingController = {
@@ -26,7 +28,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
     "address": TextEditingController(),
     "port": TextEditingController(),
     "username": TextEditingController(),
-    "passwordOrKey": TextEditingController(),
+    "password": TextEditingController(),
     "path": TextEditingController()
   };
 
@@ -65,10 +67,12 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           ),
           labelText: label,
           hintText: hint,
-          errorText: !_addressIsEntered && label == "Address*"
-              ? "Please enter an address"
+          errorText: (!_addressIsEntered && key == "address") ||
+                  (!_usernameIsEntered && key == "username") ||
+                  (!_passwordIsEntered && key == "password")
+              ? "Please enter a $key"
               : null,
-          suffixIcon: key == "passwordOrKey" &&
+          suffixIcon: key == "password" &&
                   !_passwordWasChanged &&
                   _textEditingController[key].text != ""
               ? CustomIconButton(
@@ -85,8 +89,8 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
               : null,
         ),
         onChanged: (String value) {
-          _connection.setter(key, value);
-          if (key == "passwordOrKey") {
+          _connection.setter(key == "password" ? "passwordOrKey" : key, value);
+          if (key == "password") {
             setState(() => _passwordWasChanged = true);
           }
         },
@@ -117,32 +121,23 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 6.0,
-        shape: CircularNotchedRectangle(),
-        elevation: 8.0,
-        child: Container(
-          height: 55.0,
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.keyboard_arrow_left),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              Text(
-                widget.isNew
-                    ? "Add a new SFTP connection"
-                    : "Edit SFTP connection",
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            ],
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).bottomAppBarColor,
+        leading: Padding(
+          padding: EdgeInsets.all(7),
+          child: CustomIconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
+        title: Text(
+          widget.isNew ? "Add a new SFTP connection" : "Edit SFTP connection",
+          style: TextStyle(fontSize: 19),
+        ),
+        titleSpacing: 4,
+        elevation: 2,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -150,7 +145,18 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         elevation: 4.0,
         child: Icon(Icons.done),
         onPressed: () {
-          if (_connection.address != null && _connection.address != "") {
+          bool valid = true;
+          setState(() {
+            _addressIsEntered =
+                _connection.address != null && _connection.address != "";
+            _usernameIsEntered =
+                _connection.username != null && _connection.username != "";
+            _passwordIsEntered = _connection.passwordOrKey != null &&
+                _connection.passwordOrKey != "";
+            valid =
+                _addressIsEntered && _usernameIsEntered && _passwordIsEntered;
+          });
+          if (valid) {
             if (widget.isNew) {
               if (_addToFavorites) {
                 HomePage.favoritesPage = HomePage.favoritesPage
@@ -168,86 +174,86 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                 ..setConnectionsFromJson();
               Navigator.pop(context);
             }
-          } else {
-            setState(() {
-              _addressIsEntered = false;
-            });
           }
         },
       ),
-      body: SafeArea(
-        child: Scrollbar(
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(
-                  left: 20.0,
-                  right: 20.0,
-                  top: 20.0,
-                  bottom: 4.0,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: SafeArea(
+          child: Scrollbar(
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 20.0,
+                    right: 20.0,
+                    top: 20.0,
+                    bottom: 4.0,
+                  ),
+                  child: Column(children: <Widget>[
+                    _buildTextField(
+                      label: "Name (optional)",
+                      key: "name",
+                      index: 0,
+                    ),
+                    _buildTextField(
+                      label: "Address",
+                      key: "address",
+                      index: 1,
+                    ),
+                    _buildTextField(
+                      label: "Port (optional, default: 22)",
+                      hint: "22",
+                      key: "port",
+                      index: 2,
+                    ),
+                    _buildTextField(
+                      label: "Username",
+                      key: "username",
+                      index: 3,
+                    ),
+                    _buildTextField(
+                      label: "Password",
+                      key: "password",
+                      isPassword: true,
+                      index: 4,
+                    ),
+                    _buildTextField(
+                      label: "Path (optional, default: ~)",
+                      hint: "~",
+                      key: "path",
+                      index: 5,
+                    ),
+                  ]),
                 ),
-                child: Column(children: <Widget>[
-                  _buildTextField(
-                    label: "Name",
-                    key: "name",
-                    index: 0,
-                  ),
-                  _buildTextField(
-                    label: "Address*",
-                    key: "address",
-                    index: 1,
-                  ),
-                  _buildTextField(
-                    label: "Port",
-                    hint: "22",
-                    key: "port",
-                    index: 2,
-                  ),
-                  _buildTextField(
-                    label: "Username",
-                    key: "username",
-                    index: 3,
-                  ),
-                  _buildTextField(
-                    label: "Password or Key",
-                    key: "passwordOrKey",
-                    isPassword: true,
-                    index: 4,
-                  ),
-                  _buildTextField(
-                    label: "Path",
-                    key: "path",
-                    index: 5,
-                  ),
-                ]),
-              ),
-              widget.isNew
-                  ? CheckboxListTile(
-                      activeColor: Theme.of(context).accentColor,
-                      secondary: Icon(Icons.star_border),
-                      title: Padding(
-                        padding: EdgeInsets.only(top: 2.0),
-                        child: Text(
-                          "Add to Favorites",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16.4,
+                widget.isNew ? Divider() : Container(),
+                widget.isNew
+                    ? CheckboxListTile(
+                        activeColor: Theme.of(context).accentColor,
+                        title: Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(
+                            "Add to Favorites",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16.4,
+                            ),
                           ),
                         ),
-                      ),
-                      value: _addToFavorites,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _addToFavorites = value;
-                        });
-                      },
-                    )
-                  : Container(),
-              SizedBox(
-                height: 76.0,
-              )
-            ],
+                        value: _addToFavorites,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _addToFavorites = value;
+                          });
+                        },
+                      )
+                    : Container(),
+                SizedBox(
+                  height: 76.0,
+                )
+              ],
+            ),
           ),
         ),
       ),
