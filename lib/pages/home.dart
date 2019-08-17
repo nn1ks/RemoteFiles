@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(left: 4),
-              child: Text("RemoteFiles", style: TextStyle(fontSize: 19)),
+              child: Text("RemoteFiles", style: TextStyle(fontSize: 18.6)),
             ),
             Row(
               children: <Widget>[
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         : Colors.grey[400],
                 labelStyle: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14.0,
+                  fontSize: 14.6,
                 ),
                 controller: _tabController,
                 tabs: <Widget>[
