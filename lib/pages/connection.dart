@@ -364,103 +364,22 @@ class _ConnectionPageState extends State<ConnectionPage>
                 setState(() {});
               },
               paste: () async {
-                Future<void> execute() async {
-                  for (int i = 0; i < model.savedFileInfos.length; i++) {
-                    String cmd;
-                    if (model.isCopyMode) {
-                      cmd = SettingsVariables.copyCommand;
-                      if (model.savedFileInfos[i].isDirectory) cmd += " -r";
-                    } else {
-                      cmd = SettingsVariables.moveCommand;
-                    }
-                    String toPath = widget.connection.path + "/";
-                    if (model.isCopyMode)
-                      toPath += model.savedFileInfos[i].name;
-                    await model.client.execute(
-                        cmd + " " + model.savedFilePaths[i] + " " + toPath);
+                for (int i = 0; i < model.savedFileInfos.length; i++) {
+                  String cmd;
+                  if (model.isCopyMode) {
+                    cmd = SettingsVariables.copyCommand;
+                    if (model.savedFileInfos[i].isDirectory) cmd += " -r";
+                  } else {
+                    cmd = SettingsVariables.moveCommand;
                   }
-                }
-
-                List<String> filenames = [];
-                model.savedFileInfos.forEach((v) {
-                  filenames.add(v.name);
-                });
-                bool filenameExists = await LoadFile.filenameExistsIn(
-                  fileInfos: widget.fileInfos,
-                  filenames: filenames,
-                );
-
-                if (filenameExists) {
-                  customShowDialog(
-                    context: context,
-                    builder: (context) {
-                      return CustomAlertDialog(
-                        title: Text(
-                          "There are already files with the same name. Replace the files?",
-                          style: TextStyle(fontFamily: "GoogleSans"),
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                              top: 8.0,
-                              bottom: 6.5,
-                              left: 14.0,
-                              right: 14.0,
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Text("Cancel"),
-                              ],
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            splashColor: Colors.black12,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                              top: 8.0,
-                              bottom: 6.5,
-                              left: 14.0,
-                              right: 14.0,
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Text(
-                                  "OK",
-                                  style: TextStyle(
-                                    color: Provider.of<CustomTheme>(context)
-                                            .isLightTheme()
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            elevation: .0,
-                            onPressed: () {
-                              execute();
-                              Navigator.pop(context);
-                            },
-                          ),
-                          SizedBox(width: .0),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  execute();
+                  String toPath = widget.connection.path + "/";
+                  if (model.isCopyMode) toPath += model.savedFileInfos[i].name;
+                  await model.client.execute(
+                      cmd + " " + model.savedFilePaths[i] + " " + toPath);
                 }
 
                 model.isPasteMode = false;
-                ConnectionMethods.refresh(context, widget.connection);
+                await ConnectionMethods.refresh(context, widget.connection);
               },
               cancelPasteMode: () {
                 setState(() {
