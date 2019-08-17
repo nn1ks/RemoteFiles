@@ -20,8 +20,7 @@
 ## Information
 
 #### SFTP connection
-The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).<br/>
-The package is modified and located at `./ssh_package` to fix [this issue](https://github.com/shaqian/flutter_ssh/issues/10).
+The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
 
 #### Connection data
 The connections are saved in two JSON files (favorites.json & recentlyAdded.json).<br/>
@@ -29,7 +28,7 @@ On Android the files are located in the ApplicationDocumentsDirectory.<br/>
 On iOS the files are located in the ApplicationSupportDirectory.
 
 #### Downloaded files
-On Android the downloaded files are saved to external storage (default: /storage/emulated/0/RemoteFiles). The location can be changed on Android in the settings.<br/>
+On Android the downloaded files are saved to external storage. The location can be changed on Android in the settings.<br/>
 On iOS the downloaded files are saved in the ApplicationDocumentsDirectory.
 
 #### Get directories
