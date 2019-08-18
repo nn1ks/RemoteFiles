@@ -136,37 +136,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           heroTag: "fab",
           color: Theme.of(context).accentColor,
           children: <Widget>[
-            FloatingActionRowButton(
-              icon: Icon(Icons.track_changes),
-              onTap: () {
-                QuickConnectionSheet(
-                  context,
-                  onFail: () {
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        duration: Duration(seconds: 5),
-                        content: Text(
-                          "Unable to connect",
+            CustomTooltip(
+              message: "Quick connect",
+              child: FloatingActionRowButton(
+                icon: Icon(Icons.track_changes),
+                onTap: () {
+                  QuickConnectionSheet(
+                    context,
+                    onFail: () {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(
+                          duration: Duration(seconds: 5),
+                          content: Text(
+                            "Unable to connect",
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ).show();
-              },
+                      );
+                    },
+                  ).show();
+                },
+              ),
             ),
             FloatingActionRowDivider(),
-            FloatingActionRowButton(
-              icon: Icon(Icons.add),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (BuildContext context) {
-                      return EditConnectionPage(isNew: true);
-                    },
-                  ),
-                );
-              },
+            CustomTooltip(
+              message: "Add new connection",
+              child: FloatingActionRowButton(
+                icon: Icon(Icons.add),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (BuildContext context) {
+                        return EditConnectionPage(isNew: true);
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         );
