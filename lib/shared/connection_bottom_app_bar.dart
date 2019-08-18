@@ -115,7 +115,8 @@ class ConnectionBottomAppBar extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15.8,
                       fontWeight: FontWeight.w500,
-                      color: Provider.of<CustomTheme>(context).isLightTheme()
+                      color: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
                           ? Colors.grey[700]
                           : Colors.grey[200],
                       fontStyle: FontStyle.italic,
@@ -132,9 +133,10 @@ class ConnectionBottomAppBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15.8,
                     fontWeight: FontWeight.w500,
-                    color: Provider.of<CustomTheme>(context).isLightTheme()
-                        ? Colors.grey[700]
-                        : Colors.grey[200],
+                    color:
+                        Provider.of<CustomTheme>(context).isLightTheme(context)
+                            ? Colors.grey[700]
+                            : Colors.grey[200],
                     fontStyle: FontStyle.italic,
                   ),
                 ),

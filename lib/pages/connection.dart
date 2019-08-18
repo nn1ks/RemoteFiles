@@ -496,7 +496,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                                 "OK",
                                 style: TextStyle(
                                   color: Provider.of<CustomTheme>(context)
-                                          .isLightTheme()
+                                          .isLightTheme(context)
                                       ? Colors.white
                                       : Colors.black,
                                 ),
@@ -526,9 +526,10 @@ class _ConnectionPageState extends State<ConnectionPage>
           : Consumer<ConnectionModel>(
               builder: (context, model, child) {
                 return SpeedDial(
-                  overlayColor: Provider.of<CustomTheme>(context).isLightTheme()
-                      ? Color.fromRGBO(255, 255, 255, .2)
-                      : Color.fromRGBO(18, 18, 18, .2),
+                  overlayColor:
+                      Provider.of<CustomTheme>(context).isLightTheme(context)
+                          ? Color.fromRGBO(255, 255, 255, .2)
+                          : Color.fromRGBO(18, 18, 18, .2),
                   heroTag: "fab",
                   child: RotationTransition(
                     turns: Tween(begin: .0, end: 0.125)
@@ -548,15 +549,15 @@ class _ConnectionPageState extends State<ConnectionPage>
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).textTheme.body1.color,
                       ),
-                      labelBackgroundColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.white
-                              : Colors.grey[800],
+                      labelBackgroundColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.white
+                          : Colors.grey[800],
                       child: Icon(OMIcons.publish),
-                      backgroundColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.white
-                              : Colors.grey[800],
+                      backgroundColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.white
+                          : Colors.grey[800],
                       foregroundColor: Theme.of(context).accentColor,
                       elevation: 3.0,
                       onTap: () async {
@@ -569,15 +570,15 @@ class _ConnectionPageState extends State<ConnectionPage>
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).textTheme.body1.color,
                       ),
-                      labelBackgroundColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.white
-                              : Colors.grey[800],
+                      labelBackgroundColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.white
+                          : Colors.grey[800],
                       child: Icon(OMIcons.createNewFolder),
-                      backgroundColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.white
-                              : Colors.grey[800],
+                      backgroundColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.white
+                          : Colors.grey[800],
                       foregroundColor: Theme.of(context).accentColor,
                       elevation: 3.0,
                       onTap: () async {

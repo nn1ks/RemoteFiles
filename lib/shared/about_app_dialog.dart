@@ -225,12 +225,13 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
             children: <Widget>[
               Expanded(
                 child: RaisedButton(
-                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
                       ? Color.fromRGBO(235, 240, 255, 1)
                       : Color.fromRGBO(84, 88, 92, 1),
-                  splashColor: Provider.of<CustomTheme>(context).isLightTheme()
-                      ? Color.fromRGBO(215, 225, 250, 1)
-                      : Color.fromRGBO(100, 104, 110, 1),
+                  splashColor:
+                      Provider.of<CustomTheme>(context).isLightTheme(context)
+                          ? Color.fromRGBO(215, 225, 250, 1)
+                          : Color.fromRGBO(100, 104, 110, 1),
                   elevation: .0,
                   highlightElevation: 2.8,
                   child: Padding(
@@ -264,12 +265,13 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
               ),
               Expanded(
                 child: RaisedButton(
-                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
                       ? Color.fromRGBO(235, 240, 255, 1)
                       : Color.fromRGBO(84, 88, 92, 1),
-                  splashColor: Provider.of<CustomTheme>(context).isLightTheme()
-                      ? Color.fromRGBO(215, 225, 250, 1)
-                      : Color.fromRGBO(100, 104, 110, 1),
+                  splashColor:
+                      Provider.of<CustomTheme>(context).isLightTheme(context)
+                          ? Color.fromRGBO(215, 225, 250, 1)
+                          : Color.fromRGBO(100, 104, 110, 1),
                   elevation: .0,
                   highlightElevation: 2.8,
                   child: Padding(

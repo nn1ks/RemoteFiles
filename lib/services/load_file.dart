@@ -146,10 +146,10 @@ class LoadFile {
                       child: Text(
                         "OK",
                         style: TextStyle(
-                          color:
-                              Provider.of<CustomTheme>(context).isLightTheme()
-                                  ? Colors.white
-                                  : Colors.black,
+                          color: Provider.of<CustomTheme>(context)
+                                  .isLightTheme(context)
+                              ? Colors.white
+                              : Colors.black,
                         ),
                       ),
                       elevation: .0,
@@ -280,7 +280,8 @@ class LoadFile {
                     Text(
                       "OK",
                       style: TextStyle(
-                        color: Provider.of<CustomTheme>(context).isLightTheme()
+                        color: Provider.of<CustomTheme>(context)
+                                .isLightTheme(context)
                             ? Colors.white
                             : Colors.black,
                       ),

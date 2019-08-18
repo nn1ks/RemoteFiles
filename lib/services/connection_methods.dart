@@ -258,7 +258,7 @@ class ConnectionMethods {
               child: Text(
                 "OK",
                 style: TextStyle(
-                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
                       ? Colors.white
                       : Colors.black,
                 ),

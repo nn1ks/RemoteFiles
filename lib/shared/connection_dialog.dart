@@ -152,7 +152,7 @@ class ConnectionDialog extends StatelessWidget {
                 child: Icon(
                   primaryButtonIconData,
                   size: 19.0,
-                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
                       ? Colors.white
                       : Colors.black,
                 ),
@@ -160,7 +160,7 @@ class ConnectionDialog extends StatelessWidget {
               Text(
                 primaryButtonLabel,
                 style: TextStyle(
-                  color: Provider.of<CustomTheme>(context).isLightTheme()
+                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
                       ? Colors.white
                       : Colors.black,
                 ),

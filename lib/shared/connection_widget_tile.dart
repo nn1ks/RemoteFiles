@@ -110,7 +110,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
           decoration: BoxDecoration(
             color: widget.isSelected
                 ? Theme.of(context).accentColor.withOpacity(.16)
-                : (Provider.of<CustomTheme>(context).isLightTheme()
+                : (Provider.of<CustomTheme>(context).isLightTheme(context)
                     ? Color.fromRGBO(0, 0, 0, .07)
                     : Color.fromRGBO(255, 255, 255, .04)),
             borderRadius: BorderRadius.circular(6.0),

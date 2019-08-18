@@ -165,7 +165,7 @@ class QuickConnectionSheet extends StatelessWidget {
                                   Icons.flash_on,
                                   size: 19.0,
                                   color: Provider.of<CustomTheme>(context)
-                                          .isLightTheme()
+                                          .isLightTheme(context)
                                       ? Colors.white
                                       : Colors.black,
                                 ),
@@ -175,7 +175,7 @@ class QuickConnectionSheet extends StatelessWidget {
                                 style: TextStyle(
                                     fontSize: 16.0,
                                     color: Provider.of<CustomTheme>(context)
-                                            .isLightTheme()
+                                            .isLightTheme(context)
                                         ? Colors.white
                                         : Colors.black),
                               ),
