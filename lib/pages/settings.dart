@@ -42,10 +42,10 @@ class _SettingsPageState extends State<SettingsPage>
     }
     return Padding(
       padding: EdgeInsets.only(
-        top: hasSwitch ? 8.0 : 19.0,
-        bottom: hasSwitch ? .0 : 11.0,
-        left: 18.0,
-        right: hasSwitch ? 22.0 : 18.0,
+        top: hasSwitch ? 8 : 19,
+        bottom: hasSwitch ? 0 : 11,
+        left: 18,
+        right: 18,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -279,6 +279,18 @@ class _SettingsPageState extends State<SettingsPage>
                 _buildHeadline("Appearance"),
                 ListTile(
                   title: Text("Theme"),
+                  trailing: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Opacity(
+                      opacity: .6,
+                      child: Text(Provider.of<CustomTheme>(context)
+                              .themeValue[0]
+                              .toUpperCase() +
+                          Provider.of<CustomTheme>(context)
+                              .themeValue
+                              .substring(1)),
+                    ),
+                  ),
                   onTap: () {
                     customShowDialog(
                       context: context,
@@ -348,6 +360,15 @@ class _SettingsPageState extends State<SettingsPage>
                 ),
                 ListTile(
                   title: Text("Unit for filesize"),
+                  trailing: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Opacity(
+                      opacity: .6,
+                      child: Text(
+                          SettingsVariables.filesizeUnit[0].toUpperCase() +
+                              SettingsVariables.filesizeUnit.substring(1)),
+                    ),
+                  ),
                   onTap: () {
                     customShowDialog(
                       context: context,
