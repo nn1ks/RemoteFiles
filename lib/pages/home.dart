@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 margin: EdgeInsets.only(top: 2),
                 height: 1,
                 width: MediaQuery.of(context).size.width,
-                color: Colors.grey.withOpacity(.3),
+                color: Colors.grey.withOpacity(.2),
               ),
               TabBar(
                 indicator: MD2Indicator(
