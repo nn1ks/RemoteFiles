@@ -75,24 +75,24 @@ class _SettingsPageState extends State<SettingsPage>
                     Switch(
                       activeThumbImage:
                           AssetImage("assets/arrow_drop_down.png"),
-                      activeColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.grey[50]
-                              : Colors.grey[400],
-                      activeTrackColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.grey[300]
-                              : Colors.grey[700],
+                      activeColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.grey[50]
+                          : Colors.grey[400],
+                      activeTrackColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.grey[300]
+                          : Colors.grey[700],
                       inactiveThumbImage:
                           AssetImage("assets/arrow_drop_up.png"),
-                      inactiveTrackColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.grey[300]
-                              : Colors.grey[700],
-                      inactiveThumbColor:
-                          Provider.of<CustomTheme>(context).isLightTheme()
-                              ? Colors.grey[50]
-                              : Colors.grey[400],
+                      inactiveTrackColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.grey[300]
+                          : Colors.grey[700],
+                      inactiveThumbColor: Provider.of<CustomTheme>(context)
+                              .isLightTheme(context)
+                          ? Colors.grey[50]
+                          : Colors.grey[400],
                       value: SettingsVariables.sortIsDescending,
                       onChanged: onChanged,
                     ),
@@ -132,22 +132,6 @@ class _SettingsPageState extends State<SettingsPage>
         }
         setState(() {});
       },
-    );
-  }
-
-  Widget _buildCheckboxListTile({
-    @required String titleLabel,
-    @required bool value,
-    @required ValueChanged<bool> onChanged,
-  }) {
-    return CheckboxListTile(
-      activeColor: Theme.of(context).accentColor,
-      title: Padding(
-        padding: EdgeInsets.only(left: 3.0),
-        child: Text(titleLabel),
-      ),
-      value: value,
-      onChanged: onChanged,
     );
   }
 
@@ -254,7 +238,7 @@ class _SettingsPageState extends State<SettingsPage>
             child: ListView(
               physics: BouncingScrollPhysics(),
               children: <Widget>[
-                SizedBox(height: 14.0),
+                SizedBox(height: 4),
                 _buildHeadline("View"),
                 _buildRadioListTile(
                   titleLabel: "List",
@@ -363,8 +347,18 @@ class _SettingsPageState extends State<SettingsPage>
                     );
                   },
                 ),
-                _buildCheckboxListTile(
-                  titleLabel: "Show hidden files",
+                SwitchListTile(
+                  activeColor: Theme.of(context).accentColor,
+                  title: Text("AMOLED Dark Theme"),
+                  value: SettingsVariables.useAmoledDarkTheme,
+                  onChanged: (bool value) async {
+                    await SettingsVariables.setUseAmoledDarkTheme(value);
+                    setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  activeColor: Theme.of(context).accentColor,
+                  title: Text("Show hidden files"),
                   value: SettingsVariables.showHiddenFiles,
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowHiddenFiles(value);
@@ -577,7 +571,7 @@ class _SettingsPageState extends State<SettingsPage>
                               "OK",
                               style: TextStyle(
                                 color: Provider.of<CustomTheme>(context)
-                                        .isLightTheme()
+                                        .isLightTheme(context)
                                     ? Colors.white
                                     : Colors.black,
                               ),
