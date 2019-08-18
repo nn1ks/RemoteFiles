@@ -40,7 +40,8 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+    );
 
     return MaterialApp(
       title: 'RemoteFiles',
@@ -52,11 +53,15 @@ class MyAppState extends State<MyApp> {
         FirebaseAnalyticsObserver(analytics: MyApp.analytics),
       ],
       theme: Provider.of<CustomTheme>(context).themeValue == "dark"
-          ? CustomThemes.dark
+          ? (SettingsVariables.useAmoledDarkTheme
+              ? CustomThemes.black
+              : CustomThemes.dark)
           : CustomThemes.light,
       darkTheme: Provider.of<CustomTheme>(context).themeValue == "light"
           ? CustomThemes.light
-          : CustomThemes.dark,
+          : (SettingsVariables.useAmoledDarkTheme
+              ? CustomThemes.black
+              : CustomThemes.dark),
     );
   }
 }

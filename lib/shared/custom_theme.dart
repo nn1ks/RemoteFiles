@@ -13,9 +13,9 @@ class CustomTheme with ChangeNotifier {
 
   String get themeValue => _themeValue;
 
-  bool isLightTheme() {
+  bool isLightTheme(BuildContext context) {
     if (_themeValue == "automatic") {
-      return true;
+      return MediaQuery.of(context).platformBrightness == Brightness.light;
     } else if (_themeValue == "light") {
       return true;
     } else {
@@ -65,11 +65,7 @@ class CustomThemes {
     ),
     primaryColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
-    snackBarTheme: SnackBarThemeData(
-      // When using SnackBarBehavior.floating on iOS the SnackBar is not visible
-      behavior:
-          Platform.isIOS ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
-    ),
+    snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
     textSelectionHandleColor: _lightAccentColor,
   );
 
@@ -77,7 +73,7 @@ class CustomThemes {
   static final ThemeData dark = ThemeData(
     accentColor: _darkAccentColor,
     accentColorBrightness: Brightness.light,
-    bottomAppBarColor: Color.fromRGBO(50, 50, 50, 1),
+    bottomAppBarColor: Color.fromRGBO(49, 50, 52, 1),
     bottomAppBarTheme: BottomAppBarTheme(elevation: 8.0),
     buttonTheme: ButtonThemeData(
       textTheme: ButtonTextTheme.primary,
@@ -86,7 +82,7 @@ class CustomThemes {
     ),
     brightness: Brightness.dark,
     cursorColor: _darkAccentColor,
-    dialogBackgroundColor: Color.fromRGBO(62, 62, 62, 1),
+    dialogBackgroundColor: Color.fromRGBO(62, 62, 63, 1),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
       contentPadding: EdgeInsets.all(14.0),
@@ -96,13 +92,37 @@ class CustomThemes {
       ),
       labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey[300]),
     ),
-    primaryColor: Color.fromRGBO(22, 22, 22, 1),
-    scaffoldBackgroundColor: Color.fromRGBO(22, 22, 22, 1),
-    snackBarTheme: SnackBarThemeData(
-      // When using SnackBarBehavior.floating on iOS the SnackBar is not visible
-      behavior:
-          Platform.isIOS ? SnackBarBehavior.fixed : SnackBarBehavior.floating,
+    primaryColor: Color.fromRGBO(22, 22, 23, 1),
+    scaffoldBackgroundColor: Color.fromRGBO(22, 22, 23, 1),
+    snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    textSelectionHandleColor: _darkAccentColor,
+  );
+
+  static final ThemeData black = ThemeData(
+    accentColor: _darkAccentColor,
+    accentColorBrightness: Brightness.light,
+    bottomAppBarColor: Color.fromRGBO(30, 30, 31, 1),
+    bottomAppBarTheme: BottomAppBarTheme(elevation: 8.0),
+    buttonTheme: ButtonThemeData(
+      textTheme: ButtonTextTheme.primary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
     ),
+    brightness: Brightness.dark,
+    cursorColor: _darkAccentColor,
+    dialogBackgroundColor: Color.fromRGBO(52, 52, 53, 1),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+      contentPadding: EdgeInsets.all(14.0),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: _darkAccentColor, width: 2.0),
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey[300]),
+    ),
+    primaryColor: Color.fromRGBO(0, 0, 0, 1),
+    scaffoldBackgroundColor: Color.fromRGBO(0, 0, 0, 1),
+    snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
     textSelectionHandleColor: _darkAccentColor,
   );
 }
