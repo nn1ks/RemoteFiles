@@ -160,10 +160,10 @@ class QuickConnectionSheet extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(right: 3.5, top: 1),
+                                margin: EdgeInsets.only(right: 5, top: 1),
                                 child: Icon(
-                                  Icons.flash_on,
-                                  size: 19.0,
+                                  Icons.track_changes,
+                                  size: 20,
                                   color: Provider.of<CustomTheme>(context)
                                           .isLightTheme(context)
                                       ? Colors.white

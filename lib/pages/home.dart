@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           color: Theme.of(context).accentColor,
           children: <Widget>[
             FloatingActionRowButton(
-              icon: Icon(Icons.flash_on),
+              icon: Icon(Icons.track_changes),
               onTap: () {
                 QuickConnectionSheet(
                   context,
