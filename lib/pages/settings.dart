@@ -117,18 +117,11 @@ class _SettingsPageState extends State<SettingsPage>
       onChanged: (String radioValue) async {
         if (isView) {
           await SettingsVariables.setView(value);
-          await MyApp.analytics.setUserProperty(name: "view", value: value);
         } else {
           await SettingsVariables.setSort(value);
           if (widget.currentConnectionPage != null) {
             widget.currentConnectionPage.sortFileInfos();
           }
-          await MyApp.analytics.setUserProperty(
-              name: "sort",
-              value: value +
-                  " (descending: " +
-                  SettingsVariables.sortIsDescending.toString() +
-                  ")");
         }
         setState(() {});
       },
@@ -304,10 +297,6 @@ class _SettingsPageState extends State<SettingsPage>
                                   groupValue: model.themeValue,
                                   onChanged: (String value) async {
                                     await model.setThemeValue(value);
-                                    await MyApp.analytics.setUserProperty(
-                                      name: "theme",
-                                      value: value,
-                                    );
                                     setState(() {});
                                   },
                                 ),
@@ -318,10 +307,6 @@ class _SettingsPageState extends State<SettingsPage>
                                   groupValue: model.themeValue,
                                   onChanged: (String value) async {
                                     await model.setThemeValue(value);
-                                    await MyApp.analytics.setUserProperty(
-                                      name: "theme",
-                                      value: value,
-                                    );
                                     setState(() {});
                                   },
                                 ),
@@ -332,10 +317,6 @@ class _SettingsPageState extends State<SettingsPage>
                                   groupValue: model.themeValue,
                                   onChanged: (String value) async {
                                     await model.setThemeValue(value);
-                                    await MyApp.analytics.setUserProperty(
-                                      name: "theme",
-                                      value: value,
-                                    );
                                     setState(() {});
                                   },
                                 ),
