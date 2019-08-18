@@ -363,9 +363,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 value: "automatic",
                                 groupValue: SettingsVariables.filesizeUnit,
                                 onChanged: (String value) async {
-                                  if (widget.currentConnectionPage != null)
-                                    await SettingsVariables.setFilesizeUnit(
-                                        value, widget.currentConnectionPage);
+                                  await SettingsVariables.setFilesizeUnit(
+                                      value, widget.currentConnectionPage);
                                   setState(() {});
                                 },
                               ),
@@ -375,9 +374,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 value: "B",
                                 groupValue: SettingsVariables.filesizeUnit,
                                 onChanged: (String value) async {
-                                  if (widget.currentConnectionPage != null)
-                                    await SettingsVariables.setFilesizeUnit(
-                                        value, widget.currentConnectionPage);
+                                  await SettingsVariables.setFilesizeUnit(
+                                      value, widget.currentConnectionPage);
                                   setState(() {});
                                 },
                               ),
@@ -387,9 +385,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 value: "KB",
                                 groupValue: SettingsVariables.filesizeUnit,
                                 onChanged: (String value) async {
-                                  if (widget.currentConnectionPage != null)
-                                    await SettingsVariables.setFilesizeUnit(
-                                        value, widget.currentConnectionPage);
+                                  await SettingsVariables.setFilesizeUnit(
+                                      value, widget.currentConnectionPage);
                                   setState(() {});
                                 },
                               ),
@@ -399,9 +396,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 value: "MB",
                                 groupValue: SettingsVariables.filesizeUnit,
                                 onChanged: (String value) async {
-                                  if (widget.currentConnectionPage != null)
-                                    await SettingsVariables.setFilesizeUnit(
-                                        value, widget.currentConnectionPage);
+                                  await SettingsVariables.setFilesizeUnit(
+                                      value, widget.currentConnectionPage);
                                   setState(() {});
                                 },
                               ),
@@ -411,9 +407,8 @@ class _SettingsPageState extends State<SettingsPage>
                                 value: "GB",
                                 groupValue: SettingsVariables.filesizeUnit,
                                 onChanged: (String value) async {
-                                  if (widget.currentConnectionPage != null)
-                                    await SettingsVariables.setFilesizeUnit(
-                                        value, widget.currentConnectionPage);
+                                  await SettingsVariables.setFilesizeUnit(
+                                      value, widget.currentConnectionPage);
                                   setState(() {});
                                 },
                               ),

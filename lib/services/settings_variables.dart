@@ -129,30 +129,32 @@ class SettingsVariables {
         unitDivisor = 1000000000;
         break;
     }
-    currentConnectionPage.fileInfos.forEach((v) {
-      int convertedSize;
-      String unitValue;
-      if (v.size != null) {
-        if (v.size.toString().length > 9) {
-          convertedSize = v.size ~/ 1000000000;
-          unitValue = "GB";
-        } else if (v.size.toString().length > 6) {
-          convertedSize = v.size ~/ 1000000;
-          unitValue = "MB";
-        } else if (v.size.toString().length > 3) {
-          convertedSize = v.size ~/ 1000;
-          unitValue = "KB";
-        } else {
-          convertedSize = v.size;
-          unitValue = "B";
+    if (currentConnectionPage != null) {
+      currentConnectionPage.fileInfos.forEach((v) {
+        int convertedSize;
+        String unitValue;
+        if (v.size != null) {
+          if (v.size.toString().length > 9) {
+            convertedSize = v.size ~/ 1000000000;
+            unitValue = "GB";
+          } else if (v.size.toString().length > 6) {
+            convertedSize = v.size ~/ 1000000;
+            unitValue = "MB";
+          } else if (v.size.toString().length > 3) {
+            convertedSize = v.size ~/ 1000;
+            unitValue = "KB";
+          } else {
+            convertedSize = v.size;
+            unitValue = "B";
+          }
+          if (unitDivisor != null) {
+            convertedSize = v.size ~/ unitDivisor;
+            unitValue = value;
+          }
+          v.convertedSize = convertedSize.toString() + " $unitValue";
         }
-        if (unitDivisor != null) {
-          convertedSize = v.size ~/ unitDivisor;
-          unitValue = value;
-        }
-        v.convertedSize = convertedSize.toString() + " $unitValue";
-      }
-    });
+      });
+    }
   }
 
   static String moveCommand = "mv";
