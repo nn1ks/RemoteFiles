@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:ssh/ssh.dart';
 
@@ -65,9 +66,8 @@ class ConnectionMethods {
     if (!closePageBefore) {
       Navigator.push(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (context) => connectionPage,
-          settings: RouteSettings(name: "connect"),
         ),
       );
     }
@@ -86,7 +86,7 @@ class ConnectionMethods {
       if (closePageBefore) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => connectionPage),
+          CupertinoPageRoute(builder: (context) => connectionPage),
         );
       }
       connectionPage.scaffoldKey.currentState.showSnackBar(

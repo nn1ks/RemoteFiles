@@ -1,5 +1,6 @@
 import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
@@ -81,9 +82,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
+                        CupertinoPageRoute(
                           builder: (context) => SettingsPage(),
-                          settings: RouteSettings(name: "settings"),
                         ),
                       );
                     },
@@ -160,11 +160,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (BuildContext context) {
                       return EditConnectionPage(isNew: true);
                     },
-                    settings: RouteSettings(name: "new-connection"),
                   ),
                 );
               },

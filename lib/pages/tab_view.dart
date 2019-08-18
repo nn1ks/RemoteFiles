@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -173,11 +174,9 @@ class _TabViewPageState extends State<TabViewPage> {
                             Navigator.pop(context);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
+                              CupertinoPageRoute(
                                 builder: (context) =>
                                     EditConnectionPage(index: index),
-                                settings:
-                                    RouteSettings(name: "edit-connection"),
                               ),
                             );
                           } else {
