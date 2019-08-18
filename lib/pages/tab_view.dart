@@ -242,22 +242,17 @@ class _TabViewPageState extends State<TabViewPage> {
                     });
                   },
                 )
-              : Padding(
-                  padding: EdgeInsets.only(top: 30.0),
-                  child: Opacity(
-                    opacity: .7,
-                    child: Text(
-                      widget.isFavorites
-                          ? "No favorites"
-                          : "No recently added connections",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ),
-                ),
+              : Container(),
         ),
       );
     }
     return widgets;
+  }
+
+  bool _hasConnections() {
+    if (widget.connections == null) return false;
+    if (widget.connections.length <= 0) return false;
+    return true;
   }
 
   @override
@@ -283,7 +278,54 @@ class _TabViewPageState extends State<TabViewPage> {
   Widget build(BuildContext context) {
     return Scrollbar(
       child: ReorderableListView(
-        padding: EdgeInsets.only(top: 10.0),
+        header: !_hasConnections()
+            ? Opacity(
+                opacity: .7,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 30),
+                      child: Text(
+                        widget.isFavorites
+                            ? "No favorite connections"
+                            : "No recently added connections",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: OutlineButton.icon(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        highlightedBorderColor: Colors.transparent,
+                        highlightElevation: 6,
+                        textColor: Theme.of(context).textTheme.body1.color,
+                        icon: Icon(Icons.add, size: 22),
+                        label: Text(
+                          "Add a new connection",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) =>
+                                  EditConnectionPage(isNew: true),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : null,
+        padding: EdgeInsets.only(top: 10),
         children: _getWidgetList(),
         onReorder: (int a, int b) {
           var temp = widget.connections[a];
