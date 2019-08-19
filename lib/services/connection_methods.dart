@@ -43,6 +43,7 @@ class ConnectionMethods {
     String path,
     bool setIsLoading = true,
     bool closePageBefore = false,
+    bool callConnectClient = false,
   }) async {
     var model = Provider.of<ConnectionModel>(context);
 
@@ -56,13 +57,6 @@ class ConnectionMethods {
       ),
     );
 
-    if (path.length == 0 || path[0] != "/") {
-      await model.client.execute("cd");
-      path = await model.client.execute("pwd");
-      path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
-      connectionPage.connection.path = path;
-    }
-
     if (!closePageBefore) {
       Navigator.push(
         context,
@@ -73,9 +67,26 @@ class ConnectionMethods {
     }
 
     bool loadingDone = false;
-    Future.delayed(Duration(milliseconds: 600)).then((_) {
+    Future.delayed(Duration(milliseconds: 200)).then((_) {
       if (setIsLoading && !loadingDone) model.isLoading = true;
     });
+
+    if (callConnectClient) {
+      await connectClient(
+        context,
+        address: address,
+        port: int.parse(port),
+        username: username,
+        passwordOrKey: passwordOrKey,
+      );
+    }
+
+    if (path.length == 0 || path[0] != "/") {
+      await model.client.execute("cd");
+      path = await model.client.execute("pwd");
+      path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
+      connectionPage.connection.path = path;
+    }
 
     connectionPage.fileInfos = [];
     var list;
@@ -136,6 +147,7 @@ class ConnectionMethods {
     Connection connection, {
     bool setIsLoading = true,
     bool closePageBefore = false,
+    bool callConnectClient = false,
   }) async {
     await connectIndividually(
       context,
@@ -146,6 +158,7 @@ class ConnectionMethods {
       path: connection.path,
       setIsLoading: setIsLoading,
       closePageBefore: closePageBefore,
+      callConnectClient: callConnectClient,
     );
   }
 

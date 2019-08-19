@@ -200,46 +200,11 @@ class _TabViewPageState extends State<TabViewPage> {
                     },
                   ),
                   onTap: () {
-                    customShowDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => Center(
-                        child: Container(
-                          height: 80,
-                          width: 80,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).dialogBackgroundColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      ),
-                    );
-                    ConnectionMethods.connectClient(
+                    ConnectionMethods.connect(
                       context,
-                      address: widget.connections[index].address,
-                      port: int.parse(widget.connections[index].port),
-                      username: widget.connections[index].username,
-                      passwordOrKey: widget.connections[index].passwordOrKey,
-                    ).then((bool connected) {
-                      Navigator.popUntil(context, ModalRoute.withName("/"));
-                      if (connected) {
-                        ConnectionMethods.connect(
-                          context,
-                          widget.connections[index],
-                        );
-                      } else {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          duration: Duration(seconds: 5),
-                          content: Text(
-                            "Unable to connect to " +
-                                widget.connections[index].address,
-                          ),
-                        ));
-                      }
-                    });
+                      widget.connections[index],
+                      callConnectClient: true,
+                    );
                   },
                 )
               : Container(),
