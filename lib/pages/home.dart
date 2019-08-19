@@ -54,47 +54,51 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         elevation: 2.8,
         backgroundColor: Theme.of(context).bottomAppBarColor,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 4),
-              child: Text("RemoteFiles", style: TextStyle(fontSize: 18.6)),
-            ),
-            Row(
-              children: <Widget>[
-                CustomTooltip(
-                  message: "About",
-                  child: CustomIconButton(
-                    icon: Icon(OMIcons.info),
-                    onPressed: () {
-                      customShowDialog(
-                        context: context,
-                        builder: (context) => AboutAppDialog(context),
-                      );
-                    },
+        title: Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 8, top: 2),
+                child: Text("RemoteFiles", style: TextStyle(fontSize: 18.6)),
+              ),
+              Row(
+                children: <Widget>[
+                  CustomTooltip(
+                    message: "About",
+                    child: CustomIconButton(
+                      icon: Icon(OMIcons.info),
+                      onPressed: () {
+                        customShowDialog(
+                          context: context,
+                          builder: (context) => AboutAppDialog(context),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                CustomTooltip(
-                  message: "Settings",
-                  child: CustomIconButton(
-                    icon: Icon(OMIcons.settings),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => SettingsPage(),
-                        ),
-                      );
-                    },
+                  CustomTooltip(
+                    message: "Settings",
+                    child: CustomIconButton(
+                      icon: Icon(OMIcons.settings),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => SettingsPage(),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
+        titleSpacing: 10,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(38.0),
+          preferredSize: Size.fromHeight(42.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[

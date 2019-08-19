@@ -43,6 +43,7 @@ class CustomThemes {
   static final ThemeData light = ThemeData(
     accentColor: _lightAccentColor,
     accentColorBrightness: Brightness.dark,
+    appBarTheme: AppBarTheme(brightness: Brightness.dark),
     bottomAppBarTheme: BottomAppBarTheme(elevation: 8.0),
     buttonColor: _lightAccentColor,
     buttonTheme: ButtonThemeData(

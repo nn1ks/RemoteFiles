@@ -24,7 +24,6 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-
   ThemeData _getLightTheme(CustomTheme model) {
     if (model.themeValue == "dark") {
       return CustomThemes.dark;
@@ -35,10 +34,10 @@ class MyAppState extends State<MyApp> {
     }
   }
 
-  ThemeData _getDarkTheme(CustomTheme model) {
-    if (model.themeValue == "light") {
+  ThemeData _getDarkTheme(CustomTheme themeModel) {
+    if (themeModel.themeValue == "light") {
       return CustomThemes.light;
-    } else if (model.themeValue == "black") {
+    } else if (themeModel.themeValue == "black") {
       return CustomThemes.black;
     } else {
       return CustomThemes.dark;
@@ -47,8 +46,10 @@ class MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    var themeModel = Provider.of<CustomTheme>(context);
+
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+      SystemUiOverlayStyle(statusBarColor: Color.fromRGBO(0, 0, 0, .26)),
     );
 
     return MaterialApp(
@@ -57,8 +58,8 @@ class MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => HomePage(),
       },
-      theme: _getLightTheme(Provider.of<CustomTheme>(context)),
-      darkTheme: _getDarkTheme(Provider.of<CustomTheme>(context)),
+      theme: _getLightTheme(themeModel),
+      darkTheme: _getDarkTheme(themeModel),
     );
   }
 }
