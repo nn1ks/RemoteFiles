@@ -24,6 +24,27 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+
+  ThemeData _getLightTheme(CustomTheme model) {
+    if (model.themeValue == "dark") {
+      return CustomThemes.dark;
+    } else if (model.themeValue == "black") {
+      return CustomThemes.black;
+    } else {
+      return CustomThemes.light;
+    }
+  }
+
+  ThemeData _getDarkTheme(CustomTheme model) {
+    if (model.themeValue == "light") {
+      return CustomThemes.light;
+    } else if (model.themeValue == "black") {
+      return CustomThemes.black;
+    } else {
+      return CustomThemes.dark;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -36,16 +57,8 @@ class MyAppState extends State<MyApp> {
       routes: {
         '/': (context) => HomePage(),
       },
-      theme: Provider.of<CustomTheme>(context).themeValue == "dark"
-          ? (SettingsVariables.useAmoledDarkTheme
-              ? CustomThemes.black
-              : CustomThemes.dark)
-          : CustomThemes.light,
-      darkTheme: Provider.of<CustomTheme>(context).themeValue == "light"
-          ? CustomThemes.light
-          : (SettingsVariables.useAmoledDarkTheme
-              ? CustomThemes.black
-              : CustomThemes.dark),
+      theme: _getLightTheme(Provider.of<CustomTheme>(context)),
+      darkTheme: _getDarkTheme(Provider.of<CustomTheme>(context)),
     );
   }
 }

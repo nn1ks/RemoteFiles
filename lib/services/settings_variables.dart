@@ -193,20 +193,6 @@ class SettingsVariables {
     return copyCommand;
   }
 
-  static bool useAmoledDarkTheme = false;
-  static bool getUseAmoledDarkTheme() {
-    bool useAmoledDarkThemePrefs;
-    if (prefs != null)
-      useAmoledDarkThemePrefs = prefs.getBool("useAmoledDarkTheme");
-    if (useAmoledDarkThemePrefs != null) return useAmoledDarkThemePrefs;
-    return useAmoledDarkTheme;
-  }
-
-  static Future<void> setUseAmoledDarkTheme(bool value) async {
-    useAmoledDarkTheme = value;
-    await prefs.setBool("useAmoledDarkTheme", value);
-  }
-
   static initState() {
     setSharedPreferences().then((_) {
       getDownloadDirectory().then((Directory dir) => downloadDirectory = dir);
@@ -217,7 +203,6 @@ class SettingsVariables {
       filesizeUnit = getFilesizeUnit();
       moveCommand = getMoveCommand();
       copyCommand = getCopyCommand();
-      useAmoledDarkTheme = getUseAmoledDarkTheme();
     });
   }
 }

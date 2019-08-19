@@ -305,6 +305,9 @@ class _SettingsPageState extends State<SettingsPage>
                                 RadioListTile(
                                   activeColor: Theme.of(context).accentColor,
                                   title: Text("Automatic"),
+                                  subtitle: Text(
+                                      "Chooses light or dark theme " +
+                                          "based on your system settings"),
                                   value: "automatic",
                                   groupValue: model.themeValue,
                                   onChanged: (String value) async {
@@ -332,6 +335,16 @@ class _SettingsPageState extends State<SettingsPage>
                                     setState(() {});
                                   },
                                 ),
+                                RadioListTile(
+                                  activeColor: Theme.of(context).accentColor,
+                                  title: Text("Black"),
+                                  value: "black",
+                                  groupValue: model.themeValue,
+                                  onChanged: (String value) async {
+                                    await model.setThemeValue(value);
+                                    setState(() {});
+                                  },
+                                ),
                               ],
                             );
                           });
@@ -342,16 +355,8 @@ class _SettingsPageState extends State<SettingsPage>
                 ),
                 SwitchListTile(
                   activeColor: Theme.of(context).accentColor,
-                  title: Text("AMOLED Dark Theme"),
-                  value: SettingsVariables.useAmoledDarkTheme,
-                  onChanged: (bool value) async {
-                    await SettingsVariables.setUseAmoledDarkTheme(value);
-                    setState(() {});
-                  },
-                ),
-                SwitchListTile(
-                  activeColor: Theme.of(context).accentColor,
-                  title: Text("Show hidden files"),
+                  title: Text("Show dotfiles"),
+                  subtitle: Text("Whether to show files that begin with a dot"),
                   value: SettingsVariables.showHiddenFiles,
                   onChanged: (bool value) async {
                     await SettingsVariables.setShowHiddenFiles(value);
