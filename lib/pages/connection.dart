@@ -144,7 +144,7 @@ class _ConnectionPageState extends State<ConnectionPage>
     }
   }
 
-  List<Widget> _getItemList(ConnectionModel model) {
+  List<Widget> _getItemList(ConnectionModel model, {bool addBottomSpace}) {
     if (widget.visibleFileInfos == null) widget.visibleFileInfos = [];
     _isSelected.length = widget.visibleFileInfos.length;
     for (int i = 0; i < _isSelected.length; i++) {
@@ -214,7 +214,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         }
       }
     }
-    list.add(Container());
+    list.add(Container(height: addBottomSpace ? 84 : 0));
     return list;
   }
 
@@ -623,39 +623,39 @@ class _ConnectionPageState extends State<ConnectionPage>
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: SafeArea(
-          child: Scrollbar(
-            child: Consumer<ConnectionModel>(
-              builder: (context, model, child) {
-                return RefreshIndicator(
-                  key: _refreshKey,
-                  onRefresh: () async {
-                    await ConnectionMethods.refresh(context, widget.connection);
-                  },
-                  child: model.isLoading
-                      ? Container(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : SettingsVariables.view == "list" ||
-                              SettingsVariables.view == "detailed"
-                          ? ListView(
-                              children: <Widget>[
-                                Column(children: _getItemList(model)),
-                                SizedBox(height: 84.0),
-                              ],
-                            )
-                          : GridView(
-                              padding: EdgeInsets.all(3.0),
+          child: Consumer<ConnectionModel>(
+            builder: (context, model, child) {
+              return RefreshIndicator(
+                key: _refreshKey,
+                onRefresh: () async {
+                  await ConnectionMethods.refresh(context, widget.connection);
+                },
+                child: model.isLoading
+                    ? Container(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : SettingsVariables.view == "list" ||
+                            SettingsVariables.view == "detailed"
+                        ? Scrollbar(
+                            child: ListView(
+                              children:
+                                  _getItemList(model, addBottomSpace: true),
+                            ),
+                          )
+                        : Scrollbar(
+                            child: GridView(
+                              padding: EdgeInsets.all(3),
                               gridDelegate:
                                   SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 160.0,
+                                maxCrossAxisExtent: 160,
                               ),
                               children: _getItemList(model),
                             ),
-                );
-              },
-            ),
+                          ),
+              );
+            },
           ),
         ),
       ),
