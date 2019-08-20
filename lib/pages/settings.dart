@@ -42,10 +42,10 @@ class _SettingsPageState extends State<SettingsPage>
     }
     return Padding(
       padding: EdgeInsets.only(
-        top: hasSwitch ? 8 : 19,
-        bottom: hasSwitch ? 0 : 11,
-        left: 18,
-        right: 18,
+        top: hasSwitch ? 0 : 12,
+        bottom: hasSwitch ? 0 : 12,
+        left: 16,
+        right: 11,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -53,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage>
           Text(
             title.toUpperCase(),
             style: TextStyle(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 14.5,
               letterSpacing: 1.0,
               color: Theme.of(context).hintColor,
@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage>
                     Text(
                       sortLabel.toUpperCase(),
                       style: TextStyle(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize: 14.5,
                         letterSpacing: 1.0,
                         color: Theme.of(context).hintColor,
@@ -135,12 +135,13 @@ class _SettingsPageState extends State<SettingsPage>
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Divider(),
           _buildHeadline("Save files to:"),
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 19.0,
-              vertical: 4.0,
+            padding: EdgeInsets.only(
+              left: 19,
+              right: 19,
+              top: 4,
+              bottom: 8,
             ),
             child: Container(
               child: TextField(
@@ -150,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage>
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Theme.of(context).accentColor,
-                      width: 2.0,
+                      width: 2,
                     ),
                   ),
                   suffixIcon: Row(
@@ -363,6 +364,12 @@ class _SettingsPageState extends State<SettingsPage>
                     setState(() {});
                   },
                 ),
+                Divider(),
+                _buildSaveToWidget(),
+                Divider(),
+                ExpansionTile(
+                  title: Text("Advanced"),
+                  children: <Widget>[
                 ListTile(
                   title: Text("Unit for filesize"),
                   trailing: Padding(
@@ -441,6 +448,60 @@ class _SettingsPageState extends State<SettingsPage>
                             ],
                           );
                         }),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("Delete all connections"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        title: Text(
+                          "Delete all connections?\nThis cannot be undone.",
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            padding: EdgeInsets.only(
+                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            splashColor: Colors.black12,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            padding: EdgeInsets.only(
+                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                            child: Text(
+                              "OK",
+                              style: TextStyle(
+                                color: Provider.of<CustomTheme>(context)
+                                        .isLightTheme(context)
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            elevation: .0,
+                            onPressed: () {
+                              HomePage.favoritesPage.removeAllFromJson();
+                              HomePage.favoritesPage.setConnectionsFromJson();
+                              HomePage.recentlyAddedPage.removeAllFromJson();
+                              HomePage.recentlyAddedPage
+                                  .setConnectionsFromJson();
+                              Navigator.pop(context);
+                            },
+                          ),
+                          SizedBox(width: .0),
+                        ],
                       ),
                     );
                   },
@@ -537,64 +598,9 @@ class _SettingsPageState extends State<SettingsPage>
                     },
                   ),
                 ),
-                _buildSaveToWidget(),
-                Divider(),
-                _buildHeadline("Other"),
-                ListTile(
-                  title: Text("Delete all connections"),
-                  onTap: () {
-                    customShowDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                        title: Text(
-                          "Delete all connections?\nThis cannot be undone.",
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            splashColor: Colors.black12,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-                            child: Text(
-                              "OK",
-                              style: TextStyle(
-                                color: Provider.of<CustomTheme>(context)
-                                        .isLightTheme(context)
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                            elevation: .0,
-                            onPressed: () {
-                              HomePage.favoritesPage.removeAllFromJson();
-                              HomePage.favoritesPage.setConnectionsFromJson();
-                              HomePage.recentlyAddedPage.removeAllFromJson();
-                              HomePage.recentlyAddedPage
-                                  .setConnectionsFromJson();
-                              Navigator.pop(context);
-                            },
-                          ),
-                          SizedBox(width: .0),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16.0),
+                SizedBox(height: 10),
+            ],),
+                SizedBox(height: 16),
               ],
             ),
           ),
