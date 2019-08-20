@@ -42,7 +42,7 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
     if (widget.isSelectionMode) {
       result = AnimatedContainer(
         duration: _animationDuration,
-        margin: widget.view == "grid" ? EdgeInsets.all(4) : EdgeInsets.all(12),
+        margin: widget.view == "grid" ? EdgeInsets.all(0) : EdgeInsets.all(12),
         width: widget.view == "grid" ? 18 : 21,
         height: widget.view == "grid" ? 18 : 21,
         decoration: BoxDecoration(
@@ -63,8 +63,8 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
       );
     } else if (widget.fileInfos[widget.index].isDirectory) {
       result = CustomIconButton(
-        icon: Icon(Icons.more_vert, size: widget.view == "view" ? 22 : null),
-        size: widget.view == "view" ? 24 : 44,
+        icon: Icon(Icons.more_vert, size: widget.view == "grid" ? 20 : null),
+        size: widget.view == "grid" ? 28 : 44,
         onPressed: widget.onSecondaryTap,
       );
     }
@@ -116,32 +116,32 @@ class _ConnectionWidgetTileState extends State<ConnectionWidgetTile> {
             borderRadius: BorderRadius.circular(6.0),
           ),
           child: InkWell(
-            borderRadius: BorderRadius.circular(6.0),
+            borderRadius: BorderRadius.circular(6),
             onTap: widget.onTap,
             onLongPress: widget.onLongPress,
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(3.0),
+                        borderRadius: BorderRadius.circular(3),
                       ),
                       child: Icon(
                         widget.fileInfos[widget.index].isDirectory
                             ? Icons.folder_open
                             : Icons.insert_drive_file,
-                        size: 32.0,
+                        size: 32,
                         color: Colors.grey[600],
                       ),
                     ),
                   ),
-                  SizedBox(height: 6.0),
+                  SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[

@@ -144,7 +144,10 @@ class _ConnectionPageState extends State<ConnectionPage>
     }
   }
 
-  List<Widget> _getItemList(ConnectionModel model, {bool addBottomSpace}) {
+  List<Widget> _getItemList(
+    ConnectionModel model, {
+    bool addBottomSpace = false,
+  }) {
     if (widget.visibleFileInfos == null) widget.visibleFileInfos = [];
     _isSelected.length = widget.visibleFileInfos.length;
     for (int i = 0; i < _isSelected.length; i++) {
