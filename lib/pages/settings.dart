@@ -45,54 +45,39 @@ class _SettingsPageState extends State<SettingsPage>
         top: hasSwitch ? 0 : 12,
         bottom: hasSwitch ? 0 : 12,
         left: 16,
-        right: 11,
+        right: 14,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            title.toUpperCase(),
+            title,
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14.5,
-              letterSpacing: 1.0,
-              color: Theme.of(context).hintColor,
+              letterSpacing: .7,
+              color: Theme.of(context).accentColor,
             ),
           ),
           hasSwitch
               ? Row(
                   children: <Widget>[
                     Text(
-                      sortLabel.toUpperCase(),
+                      sortLabel,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14.5,
-                        letterSpacing: 1.0,
-                        color: Theme.of(context).hintColor,
+                        letterSpacing: .7,
+                        color: Theme.of(context).accentColor,
                       ),
                     ),
                     SizedBox(width: 6.0),
                     Switch(
+                      activeColor: Theme.of(context).accentColor,
                       activeThumbImage:
                           AssetImage("assets/arrow_drop_down.png"),
-                      activeColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.grey[50]
-                          : Colors.grey[400],
-                      activeTrackColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.grey[300]
-                          : Colors.grey[700],
                       inactiveThumbImage:
                           AssetImage("assets/arrow_drop_up.png"),
-                      inactiveTrackColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.grey[300]
-                          : Colors.grey[700],
-                      inactiveThumbColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.grey[50]
-                          : Colors.grey[400],
                       value: SettingsVariables.sortIsDescending,
                       onChanged: onChanged,
                     ),
@@ -135,11 +120,11 @@ class _SettingsPageState extends State<SettingsPage>
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildHeadline("Save files to:"),
+          _buildHeadline("Save files to"),
           Padding(
             padding: EdgeInsets.only(
-              left: 19,
-              right: 19,
+              left: 16,
+              right: 16,
               top: 4,
               bottom: 8,
             ),
@@ -206,6 +191,11 @@ class _SettingsPageState extends State<SettingsPage>
       TextEditingController(text: SettingsVariables.moveCommand);
   var _copyCommandTextController =
       TextEditingController(text: SettingsVariables.copyCommand);
+
+  String _moveCommandGroupValue =
+      SettingsVariables.moveCommand == "mv" ? "default" : "custom";
+  String _copyCommandGroupValue =
+      SettingsVariables.copyCommand == "cp" ? "default" : "custom";
 
   @override
   Widget build(BuildContext context) {
@@ -354,6 +344,10 @@ class _SettingsPageState extends State<SettingsPage>
                     );
                   },
                 ),
+                Divider(),
+                _buildSaveToWidget(),
+                Divider(),
+                _buildHeadline("Miscellaneous"),
                 SwitchListTile(
                   activeColor: Theme.of(context).accentColor,
                   title: Text("Show dotfiles"),
@@ -364,12 +358,6 @@ class _SettingsPageState extends State<SettingsPage>
                     setState(() {});
                   },
                 ),
-                Divider(),
-                _buildSaveToWidget(),
-                Divider(),
-                ExpansionTile(
-                  title: Text("Advanced"),
-                  children: <Widget>[
                 ListTile(
                   title: Text("Unit for filesize"),
                   trailing: Padding(
@@ -509,98 +497,197 @@ class _SettingsPageState extends State<SettingsPage>
                 Divider(),
                 _buildHeadline("Shell commands"),
                 ListTile(
-                  title: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minWidth: constraints.maxWidth / 2.8,
-                            ),
-                            child: Text("Moving files:"),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _moveCommandTextController,
-                              decoration: InputDecoration(
-                                suffixIcon: CustomTooltip(
-                                  message: "Set to default",
-                                  child: CustomIconButton(
-                                    icon: Icon(
-                                      Icons.settings_backup_restore,
-                                      color: Theme.of(context).iconTheme.color,
-                                    ),
-                                    onPressed: () {
-                                      SettingsVariables
-                                              .setMoveCommandToDefault()
-                                          .then((String command) {
-                                        _moveCommandTextController.text =
-                                            command;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              onChanged: (String value) async {
-                                await SettingsVariables.setMoveCommand(value);
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  title: Text("Moving Files"),
+                  trailing: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Opacity(
+                      opacity: .6,
+                      child: Text(_moveCommandGroupValue[0].toUpperCase() +
+                          _moveCommandGroupValue.substring(1)),
+                    ),
                   ),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                        content: StatefulBuilder(builder: (context, setState) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              RadioListTile(
+                                activeColor: Theme.of(context).accentColor,
+                                title: Text("Default"),
+                                subtitle: Text("Uses the shell command 'mv' " +
+                                    "to move files and folders"),
+                                value: "default",
+                                groupValue: _moveCommandGroupValue,
+                                onChanged: (String value) async {
+                                  await SettingsVariables
+                                      .setMoveCommandToDefault();
+                                  await SettingsVariables.setMoveCommandAppend(
+                                      false);
+                                  setState(() {
+                                    _moveCommandGroupValue = "default";
+                                  });
+                                },
+                              ),
+                              _moveCommandGroupValue == "custom"
+                                  ? Divider()
+                                  : Container(),
+                              RadioListTile(
+                                activeColor: Theme.of(context).accentColor,
+                                title: Text("Custom"),
+                                value: "custom",
+                                groupValue: _moveCommandGroupValue,
+                                onChanged: (String value) async {
+                                  await SettingsVariables.setMoveCommand(
+                                      _moveCommandTextController.text);
+                                  setState(() {
+                                    _moveCommandGroupValue = "custom";
+                                  });
+                                },
+                              ),
+                              _moveCommandGroupValue == "custom"
+                                  ? Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 19, vertical: 10),
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          labelText: "Shell command",
+                                        ),
+                                        controller: _moveCommandTextController,
+                                        onChanged: (String value) async {
+                                          await SettingsVariables
+                                              .setMoveCommand(value);
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
+                              _moveCommandGroupValue == "custom"
+                                  ? SwitchListTile(
+                                      activeColor:
+                                          Theme.of(context).accentColor,
+                                      title: Padding(
+                                        padding: EdgeInsets.only(left: 6),
+                                        child: Text(
+                                          "Append '-r' when moving " +
+                                              "directories",
+                                        ),
+                                      ),
+                                      value:
+                                          SettingsVariables.moveCommandAppend,
+                                      onChanged: (bool value) async {
+                                        await SettingsVariables
+                                            .setMoveCommandAppend(value);
+                                        setState(() {});
+                                      },
+                                    )
+                                  : Container(),
+                            ],
+                          );
+                        }),
+                      ),
+                    );
+                  },
                 ),
                 ListTile(
-                  title: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minWidth: constraints.maxWidth / 2.8,
-                            ),
-                            child: Text("Copying files:"),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _copyCommandTextController,
-                              decoration: InputDecoration(
-                                suffixIcon: CustomTooltip(
-                                  message: "Set to default",
-                                  child: CustomIconButton(
-                                    icon: Icon(
-                                      Icons.settings_backup_restore,
-                                      color: Theme.of(context).iconTheme.color,
-                                    ),
-                                    onPressed: () {
-                                      SettingsVariables
-                                              .setCopyCommandToDefault()
-                                          .then((String command) {
-                                        _copyCommandTextController.text =
-                                            command;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                              onChanged: (String value) async {
-                                await SettingsVariables.setCopyCommand(value);
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  title: Text("Copying Files"),
+                  trailing: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Opacity(
+                      opacity: .6,
+                      child: Text(_copyCommandGroupValue[0].toUpperCase() +
+                          _copyCommandGroupValue.substring(1)),
+                    ),
                   ),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                        content: StatefulBuilder(builder: (context, setState) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              RadioListTile(
+                                activeColor: Theme.of(context).accentColor,
+                                title: Text("Default"),
+                                subtitle: Text("Uses the shell command 'cp' " +
+                                    "to copy files and 'cp -r' to copy " +
+                                    "folders"),
+                                value: "default",
+                                groupValue: _copyCommandGroupValue,
+                                onChanged: (String value) async {
+                                  await SettingsVariables
+                                      .setCopyCommandToDefault();
+                                  await SettingsVariables.setCopyCommandAppend(
+                                      true);
+                                  setState(() {
+                                    _copyCommandGroupValue = "default";
+                                  });
+                                },
+                              ),
+                              _copyCommandGroupValue == "custom"
+                                  ? Divider()
+                                  : Container(),
+                              RadioListTile(
+                                activeColor: Theme.of(context).accentColor,
+                                title: Text("Custom"),
+                                value: "custom",
+                                groupValue: _copyCommandGroupValue,
+                                onChanged: (String value) async {
+                                  await SettingsVariables.setCopyCommand(
+                                      _copyCommandTextController.text);
+                                  setState(() {
+                                    _copyCommandGroupValue = "custom";
+                                  });
+                                },
+                              ),
+                              _copyCommandGroupValue == "custom"
+                                  ? Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 19, vertical: 10),
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          labelText: "Shell command",
+                                        ),
+                                        controller: _copyCommandTextController,
+                                        onChanged: (String value) async {
+                                          await SettingsVariables
+                                              .setCopyCommand(value);
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
+                              _copyCommandGroupValue == "custom"
+                                  ? SwitchListTile(
+                                      activeColor:
+                                          Theme.of(context).accentColor,
+                                      title: Padding(
+                                        padding: EdgeInsets.only(left: 6),
+                                        child: Text(
+                                          "Append '-r' when copying " +
+                                              "directories",
+                                        ),
+                                      ),
+                                      value:
+                                          SettingsVariables.copyCommandAppend,
+                                      onChanged: (bool value) async {
+                                        await SettingsVariables
+                                            .setCopyCommandAppend(value);
+                                        setState(() {});
+                                      },
+                                    )
+                                  : Container(),
+                            ],
+                          );
+                        }),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(height: 10),
-            ],),
-                SizedBox(height: 16),
+                SizedBox(height: 26),
               ],
             ),
           ),

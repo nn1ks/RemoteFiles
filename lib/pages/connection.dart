@@ -371,9 +371,16 @@ class _ConnectionPageState extends State<ConnectionPage>
                   String cmd;
                   if (model.isCopyMode) {
                     cmd = SettingsVariables.copyCommand;
-                    if (model.savedFileInfos[i].isDirectory) cmd += " -r";
+                    if (model.savedFileInfos[i].isDirectory &&
+                        SettingsVariables.copyCommandAppend) {
+                      cmd += " -r";
+                    }
                   } else {
                     cmd = SettingsVariables.moveCommand;
+                    if (model.savedFileInfos[i].isDirectory &&
+                        SettingsVariables.moveCommandAppend) {
+                      cmd += " -r";
+                    }
                   }
                   String toPath = widget.connection.path + "/";
                   if (model.isCopyMode) toPath += model.savedFileInfos[i].name;

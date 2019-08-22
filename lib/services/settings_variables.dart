@@ -175,6 +175,20 @@ class SettingsVariables {
     return moveCommand;
   }
 
+  static bool moveCommandAppend = false;
+  static bool getMoveCommandAppend() {
+    bool moveCommandAppendPrefs;
+    if (prefs != null)
+      moveCommandAppendPrefs = prefs.getBool("moveCommandAppend");
+    if (moveCommandAppendPrefs != null) return moveCommandAppendPrefs;
+    return moveCommandAppend;
+  }
+
+  static Future<void> setMoveCommandAppend(bool value) async {
+    moveCommandAppend = value;
+    await prefs.setBool("moveCommandAppend", value);
+  }
+
   static String copyCommand = "cp";
   static String getCopyCommand() {
     String copyCommandPrefs;
@@ -193,6 +207,20 @@ class SettingsVariables {
     return copyCommand;
   }
 
+  static bool copyCommandAppend = true;
+  static bool getCopyCommandAppend() {
+    bool copyCommandAppendPrefs;
+    if (prefs != null)
+      copyCommandAppendPrefs = prefs.getBool("copyCommandAppend");
+    if (copyCommandAppendPrefs != null) return copyCommandAppendPrefs;
+    return copyCommandAppend;
+  }
+
+  static Future<void> setCopyCommandAppend(bool value) async {
+    copyCommandAppend = value;
+    await prefs.setBool("copyCommandAppend", value);
+  }
+
   static initState() {
     setSharedPreferences().then((_) {
       getDownloadDirectory().then((Directory dir) => downloadDirectory = dir);
@@ -202,7 +230,9 @@ class SettingsVariables {
       showHiddenFiles = getShowHiddenFiles();
       filesizeUnit = getFilesizeUnit();
       moveCommand = getMoveCommand();
+      moveCommandAppend = getMoveCommandAppend();
       copyCommand = getCopyCommand();
+      copyCommandAppend = getCopyCommandAppend();
     });
   }
 }
