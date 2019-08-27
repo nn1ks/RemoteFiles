@@ -13,6 +13,18 @@ import 'services.dart';
 import '../shared/shared.dart';
 
 class LoadFile {
+  static _getFilenameFromPath(String path) {
+    String filename = "";
+    for (int i = path.length - 1; i >= 0; i--) {
+      if (path[i] == "/") {
+        break;
+      } else {
+        filename = path[i] + filename;
+      }
+    }
+    return filename;
+  }
+
   /// Wheter permission to save files to external storage is granted
   static Future<bool> _handlePermission() async {
     if (Platform.isIOS) return true;
@@ -76,13 +88,7 @@ class LoadFile {
     var model = Provider.of<ConnectionModel>(context);
     try {
       if (await _handlePermission()) {
-        String filename = "";
-        for (int i = 0; i < filePath.length; i++) {
-          filename += filePath[i];
-          if (filePath[i] == "/") {
-            filename = "";
-          }
-        }
+        String filename = _getFilenameFromPath(filePath);
         Directory dir = await SettingsVariables.getDownloadDirectory();
         dir = await dir.create(recursive: true);
         bool exists = await filenameExistsIn(
@@ -199,17 +205,20 @@ class LoadFile {
       path = pathFromReuploading;
     }
     if (path == null) return;
-    String filename = "";
-    for (int i = 0; i < path.length; i++) {
-      filename += path[i];
-      if (path[i] == "/") {
-        filename = "";
-      }
-    }
-    var fileInfosMap =
-        await model.client.sftpLs(currentConnectionPage.connection.path);
+    String filename = _getFilenameFromPath(path);
+    var list = await model.client.sftpLs(currentConnectionPage.connection.path);
     List<FileInfo> fileInfos = [];
-    fileInfosMap.forEach((v) => fileInfos.add(FileInfo.fromMap(v)));
+    for (int i = 0; i < list.length; i++) {
+      fileInfos.add(FileInfo());
+      list[i].forEach((k, v) {
+        if (k == "filename") {
+          if (v[v.length - 1] == "/") {
+            v = v.toString().substring(0, v.length - 1);
+          }
+        }
+        fileInfos[i] = fileInfos[i].copyWith(FileInfo.fromMap({k: v}));
+      });
+    }
     bool exists = await filenameExistsIn(
       fileInfos: fileInfos,
       filenames: [filename],
