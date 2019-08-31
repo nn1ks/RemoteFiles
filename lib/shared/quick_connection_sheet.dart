@@ -25,6 +25,7 @@ class QuickConnectionSheet extends StatelessWidget {
     String _mainTextInput;
     bool _mainInputIsValid = true;
     bool _showUsernameInput = true;
+    bool _passwordIsVisible = false;
     bool _showError = false;
 
     void _setConnection() {
@@ -138,10 +139,21 @@ class QuickConnectionSheet extends StatelessWidget {
                   ),
                 TextField(
                   autofocus: true,
-                  obscureText: true,
+                  obscureText: !_passwordIsVisible,
                   focusNode: _focusNodes[2],
                   textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(labelText: "Password"),
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    suffixIcon: CustomIconButton(
+                      icon: Icon(_passwordIsVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState2(
+                            () => _passwordIsVisible = !_passwordIsVisible);
+                      },
+                    ),
+                  ),
                   onChanged: (String value) =>
                       _connection.passwordOrKey = value,
                 ),
@@ -199,19 +211,19 @@ class QuickConnectionSheet extends StatelessWidget {
                               context: context,
                               barrierDismissible: false,
                               builder: (context) => Center(
-                                    child: Container(
-                                      height: 80,
-                                      width: 80,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .dialogBackgroundColor,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
+                                child: Container(
+                                  height: 80,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).dialogBackgroundColor,
+                                    shape: BoxShape.circle,
                                   ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
                             );
                             HomePage.recentlyAddedPage.addToJson(_connection);
                             HomePage.recentlyAddedPage.setConnectionsFromJson();

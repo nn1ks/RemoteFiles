@@ -21,7 +21,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
   bool _addressIsEntered = true;
   bool _usernameIsEntered = true;
   bool _passwordIsEntered = true;
-  bool _passwordWasChanged = false;
+  bool _passwordIsVisible = false;
 
   Map<String, TextEditingController> _textEditingController = {
     "name": TextEditingController(),
@@ -55,7 +55,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         controller: _textEditingController[key],
         focusNode: focusNodes[index],
         cursorColor: Theme.of(context).accentColor,
-        obscureText: isPassword,
+        obscureText: isPassword && !_passwordIsVisible,
         autocorrect: key == "name",
         textInputAction:
             label == "Path" ? TextInputAction.done : TextInputAction.next,
@@ -72,27 +72,19 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                   (!_passwordIsEntered && key == "password")
               ? "Please enter a $key"
               : null,
-          suffixIcon: key == "password" &&
-                  !_passwordWasChanged &&
-                  _textEditingController[key].text != ""
+          suffixIcon: key == "password"
               ? CustomIconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: Theme.of(context).textTheme.body1.color,
-                  ),
+                  icon: Icon(_passwordIsVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility),
                   onPressed: () {
-                    _textEditingController[key].text = "";
-                    _connection.setter(key, "");
-                    setState(() => _passwordWasChanged = true);
+                    setState(() => _passwordIsVisible = !_passwordIsVisible);
                   },
                 )
               : null,
         ),
         onChanged: (String value) {
           _connection.setter(key == "password" ? "passwordOrKey" : key, value);
-          if (key == "password") {
-            setState(() => _passwordWasChanged = true);
-          }
         },
         onSubmitted: (String value) {
           if (index < focusNodes.length - 1) {
