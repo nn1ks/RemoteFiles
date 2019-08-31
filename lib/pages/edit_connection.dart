@@ -56,6 +56,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
         focusNode: focusNodes[index],
         cursorColor: Theme.of(context).accentColor,
         obscureText: isPassword && !_passwordIsVisible,
+        enableInteractiveSelection: true,
         autocorrect: key == "name",
         textInputAction:
             label == "Path" ? TextInputAction.done : TextInputAction.next,

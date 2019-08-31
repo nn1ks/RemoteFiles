@@ -140,6 +140,7 @@ class QuickConnectionSheet extends StatelessWidget {
                 TextField(
                   autofocus: true,
                   obscureText: !_passwordIsVisible,
+                  enableInteractiveSelection: true,
                   focusNode: _focusNodes[2],
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
