@@ -73,33 +73,75 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
     return null;
   }
 
-  Widget _buildUpdateText() {
-    String url = _latestVersion["html_url"];
-    return Flexible(
-      child: Padding(
-        padding: EdgeInsets.only(top: 6),
-        child: RichText(
-          text: TextSpan(children: <TextSpan>[
-            TextSpan(
-                text: "Download the latest version from GitHub",
-                style: TextStyle(
-                  color: Colors.black,
-                  decoration: TextDecoration.underline,
-                ),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () async {
-                    if (await canLaunch(url)) await launch(url);
-                  }),
-            TextSpan(
-              text: " or click the PlayStore button below",
+  Widget _buildVersionInfo() {
+    Widget buildTopRow() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            _isLatestVersion ? Icons.check : Icons.error_outline,
+            size: 18,
+            color: Theme.of(context).hintColor,
+          ),
+          SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              _isLatestVersion
+                  ? "You have the latest version"
+                  : "You don't have the latest version",
               style: TextStyle(
-                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+                color: Theme.of(context).hintColor,
               ),
             ),
-          ]),
-        ),
-      ),
-    );
+          ),
+        ],
+      );
+    }
+
+    if (_isLatestVersion) {
+      return buildTopRow();
+    } else {
+      String url = _latestVersion["html_url"];
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Divider(),
+          SizedBox(height: 6),
+          buildTopRow(),
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: RichText(
+                text: TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "Download the latest version from GitHub",
+                      style: TextStyle(
+                        color: Theme.of(context).hintColor,
+                        fontSize: 15,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () async {
+                          if (await canLaunch(url)) await launch(url);
+                        }),
+                  TextSpan(
+                    text:
+                        " or click the PlayStore button below to update the " +
+                            "app",
+                    style: TextStyle(
+                      color: Theme.of(context).hintColor,
+                      fontSize: 15,
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   @override
@@ -117,189 +159,163 @@ class _AboutAppDialogState extends State<AboutAppDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomAlertDialog(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 6.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18.0),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, .2),
-                  blurRadius: 2.0,
-                  offset: Offset(.0, .8),
-                )
-              ],
-            ),
-            width: 90.0,
-            height: 90.0,
-            child: Padding(
-              padding: EdgeInsets.all(15.79),
-              child: Image.asset("assets/app_icon.png"),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0, bottom: 6.0),
-            child: Text(
-              "RemoteFiles",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 19.0,
+      content: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.4),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(0, 0, 0, .24),
+                    blurRadius: 2.6,
+                    offset: Offset(.0, .6),
+                  )
+                ],
+              ),
+              width: 68,
+              height: 68,
+              child: Padding(
+                padding: EdgeInsets.all(11.6),
+                child: Image.asset("assets/app_icon.png"),
               ),
             ),
-          ),
-          Text(
-            "Version: $_version",
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
-              color: Theme.of(context).hintColor,
+            Padding(
+              padding: EdgeInsets.only(top: 16, bottom: 6),
+              child: Text(
+                "RemoteFiles",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 19,
+                ),
+              ),
             ),
-          ),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 230),
-            child: Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: _isLatestVersion == null
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1.4,
-                            valueColor: AlwaysStoppedAnimation(
-                              Theme.of(context).hintColor,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          "Checking for updates...",
-                          style: TextStyle(
-                            color: Theme.of(context).hintColor,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              _isLatestVersion ? Icons.check : Icons.warning,
-                              size: 18,
-                              color: _isLatestVersion
-                                  ? Color.fromRGBO(50, 150, 80, 1)
-                                  : Color.fromRGBO(170, 120, 60, 1),
-                            ),
-                            SizedBox(width: 8),
-                            Flexible(
-                              child: Text(
-                                _isLatestVersion
-                                    ? "You have the latest version"
-                                    : "There is a newer version available",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color: _isLatestVersion
-                                      ? Color.fromRGBO(50, 150, 80, 1)
-                                      : Color.fromRGBO(170, 120, 60, 1),
-                                ),
+            Text(
+              "Version: $_version",
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 230),
+              child: Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: _isLatestVersion == null
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 11,
+                            height: 11,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.4,
+                              valueColor: AlwaysStoppedAnimation(
+                                Theme.of(context).hintColor,
                               ),
                             ),
-                          ],
-                        ),
-                        _isLatestVersion ? Container() : _buildUpdateText(),
-                      ],
-                    ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            "Checking for updates...",
+                            style: TextStyle(
+                              color: Theme.of(context).hintColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      )
+                    : _buildVersionInfo(),
+              ),
             ),
-          ),
-          Divider(height: 30.0),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
-                      ? Color.fromRGBO(235, 240, 255, 1)
-                      : Color.fromRGBO(84, 88, 92, 1),
-                  splashColor:
-                      Provider.of<CustomTheme>(context).isLightTheme(context)
-                          ? Color.fromRGBO(215, 225, 250, 1)
-                          : Color.fromRGBO(100, 104, 110, 1),
-                  elevation: .0,
-                  highlightElevation: 2.8,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: .8),
-                    child: Text(
-                      "GitHub",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).textTheme.body1.color,
-                        fontSize: 13.6,
+            Divider(height: 30.0),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: RaisedButton(
+                    color:
+                        Provider.of<CustomTheme>(context).isLightTheme(context)
+                            ? Color.fromRGBO(235, 240, 255, 1)
+                            : Color.fromRGBO(84, 88, 92, 1),
+                    splashColor:
+                        Provider.of<CustomTheme>(context).isLightTheme(context)
+                            ? Color.fromRGBO(215, 225, 250, 1)
+                            : Color.fromRGBO(100, 104, 110, 1),
+                    elevation: .0,
+                    highlightElevation: 2.8,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: .8),
+                      child: Text(
+                        "GitHub",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).textTheme.body1.color,
+                          fontSize: 13.6,
+                        ),
                       ),
                     ),
+                    onPressed: () async {
+                      const url = "https://github.com/niklas-8/RemoteFiles";
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        Navigator.pop(context);
+                        HomePage.scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: Text("Could not launch $url"),
+                          ),
+                        );
+                      }
+                    },
                   ),
-                  onPressed: () async {
-                    const url = "https://github.com/niklas-8/RemoteFiles";
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
+                ),
+                SizedBox(
+                  width: 14.0,
+                ),
+                Expanded(
+                  child: RaisedButton(
+                    color:
+                        Provider.of<CustomTheme>(context).isLightTheme(context)
+                            ? Color.fromRGBO(235, 240, 255, 1)
+                            : Color.fromRGBO(84, 88, 92, 1),
+                    splashColor:
+                        Provider.of<CustomTheme>(context).isLightTheme(context)
+                            ? Color.fromRGBO(215, 225, 250, 1)
+                            : Color.fromRGBO(100, 104, 110, 1),
+                    elevation: .0,
+                    highlightElevation: 2.8,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: .8),
+                      child: Text(
+                        "PlayStore",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).textTheme.body1.color,
+                          fontSize: 13.6,
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
                       Navigator.pop(context);
                       HomePage.scaffoldKey.currentState.showSnackBar(
                         SnackBar(
-                          content: Text("Could not launch $url"),
+                          content: Text(
+                            "App is not yet available in the Google PlayStore",
+                          ),
                         ),
                       );
-                    }
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 14.0,
-              ),
-              Expanded(
-                child: RaisedButton(
-                  color: Provider.of<CustomTheme>(context).isLightTheme(context)
-                      ? Color.fromRGBO(235, 240, 255, 1)
-                      : Color.fromRGBO(84, 88, 92, 1),
-                  splashColor:
-                      Provider.of<CustomTheme>(context).isLightTheme(context)
-                          ? Color.fromRGBO(215, 225, 250, 1)
-                          : Color.fromRGBO(100, 104, 110, 1),
-                  elevation: .0,
-                  highlightElevation: 2.8,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: .8),
-                    child: Text(
-                      "PlayStore",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).textTheme.body1.color,
-                        fontSize: 13.6,
-                      ),
-                    ),
+                    },
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    HomePage.scaffoldKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "App is not yet available in the Google PlayStore",
-                        ),
-                      ),
-                    );
-                  },
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
