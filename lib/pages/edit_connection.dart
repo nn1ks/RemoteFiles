@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 import 'pages.dart';
 import '../services/services.dart';
@@ -76,8 +77,8 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           suffixIcon: key == "password"
               ? CustomIconButton(
                   icon: Icon(_passwordIsVisible
-                      ? Icons.visibility_off
-                      : Icons.visibility),
+                      ? OMIcons.visibilityOff
+                      : OMIcons.visibility),
                   onPressed: () {
                     setState(() => _passwordIsVisible = !_passwordIsVisible);
                   },
