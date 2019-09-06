@@ -103,14 +103,27 @@ class _AboutPageState extends State<AboutPage> {
       body: ListView(
         physics: BouncingScrollPhysics(),
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 10, bottom: 4),
-            child: ListTile(
-              leading: Image.asset("assets/app_icon_bg.png"),
-              title: Text("RemoteFiles"),
-              subtitle: Text("Version $_version"),
+          SizedBox(height: 16),
+          Image.asset("assets/app_icon_bg.png", height: 86),
+          SizedBox(height: 6),
+          Text(
+            "RemoteFiles",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w500,
             ),
           ),
+          SizedBox(height: 5),
+          Text(
+            "Version $_version",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).hintColor,
+            ),
+          ),
+          SizedBox(height: 5),
           Container(
             margin: EdgeInsets.all(16),
             padding: EdgeInsets.symmetric(vertical: 8),
@@ -193,7 +206,10 @@ class _AboutPageState extends State<AboutPage> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2.4,
                             valueColor: AlwaysStoppedAnimation(
-                              Theme.of(context).textTheme.body1.color,
+                              Provider.of<CustomTheme>(context)
+                                      .isLightTheme(context)
+                                  ? Colors.black45
+                                  : Theme.of(context).iconTheme.color,
                             ),
                           ),
                         )
