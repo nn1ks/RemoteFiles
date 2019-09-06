@@ -1,3 +1,4 @@
+export 'about.dart';
 export 'connection.dart';
 export 'edit_connection.dart';
 export 'home.dart';

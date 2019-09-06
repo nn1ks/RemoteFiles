@@ -70,9 +70,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     child: CustomIconButton(
                       icon: Icon(OMIcons.info),
                       onPressed: () {
-                        customShowDialog(
+                        /*customShowDialog(
                           context: context,
                           builder: (context) => AboutAppDialog(context),
+                        );*/
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(builder: (context) => AboutPage()),
                         );
                       },
                     ),

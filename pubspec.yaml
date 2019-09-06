@@ -26,6 +26,7 @@ dependencies:
   flutter_speed_dial: ^1.1.1
   floating_action_row: ^0.1.0
   http: ^0.12.0+2
+  material_design_icons_flutter: ^3.2.4096
   md2_tab_indicator: ^1.0.2
   open_file: ^2.0.1+2
   outline_material_icons: ^0.1.0
@@ -61,6 +62,7 @@ flutter:
 
   assets:
     - assets/app_icon.png
+    - assets/app_icon_bg.png
     - assets/arrow_drop_down.png
     - assets/arrow_drop_up.png
 
