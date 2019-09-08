@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -344,10 +345,6 @@ class _SettingsPageState extends State<SettingsPage>
                     );
                   },
                 ),
-                Divider(),
-                _buildSaveToWidget(),
-                Divider(),
-                _buildHeadline("Miscellaneous"),
                 SwitchListTile(
                   activeColor: Theme.of(context).accentColor,
                   title: Text("Show dotfiles"),
@@ -440,64 +437,12 @@ class _SettingsPageState extends State<SettingsPage>
                     );
                   },
                 ),
-                ListTile(
-                  title: Text("Delete all connections"),
-                  onTap: () {
-                    customShowDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                        title: Text(
-                          "Delete all connections?\nThis cannot be undone.",
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          RaisedButton(
-                            color: Theme.of(context).accentColor,
-                            splashColor: Colors.black12,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                            ),
-                            padding: EdgeInsets.only(
-                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
-                            child: Text(
-                              "OK",
-                              style: TextStyle(
-                                color: Provider.of<CustomTheme>(context)
-                                        .isLightTheme(context)
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                            elevation: .0,
-                            onPressed: () {
-                              HomePage.favoritesPage.removeAllFromJson();
-                              HomePage.favoritesPage.setConnectionsFromJson();
-                              HomePage.recentlyAddedPage.removeAllFromJson();
-                              HomePage.recentlyAddedPage
-                                  .setConnectionsFromJson();
-                              Navigator.pop(context);
-                            },
-                          ),
-                          SizedBox(width: .0),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                Divider(),
+                _buildSaveToWidget(),
                 Divider(),
                 _buildHeadline("Shell commands"),
                 ListTile(
-                  title: Text("Moving Files"),
+                  title: Text("Move"),
                   trailing: Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Opacity(
@@ -592,7 +537,7 @@ class _SettingsPageState extends State<SettingsPage>
                   },
                 ),
                 ListTile(
-                  title: Text("Copying Files"),
+                  title: Text("Copy"),
                   trailing: Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Opacity(
@@ -686,6 +631,73 @@ class _SettingsPageState extends State<SettingsPage>
                       ),
                     );
                   },
+                ),
+                Divider(),
+                _buildHeadline("Miscellaneous"),
+                ListTile(
+                  title: Text("Delete all connections"),
+                  onTap: () {
+                    customShowDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        title: Text(
+                          "Delete all connections?\nThis cannot be undone.",
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            padding: EdgeInsets.only(
+                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            splashColor: Colors.black12,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            padding: EdgeInsets.only(
+                                top: 8.5, bottom: 8.0, left: 14.0, right: 14.0),
+                            child: Text(
+                              "OK",
+                              style: TextStyle(
+                                color: Provider.of<CustomTheme>(context)
+                                        .isLightTheme(context)
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                            elevation: .0,
+                            onPressed: () {
+                              HomePage.favoritesPage.removeAllFromJson();
+                              HomePage.favoritesPage.setConnectionsFromJson();
+                              HomePage.recentlyAddedPage.removeAllFromJson();
+                              HomePage.recentlyAddedPage
+                                  .setConnectionsFromJson();
+                              Navigator.pop(context);
+                            },
+                          ),
+                          SizedBox(width: .0),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Divider(),
+                _buildHeadline("About"),
+                ListTile(
+                  title: Text("About RemoteFiles"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(builder: (context) => AboutPage()),
+                    );
+                  }
                 ),
                 SizedBox(height: 26),
               ],
