@@ -216,6 +216,8 @@ class _TabViewPageState extends State<TabViewPage> {
                       },
                     ),
                     onTap: () {
+                      Provider.of<ConnectionModel>(context).isPasteMode = false;
+                      Provider.of<ConnectionModel>(context).isCopyMode = false;
                       ConnectionMethods.connect(
                         context,
                         widget.connections[index],
