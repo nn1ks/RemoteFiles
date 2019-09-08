@@ -23,6 +23,10 @@ class CustomTheme with ChangeNotifier {
     }
   }
 
+  bool isBlackTheme() {
+    return _themeValue == "black";
+  }
+
   Future<String> getThemeValue() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String themeValuePrefs;

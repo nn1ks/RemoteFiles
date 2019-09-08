@@ -11,6 +11,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(builder: (context) => ConnectionModel()),
+        ChangeNotifierProvider(builder: (context) => HomeModel()),
         ChangeNotifierProvider(builder: (context) => CustomTheme()),
       ],
       child: MyApp(),

@@ -10,14 +10,9 @@ import '../services/services.dart';
 import '../shared/shared.dart';
 
 class HomePage extends StatefulWidget {
-  static TabViewPage favoritesPage = TabViewPage(
-    "favorites.json",
-    true,
-  );
-  static TabViewPage recentlyAddedPage = TabViewPage(
-    "recently_added.json",
-    false,
-  );
+  static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
+  static TabViewPage recentlyAddedPage =
+      TabViewPage("recently_added.json", false);
 
   static var scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -51,91 +46,116 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       key: HomePage.scaffoldKey,
       resizeToAvoidBottomPadding: true,
-      appBar: AppBar(
-        elevation: 2.8,
-        backgroundColor: Theme.of(context).bottomAppBarColor,
-        title: Padding(
-          padding: EdgeInsets.only(top: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 8, top: 2),
-                child: Text("RemoteFiles", style: TextStyle(fontSize: 18.6)),
-              ),
-              Row(
-                children: <Widget>[
-                  CustomTooltip(
-                    message: "About",
-                    child: CustomIconButton(
-                      icon: Icon(OMIcons.info),
-                      onPressed: () {
-                        /*customShowDialog(
-                          context: context,
-                          builder: (context) => AboutAppDialog(context),
-                        );*/
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => AboutPage()),
-                        );
-                      },
-                    ),
-                  ),
-                  CustomTooltip(
-                    message: "Settings",
-                    child: CustomIconButton(
-                      icon: Icon(OMIcons.settings),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => SettingsPage(),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(112),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).bottomAppBarColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 1,
+                offset: Offset(0, 1),
               ),
             ],
           ),
-        ),
-        titleSpacing: 10,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(42.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top: 2),
-                height: 1,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.grey.withOpacity(.2),
-              ),
-              TabBar(
-                indicator: MD2Indicator(
-                  indicatorSize: MD2IndicatorSize.normal,
-                  indicatorHeight: 3.4,
-                  indicatorColor: Theme.of(context).accentColor,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 12,
+                    top: 12,
+                    right: 12,
+                    bottom: 2,
+                  ),
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color:
+                        Provider.of<CustomTheme>(context).isLightTheme(context)
+                            ? Colors.white
+                            : (Provider.of<CustomTheme>(context).isBlackTheme()
+                                ? Color.fromRGBO(42, 43, 45, 1)
+                                : Color.fromRGBO(61, 62, 64, 1)),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 1.4,
+                        offset: Offset(0, .3),
+                      ),
+                    ],
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          SizedBox(
+                            width: constraints.maxWidth - 48,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                focusColor: Theme.of(context).accentColor,
+                                hintText: "Search",
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: Theme.of(context).iconTheme.color,
+                                ),
+                              ),
+                              onChanged: (String value) {
+                                Provider.of<HomeModel>(context).searchQuery =
+                                    value.trim();
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          CustomTooltip(
+                            message: "Settings",
+                            child: IconButton(
+                              icon: Icon(OMIcons.settings),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => SettingsPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorWeight: 2.0,
-                labelColor: Theme.of(context).accentColor,
-                unselectedLabelColor:
-                    Theme.of(context).brightness == Brightness.light
-                        ? Colors.grey[600]
-                        : Colors.grey[400],
-                labelStyle: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.6,
+                TabBar(
+                  indicator: MD2Indicator(
+                    indicatorSize: MD2IndicatorSize.normal,
+                    indicatorHeight: 3.4,
+                    indicatorColor: Theme.of(context).accentColor,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorWeight: 2.0,
+                  labelColor: Theme.of(context).accentColor,
+                  unselectedLabelColor:
+                      Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[600]
+                          : Colors.grey[400],
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.6,
+                  ),
+                  controller: _tabController,
+                  tabs: <Widget>[
+                    Tab(text: "Favorites"),
+                    Tab(text: "Recently added"),
+                  ],
                 ),
-                controller: _tabController,
-                tabs: <Widget>[
-                  Tab(text: "Favorites"),
-                  Tab(text: "Recently added"),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

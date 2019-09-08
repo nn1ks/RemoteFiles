@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'pages.dart';
 import '../services/services.dart';
@@ -140,76 +141,92 @@ class _TabViewPageState extends State<TabViewPage> {
     if (widget.connections == null) {
       widget.connections = [];
     }
+
+    bool addWidget(int index) {
+      String searchQuery = Provider.of<HomeModel>(context).searchQuery;
+      if (widget.connections.length <= 0) {
+        return true;
+      }
+      if (searchQuery == "" ||
+          widget.connections[index].name.contains(searchQuery) ||
+          widget.connections[index].address.contains(searchQuery)) {
+        return true;
+      }
+      return false;
+    }
+
     int itemCount =
         widget.connections.length > 0 ? widget.connections.length : 1;
     for (int index = 0; index < itemCount; index++) {
-      widgets.add(
-        Container(
-          key: _reorderableKeys[index],
-          child: widget.connections.length > 0
-              ? ListTile(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                  title: widget.connections[index].name != "" &&
-                          widget.connections[index].name != "-"
-                      ? Text(widget.connections[index].name)
-                      : Text(widget.connections[index].address),
-                  subtitle: Text(_getSubtitle(index)),
-                  trailing: IconButton(
-                    icon: Icon(
-                      OMIcons.edit,
-                      color: Theme.of(context).accentColor,
+      if (addWidget(index)) {
+        widgets.add(
+          Container(
+            key: _reorderableKeys[index],
+            child: widget.connections.length > 0
+                ? ListTile(
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    title: widget.connections[index].name != "" &&
+                            widget.connections[index].name != "-"
+                        ? Text(widget.connections[index].name)
+                        : Text(widget.connections[index].address),
+                    subtitle: Text(_getSubtitle(index)),
+                    trailing: IconButton(
+                      icon: Icon(
+                        OMIcons.edit,
+                        color: Theme.of(context).accentColor,
+                      ),
+                      onPressed: () {
+                        ConnectionDialog(
+                          context: context,
+                          connection: widget.connections[index],
+                          primaryButtonIconData: widget.isFavorites
+                              ? OMIcons.edit
+                              : Icons.star_border,
+                          primaryButtonLabel:
+                              widget.isFavorites ? "Edit" : "Add to favorites",
+                          primaryButtonOnPressed: () {
+                            if (widget.isFavorites) {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) =>
+                                      EditConnectionPage(index: index),
+                                ),
+                              );
+                            } else {
+                              HomePage.favoritesPage
+                                  .addToJson(widget.connections[index]);
+                              HomePage.favoritesPage.setConnectionsFromJson();
+                              Navigator.pop(context);
+                            }
+                          },
+                          hasSecondaryButton: true,
+                          secondaryButtonIconData: OMIcons.delete,
+                          secondaryButtonLabel: "Delete",
+                          secondaryButtonOnPressed: () {
+                            widget.removeFromJsonAt(index);
+                            setState(() {
+                              widget.setConnectionsFromJson();
+                            });
+                            Navigator.pop(context);
+                          },
+                        ).show();
+                      },
                     ),
-                    onPressed: () {
-                      ConnectionDialog(
-                        context: context,
-                        connection: widget.connections[index],
-                        primaryButtonIconData: widget.isFavorites
-                            ? OMIcons.edit
-                            : Icons.star_border,
-                        primaryButtonLabel:
-                            widget.isFavorites ? "Edit" : "Add to favorites",
-                        primaryButtonOnPressed: () {
-                          if (widget.isFavorites) {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (context) =>
-                                    EditConnectionPage(index: index),
-                              ),
-                            );
-                          } else {
-                            HomePage.favoritesPage
-                                .addToJson(widget.connections[index]);
-                            HomePage.favoritesPage.setConnectionsFromJson();
-                            Navigator.pop(context);
-                          }
-                        },
-                        hasSecondaryButton: true,
-                        secondaryButtonIconData: OMIcons.delete,
-                        secondaryButtonLabel: "Delete",
-                        secondaryButtonOnPressed: () {
-                          widget.removeFromJsonAt(index);
-                          setState(() {
-                            widget.setConnectionsFromJson();
-                          });
-                          Navigator.pop(context);
-                        },
-                      ).show();
+                    onTap: () {
+                      ConnectionMethods.connect(
+                        context,
+                        widget.connections[index],
+                        callConnectClient: true,
+                      );
                     },
-                  ),
-                  onTap: () {
-                    ConnectionMethods.connect(
-                      context,
-                      widget.connections[index],
-                      callConnectClient: true,
-                    );
-                  },
-                )
-              : Container(),
-        ),
-      );
+                  )
+                : Container(),
+          ),
+        );
+      }
     }
     return widgets;
   }
@@ -289,7 +306,19 @@ class _TabViewPageState extends State<TabViewPage> {
                   ],
                 ),
               )
-            : null,
+            : (_getWidgetList().length <= 0
+                ? Padding(
+                    padding: EdgeInsets.all(30),
+                    child: Opacity(
+                      opacity: .7,
+                      child: Text(
+                        "No connections with this name or address",
+                        style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                : null),
         padding: EdgeInsets.only(top: 10),
         children: _getWidgetList(),
         onReorder: (int a, int b) {
