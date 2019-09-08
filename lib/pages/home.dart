@@ -21,6 +21,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  bool _isSearchMode = false;
+  var _searchController = TextEditingController();
+
   TabController _tabController;
 
   @override
@@ -47,18 +50,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       key: HomePage.scaffoldKey,
       resizeToAvoidBottomPadding: true,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(112),
+        preferredSize: Size.fromHeight(120),
         child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 1,
-                offset: Offset(0, 1),
-              ),
-            ],
-          ),
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -68,16 +62,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     left: 12,
                     top: 12,
                     right: 12,
-                    bottom: 2,
+                    bottom: 9,
                   ),
+                  padding: EdgeInsets.symmetric(horizontal: 4),
                   height: 50,
                   decoration: BoxDecoration(
-                    color:
-                        Provider.of<CustomTheme>(context).isLightTheme(context)
-                            ? Colors.white
-                            : (Provider.of<CustomTheme>(context).isBlackTheme()
-                                ? Color.fromRGBO(42, 43, 45, 1)
-                                : Color.fromRGBO(61, 62, 64, 1)),
+                    color: Theme.of(context).bottomAppBarColor,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
@@ -92,26 +82,59 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       return Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          SizedBox(
-                            width: constraints.maxWidth - 44,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                focusColor: Theme.of(context).accentColor,
-                                hintText: "Search",
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: Theme.of(context).iconTheme.color,
+                          _isSearchMode
+                              ? CustomIconButton(
+                                  icon: Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    _isSearchMode = false;
+                                    setState(() {});
+                                  })
+                              : Container(),
+                          _isSearchMode
+                              ? SizedBox(
+                                  width: constraints.maxWidth - 2 * 44,
+                                  child: TextField(
+                                    controller: _searchController,
+                                    autofocus: true,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      focusColor: Theme.of(context).accentColor,
+                                      hintText: "Search",
+                                    ),
+                                    onChanged: (String value) {
+                                      Provider.of<HomeModel>(context)
+                                          .searchQuery = value.trim();
+                                      setState(() {});
+                                    },
+                                  ),
+                                )
+                              : Container(),
+                          _isSearchMode
+                              ? Container()
+                              : Container(
+                                  width: constraints.maxWidth - 2 * 44,
+                                  padding: EdgeInsets.only(left: 14),
+                                  child: Text(
+                                    "RemoteFiles",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
-                              ),
-                              onChanged: (String value) {
-                                Provider.of<HomeModel>(context).searchQuery =
-                                    value.trim();
-                                setState(() {});
-                              },
-                            ),
-                          ),
+                          _isSearchMode
+                              ? Container()
+                              : CustomTooltip(
+                                  message: "Search",
+                                  child: CustomIconButton(
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      _isSearchMode = true;
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
                           CustomTooltip(
                             message: "Settings",
                             child: CustomIconButton(
@@ -154,6 +177,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Tab(text: "Recently added"),
                   ],
                 ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 1,
+                  color: Theme.of(context).dividerColor,
+                )
               ],
             ),
           ),
