@@ -1,4 +1,3 @@
-export 'connection_bottom_app_bar.dart';
 export 'connection_dialog.dart';
 export 'connection_widget_tile.dart';
 export 'custom_bottom_sheet.dart';

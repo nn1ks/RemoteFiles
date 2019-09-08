@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           SizedBox(
-                            width: constraints.maxWidth - 48,
+                            width: constraints.maxWidth - 44,
                             child: TextField(
                               decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           CustomTooltip(
                             message: "Settings",
-                            child: IconButton(
+                            child: CustomIconButton(
                               icon: Icon(OMIcons.settings),
                               onPressed: () {
                                 Navigator.push(

@@ -1,8 +1,10 @@
+import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
 
+import 'pages.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
 
@@ -221,415 +223,496 @@ class _ConnectionPageState extends State<ConnectionPage>
     return list;
   }
 
-  var _searchController = TextEditingController();
-  bool _showSearch = false;
-
-  AnimationController _rotationController;
-
-  @override
-  void initState() {
-    _rotationController =
-        AnimationController(duration: Duration(milliseconds: 100), vsync: this);
-    super.initState();
+  Widget _buildGoToDirectoryWidget() {
+    return Container(
+      margin: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 1,
+          color: Theme.of(context).textTheme.body1.color.withOpacity(.3),
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            vertical: 6,
+            horizontal: 12,
+          ),
+          child: Text(
+            'Go to directory "' + _searchController.text + '"',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        onTap: () {
+          ConnectionMethods.goToDirectory(
+            context,
+            _searchController.text,
+            widget.connection,
+          );
+        },
+      ),
+    );
   }
+
+  Widget _buildFloatingActionRow() {
+    List<Widget> widgets = [];
+    var model = Provider.of<ConnectionModel>(context);
+    if (_isSelectionMode) {
+      widgets.add(
+        CustomTooltip(
+          message: "Download",
+          child: Opacity(
+            opacity: _selectedItemsAreFiles ? 1 : .5,
+            child: FloatingActionRowButton(
+              icon: Icon(OMIcons.getApp),
+              onTap: () async {
+                if (_selectedItemsAreFiles) {
+                  List<String> filenames = [];
+                  for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                    if (_isSelected[i]) {
+                      filenames.add(widget.visibleFileInfos[i].name);
+                    }
+                  }
+                  void download(int i) {
+                    if (i >= filenames.length - 1) {
+                      LoadFile.download(
+                        context,
+                        widget.connection.path + "/" + filenames[i],
+                        widget,
+                        ignoreExistingFiles: true,
+                      );
+                    } else {
+                      LoadFile.download(
+                        context,
+                        widget.connection.path + "/" + filenames[i],
+                        widget,
+                        ignoreExistingFiles: true,
+                      ).then((_) {
+                        download(i + 1);
+                      });
+                    }
+                  }
+
+                  bool filenameExists = await LoadFile.filenameExistsIn(
+                    directory: await SettingsVariables.getDownloadDirectory(),
+                    filenames: filenames,
+                  );
+
+                  if (filenameExists) {
+                    customShowDialog(
+                        context: context,
+                        builder: (context) {
+                          return CustomAlertDialog(
+                            title: Text(
+                              "There are already files with the same name. " +
+                                  "Replace files?",
+                              style: TextStyle(fontFamily: "GoogleSans"),
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                padding: EdgeInsets.only(
+                                  top: 8.5,
+                                  bottom: 8.0,
+                                  left: 14.0,
+                                  right: 14.0,
+                                ),
+                                child: Text("Cancel"),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              RaisedButton(
+                                color: Theme.of(context).accentColor,
+                                splashColor: Colors.black12,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.0),
+                                ),
+                                padding: EdgeInsets.only(
+                                  top: 8.5,
+                                  bottom: 8.0,
+                                  left: 14.0,
+                                  right: 14.0,
+                                ),
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(
+                                    color: Provider.of<CustomTheme>(context)
+                                            .isLightTheme(context)
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                                elevation: .0,
+                                onPressed: () {
+                                  download(0);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              SizedBox(width: .0),
+                            ],
+                          );
+                        });
+                  } else {
+                    download(0);
+                  }
+                }
+              },
+            ),
+          ),
+        ),
+      );
+      widgets.add(
+        FloatingActionRowDivider(),
+      );
+      widgets.add(
+        CustomTooltip(
+          message: "Delete",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.delete),
+            onTap: () {
+              List<String> filePaths = [];
+              List<bool> isDirectory = [];
+              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                if (_isSelected[i]) {
+                  filePaths.add(widget.connection.path +
+                      "/" +
+                      widget.visibleFileInfos[i].name);
+                  isDirectory.add(widget.visibleFileInfos[i].isDirectory);
+                }
+              }
+              ConnectionMethods.showDeleteConfirmDialog(
+                context: context,
+                filePaths: filePaths,
+                isDirectory: isDirectory,
+                currentConnection: widget.connection,
+                calledFromFileBottomSheet: false,
+              );
+            },
+          ),
+        ),
+      );
+      widgets.add(
+        FloatingActionRowDivider(),
+      );
+      widgets.add(
+        CustomTooltip(
+          message: "Copy to",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.fileCopy),
+            onTap: () {
+              _isSelectionMode = false;
+              model.isPasteMode = true;
+              model.isCopyMode = true;
+              model.savedFilePaths = [];
+              model.savedFileInfos = [];
+              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                if (_isSelected[i]) {
+                  model.savedFilePaths.add(widget.connection.path +
+                      "/" +
+                      widget.visibleFileInfos[i].name);
+                  model.savedFileInfos.add(widget.visibleFileInfos[i]);
+                }
+              }
+              _isSelected = [];
+              setState(() {});
+            },
+          ),
+        ),
+      );
+      widgets.add(
+        FloatingActionRowDivider(),
+      );
+      widgets.add(
+        CustomTooltip(
+          message: "Move to",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.keyboardTab),
+            onTap: () {
+              _isSelectionMode = false;
+              model.isPasteMode = true;
+              model.isCopyMode = false;
+              model.savedFilePaths = [];
+              model.savedFileInfos = [];
+              for (int i = 0; i < widget.visibleFileInfos.length; i++) {
+                if (_isSelected[i]) {
+                  model.savedFilePaths.add(widget.connection.path +
+                      "/" +
+                      widget.visibleFileInfos[i].name);
+                  model.savedFileInfos.add(widget.visibleFileInfos[i]);
+                }
+              }
+              _isSelected = [];
+              setState(() {});
+            },
+          ),
+        ),
+      );
+      widgets.add(
+        FloatingActionRowDivider(),
+      );
+      widgets.add(
+        CustomTooltip(
+          message: "Cancel",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.clear),
+            onTap: () {
+              setState(() {
+                for (int i = 0; i < _isSelected.length; i++) {
+                  _isSelected[i] = false;
+                }
+                _isSelectionMode = false;
+              });
+            },
+          ),
+        ),
+      );
+    } else if (Provider.of<ConnectionModel>(context).isPasteMode) {
+      widgets.add(
+        CustomTooltip(
+          message: "Paste",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.saveAlt),
+            onTap: () async {
+              for (int i = 0; i < model.savedFileInfos.length; i++) {
+                String cmd;
+                if (model.isCopyMode) {
+                  cmd = SettingsVariables.copyCommand;
+                  if (model.savedFileInfos[i].isDirectory &&
+                      SettingsVariables.copyCommandAppend) {
+                    cmd += " -r";
+                  }
+                } else {
+                  cmd = SettingsVariables.moveCommand;
+                  if (model.savedFileInfos[i].isDirectory &&
+                      SettingsVariables.moveCommandAppend) {
+                    cmd += " -r";
+                  }
+                }
+                String toPath = widget.connection.path + "/";
+                if (model.isCopyMode) toPath += model.savedFileInfos[i].name;
+                await model.client.execute(
+                    cmd + " " + model.savedFilePaths[i] + " " + toPath);
+              }
+
+              model.isPasteMode = false;
+              await ConnectionMethods.refresh(context, widget.connection);
+            },
+          ),
+        ),
+      );
+      widgets.add(
+        FloatingActionRowDivider(),
+      );
+      widgets.add(
+        CustomTooltip(
+          message: "Cancel",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.clear),
+            onTap: () {
+              setState(() {
+                model.isPasteMode = false;
+              });
+            },
+          ),
+        ),
+      );
+    } else {
+      widgets.add(
+        CustomTooltip(
+          message: "Create folder",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.createNewFolder),
+            onTap: () async {
+              customShowDialog(
+                context: context,
+                builder: (context) {
+                  return CustomAlertDialog(
+                    title: Text("Create Folder"),
+                    content: TextField(
+                      decoration: InputDecoration(
+                        labelText: "Name",
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).accentColor,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      cursorColor: Theme.of(context).accentColor,
+                      autofocus: true,
+                      autocorrect: false,
+                      onSubmitted: (String value) async {
+                        await Provider.of<ConnectionModel>(context)
+                            .client
+                            .sftpMkdir(
+                              widget.connection.path + "/" + value,
+                            );
+                        Navigator.pop(context);
+                        ConnectionMethods.refresh(
+                          context,
+                          widget.connection,
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      );
+      widgets.add(
+        FloatingActionRowDivider(),
+      );
+      widgets.add(
+        CustomTooltip(
+          message: "Upload file",
+          child: FloatingActionRowButton(
+            icon: Icon(OMIcons.publish),
+            onTap: () async {
+              await LoadFile.upload(context, widget);
+            },
+          ),
+        ),
+      );
+    }
+
+    return FloatingActionRow(
+      heroTag: "fab",
+      color: Theme.of(context).accentColor,
+      children: widgets,
+    );
+  }
+
+  var _searchController = TextEditingController();
+  var _searchFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: widget.scaffoldKey,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(48),
-        child: AppBar(
-          backgroundColor: Theme.of(context).bottomAppBarColor,
-          elevation: 1.6,
-          automaticallyImplyLeading: false,
-          title: SingleChildScrollView(
-            reverse: true,
-            scrollDirection: Axis.horizontal,
-            physics: BouncingScrollPhysics(),
+        preferredSize: Size.fromHeight(100),
+        child: Container(
+          child: SafeArea(
             child: Container(
-              margin: EdgeInsets.only(right: 10.0),
-              child: Row(
-                children: _getCurrentPathWidgets(),
+              margin: EdgeInsets.only(left: 12, top: 12, right: 12),
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              height: 50,
+              decoration: BoxDecoration(
+                color: Theme.of(context).bottomAppBarColor,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 1.4,
+                    offset: Offset(0, .3),
+                  ),
+                ],
               ),
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(48),
-            child: Visibility(
-              visible: _showSearch,
-              child: SizedBox(
-                height: 48,
-                child: TextField(
-                  controller: _searchController,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    icon: Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: CustomIconButton(
-                        icon: Icon(
-                          Icons.clear,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      CustomIconButton(
+                        icon: Icon(_searchFocusNode.hasFocus
+                            ? Icons.clear
+                            : Icons.arrow_back),
                         onPressed: () {
-                          setState(() {
-                            _showSearch = false;
+                          if (_searchFocusNode.hasFocus) {
                             _searchController.clear();
                             widget.visibleFileInfos =
                                 List.from(widget.fileInfos);
-                          });
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            setState(() {});
+                          } else {
+                            Navigator.pop(context);
+                          }
                         },
                       ),
-                    ),
-                    hintText: "Search",
-                    border: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                  onChanged: (String value) {
-                    if (value.isEmpty) {
-                      widget.visibleFileInfos = List.from(widget.fileInfos);
-                    } else {
-                      widget.visibleFileInfos = [];
-                      widget.fileInfos.forEach((v) {
-                        if (v.name
-                            .toLowerCase()
-                            .contains(value.toLowerCase())) {
-                          widget.visibleFileInfos.add(v);
-                        }
-                      });
-                    }
-                    setState(() {});
-                  },
-                ),
+                      SizedBox(
+                        width: constraints.maxWidth - 3 * 44,
+                        child: TextField(
+                          controller: _searchController,
+                          focusNode: _searchFocusNode,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            focusColor: Theme.of(context).accentColor,
+                            hintText: "Search",
+                          ),
+                          onChanged: (String value) {
+                            if (value.isEmpty) {
+                              widget.visibleFileInfos =
+                                  List.from(widget.fileInfos);
+                            } else {
+                              widget.visibleFileInfos = [];
+                              widget.fileInfos.forEach((v) {
+                                if (v.name
+                                    .toLowerCase()
+                                    .contains(value.toLowerCase())) {
+                                  widget.visibleFileInfos.add(v);
+                                }
+                              });
+                            }
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                      CustomTooltip(
+                        message: "Connection",
+                        child: CustomIconButton(
+                          icon: Icon(Icons.info_outline),
+                          onPressed: () {
+                            ConnectionDialog(
+                              context: context,
+                              connection: widget.connection,
+                              isConnectionPage: true,
+                              primaryButtonIconData:
+                                  Icons.remove_circle_outline,
+                              primaryButtonLabel: "Disconnect",
+                              primaryButtonOnPressed: () {
+                                var model =
+                                    Provider.of<ConnectionModel>(context);
+                                model.client.disconnectSFTP();
+                                model.client.disconnect();
+                                Navigator.popUntil(
+                                    context, ModalRoute.withName('/'));
+                              },
+                            ).show();
+                          },
+                        ),
+                      ),
+                      CustomTooltip(
+                        message: "Settings",
+                        child: CustomIconButton(
+                          icon: Icon(OMIcons.settings),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => SettingsPage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, .08),
-              blurRadius: 4.0,
-              offset: Offset(.0, 2.0),
-            )
-          ],
-        ),
-        child: Consumer<ConnectionModel>(builder: (context, model, child) {
-          return Theme(
-            data: Theme.of(context).copyWith(
-              bottomAppBarColor: _isSelectionMode || model.isPasteMode
-                  ? Theme.of(context).accentColor
-                  : Theme.of(context).bottomAppBarColor,
-              iconTheme: IconThemeData(
-                color: _isSelectionMode || model.isPasteMode
-                    ? Theme.of(context).accentIconTheme.color
-                    : Theme.of(context).primaryIconTheme.color,
-              ),
-            ),
-            child: ConnectionBottomAppBar(
-              currentConnectionPage: widget,
-              isPasteMode: model.isPasteMode,
-              isCopyMode: model.isCopyMode,
-              copy: () {
-                _isSelectionMode = false;
-                model.isPasteMode = true;
-                model.isCopyMode = true;
-                model.savedFilePaths = [];
-                model.savedFileInfos = [];
-                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
-                  if (_isSelected[i]) {
-                    model.savedFilePaths.add(widget.connection.path +
-                        "/" +
-                        widget.visibleFileInfos[i].name);
-                    model.savedFileInfos.add(widget.visibleFileInfos[i]);
-                  }
-                }
-                _isSelected = [];
-                setState(() {});
-              },
-              move: () {
-                _isSelectionMode = false;
-                model.isPasteMode = true;
-                model.isCopyMode = false;
-                model.savedFilePaths = [];
-                model.savedFileInfos = [];
-                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
-                  if (_isSelected[i]) {
-                    model.savedFilePaths.add(widget.connection.path +
-                        "/" +
-                        widget.visibleFileInfos[i].name);
-                    model.savedFileInfos.add(widget.visibleFileInfos[i]);
-                  }
-                }
-                _isSelected = [];
-                setState(() {});
-              },
-              paste: () async {
-                for (int i = 0; i < model.savedFileInfos.length; i++) {
-                  String cmd;
-                  if (model.isCopyMode) {
-                    cmd = SettingsVariables.copyCommand;
-                    if (model.savedFileInfos[i].isDirectory &&
-                        SettingsVariables.copyCommandAppend) {
-                      cmd += " -r";
-                    }
-                  } else {
-                    cmd = SettingsVariables.moveCommand;
-                    if (model.savedFileInfos[i].isDirectory &&
-                        SettingsVariables.moveCommandAppend) {
-                      cmd += " -r";
-                    }
-                  }
-                  String toPath = widget.connection.path + "/";
-                  if (model.isCopyMode) toPath += model.savedFileInfos[i].name;
-                  await model.client.execute(
-                      cmd + " " + model.savedFilePaths[i] + " " + toPath);
-                }
-
-                model.isPasteMode = false;
-                await ConnectionMethods.refresh(context, widget.connection);
-              },
-              cancelPasteMode: () {
-                setState(() {
-                  model.isPasteMode = false;
-                });
-              },
-              isSelectionMode: _isSelectionMode,
-              cancelSelection: () {
-                setState(() {
-                  for (int i = 0; i < _isSelected.length; i++) {
-                    _isSelected[i] = false;
-                  }
-                  _isSelectionMode = false;
-                });
-              },
-              deleteSelectedFiles: () {
-                List<String> filePaths = [];
-                List<bool> isDirectory = [];
-                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
-                  if (_isSelected[i]) {
-                    filePaths.add(widget.connection.path +
-                        "/" +
-                        widget.visibleFileInfos[i].name);
-                    isDirectory.add(widget.visibleFileInfos[i].isDirectory);
-                  }
-                }
-                ConnectionMethods.showDeleteConfirmDialog(
-                  context: context,
-                  filePaths: filePaths,
-                  isDirectory: isDirectory,
-                  currentConnection: widget.connection,
-                  calledFromFileBottomSheet: false,
-                );
-              },
-              searchOnTap: () {
-                setState(() {
-                  _showSearch = !_showSearch;
-                  _searchController.clear();
-                  widget.visibleFileInfos = List.from(widget.fileInfos);
-                });
-              },
-              downloadIsEnabled: _selectedItemsAreFiles,
-              download: () async {
-                List<String> filenames = [];
-                for (int i = 0; i < widget.visibleFileInfos.length; i++) {
-                  if (_isSelected[i]) {
-                    filenames.add(widget.visibleFileInfos[i].name);
-                  }
-                }
-                void download(int i) {
-                  if (i >= filenames.length - 1) {
-                    LoadFile.download(
-                      context,
-                      widget.connection.path + "/" + filenames[i],
-                      widget,
-                      ignoreExistingFiles: true,
-                    );
-                  } else {
-                    LoadFile.download(
-                      context,
-                      widget.connection.path + "/" + filenames[i],
-                      widget,
-                      ignoreExistingFiles: true,
-                    ).then((_) {
-                      download(i + 1);
-                    });
-                  }
-                }
-
-                bool filenameExists = await LoadFile.filenameExistsIn(
-                  directory: await SettingsVariables.getDownloadDirectory(),
-                  filenames: filenames,
-                );
-
-                if (filenameExists) {
-                  customShowDialog(
-                      context: context,
-                      builder: (context) {
-                        return CustomAlertDialog(
-                          title: Text(
-                            "There are already files with the same name. " +
-                                "Replace files?",
-                            style: TextStyle(fontFamily: "GoogleSans"),
-                          ),
-                          actions: <Widget>[
-                            FlatButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              padding: EdgeInsets.only(
-                                top: 8.5,
-                                bottom: 8.0,
-                                left: 14.0,
-                                right: 14.0,
-                              ),
-                              child: Text("Cancel"),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            RaisedButton(
-                              color: Theme.of(context).accentColor,
-                              splashColor: Colors.black12,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.0),
-                              ),
-                              padding: EdgeInsets.only(
-                                top: 8.5,
-                                bottom: 8.0,
-                                left: 14.0,
-                                right: 14.0,
-                              ),
-                              child: Text(
-                                "OK",
-                                style: TextStyle(
-                                  color: Provider.of<CustomTheme>(context)
-                                          .isLightTheme(context)
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                              ),
-                              elevation: .0,
-                              onPressed: () {
-                                download(0);
-                                Navigator.pop(context);
-                              },
-                            ),
-                            SizedBox(width: .0),
-                          ],
-                        );
-                      });
-                } else {
-                  download(0);
-                }
-              },
-            ),
-          );
-        }),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: _isSelectionMode ||
-              Provider.of<ConnectionModel>(context).isPasteMode
-          ? Container()
-          : Consumer<ConnectionModel>(
-              builder: (context, model, child) {
-                return SpeedDial(
-                  overlayColor:
-                      Provider.of<CustomTheme>(context).isLightTheme(context)
-                          ? Color.fromRGBO(255, 255, 255, .2)
-                          : Color.fromRGBO(18, 18, 18, .2),
-                  heroTag: "fab",
-                  child: RotationTransition(
-                    turns: Tween(begin: .0, end: 0.125)
-                        .animate(_rotationController),
-                    child: Icon(Icons.add),
-                  ),
-                  onOpen: () {
-                    _rotationController.forward(from: .0);
-                  },
-                  onClose: () {
-                    _rotationController.animateBack(.0);
-                  },
-                  children: [
-                    SpeedDialChild(
-                      label: "Upload File",
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.body1.color,
-                      ),
-                      labelBackgroundColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.white
-                          : Colors.grey[800],
-                      child: Icon(OMIcons.publish),
-                      backgroundColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.white
-                          : Colors.grey[800],
-                      foregroundColor: Theme.of(context).accentColor,
-                      elevation: 3.0,
-                      onTap: () async {
-                        await LoadFile.upload(context, widget);
-                      },
-                    ),
-                    SpeedDialChild(
-                      label: "Create Folder",
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.body1.color,
-                      ),
-                      labelBackgroundColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.white
-                          : Colors.grey[800],
-                      child: Icon(OMIcons.createNewFolder),
-                      backgroundColor: Provider.of<CustomTheme>(context)
-                              .isLightTheme(context)
-                          ? Colors.white
-                          : Colors.grey[800],
-                      foregroundColor: Theme.of(context).accentColor,
-                      elevation: 3.0,
-                      onTap: () async {
-                        customShowDialog(
-                          context: context,
-                          builder: (context) {
-                            return CustomAlertDialog(
-                              title: Text("Create Folder"),
-                              content: TextField(
-                                decoration: InputDecoration(
-                                  labelText: "Name",
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Theme.of(context).accentColor,
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                ),
-                                cursorColor: Theme.of(context).accentColor,
-                                autofocus: true,
-                                autocorrect: false,
-                                onSubmitted: (String value) async {
-                                  await model.client.sftpMkdir(
-                                    widget.connection.path + "/" + value,
-                                  );
-                                  Navigator.pop(context);
-                                  ConnectionMethods.refresh(
-                                    context,
-                                    widget.connection,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
+      floatingActionButton: _buildFloatingActionRow(),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: SafeArea(
@@ -646,24 +729,60 @@ class _ConnectionPageState extends State<ConnectionPage>
                           child: CircularProgressIndicator(),
                         ),
                       )
-                    : SettingsVariables.view == "list" ||
-                            SettingsVariables.view == "detailed"
-                        ? Scrollbar(
-                            child: ListView(
-                              children:
-                                  _getItemList(model, addBottomSpace: true),
-                            ),
-                          )
-                        : Scrollbar(
-                            child: GridView(
-                              padding: EdgeInsets.all(3),
-                              gridDelegate:
-                                  SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 160,
+                    : Scrollbar(
+                        child: CustomScrollView(
+                          physics: BouncingScrollPhysics(),
+                          slivers: <Widget>[
+                            SliverAppBar(
+                              floating: true,
+                              snap: true,
+                              elevation: 2,
+                              automaticallyImplyLeading: false,
+                              titleSpacing: 6,
+                              title: SingleChildScrollView(
+                                reverse: true,
+                                scrollDirection: Axis.horizontal,
+                                physics: BouncingScrollPhysics(),
+                                child: Container(
+                                  margin: EdgeInsets.only(right: 10.0),
+                                  child: Row(
+                                    children: _getCurrentPathWidgets(),
+                                  ),
+                                ),
                               ),
-                              children: _getItemList(model),
+                              bottom: PreferredSize(
+                                preferredSize: Size.fromHeight(
+                                    _searchController.text != "" ? 42 : 1),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    _searchController.text != ""
+                                        ? _buildGoToDirectoryWidget()
+                                        : Container(),
+                                    Container(
+                                      height: 1,
+                                      color: Theme.of(context).dividerColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                            (SettingsVariables.view == "list" ||
+                                    SettingsVariables.view == "detailed"
+                                ? SliverList(
+                                    delegate: SliverChildListDelegate(
+                                      _getItemList(model, addBottomSpace: true),
+                                    ),
+                                  )
+                                : SliverGrid.extent(
+                                    maxCrossAxisExtent: 160,
+                                    children: _getItemList(model),
+                                  )),
+                          ],
+                        ),
+                      ),
               );
             },
           ),
