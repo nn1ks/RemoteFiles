@@ -1,6 +1,7 @@
 import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -431,7 +432,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         CustomTooltip(
           message: "Move to",
           child: FloatingActionRowButton(
-            icon: Icon(OMIcons.keyboardTab),
+            icon: Icon(MdiIcons.fileSwapOutline),
             onTap: () {
               _isSelectionMode = false;
               model.isPasteMode = true;
@@ -663,6 +664,9 @@ class _ConnectionPageState extends State<ConnectionPage>
                             }
                             setState(() {});
                           },
+                          onTap: () {
+                            setState(() {});
+                          }
                         ),
                       ),
                       CustomTooltip(
