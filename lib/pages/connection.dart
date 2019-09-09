@@ -631,8 +631,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                         onPressed: () {
                           if (_searchFocusNode.hasFocus) {
                             _searchController.clear();
-                            widget.visibleFileInfos =
-                                List.from(widget.fileInfos);
+                            if (widget.fileInfos != null) {
+                              widget.visibleFileInfos =
+                                  List.from(widget.fileInfos);
+                            }
                             FocusScope.of(context).requestFocus(FocusNode());
                             setState(() {});
                           } else {
