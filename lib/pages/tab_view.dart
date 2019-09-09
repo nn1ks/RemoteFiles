@@ -215,14 +215,23 @@ class _TabViewPageState extends State<TabViewPage> {
                         ).show();
                       },
                     ),
-                    onTap: () {
+                    onTap: () async {
                       Provider.of<ConnectionModel>(context).isPasteMode = false;
                       Provider.of<ConnectionModel>(context).isCopyMode = false;
-                      ConnectionMethods.connect(
+                      bool connected = await ConnectionMethods.connect(
                         context,
                         widget.connections[index],
                         callConnectClient: true,
                       );
+                      if (!connected) {
+                        Navigator.popUntil(context, ModalRoute.withName('/'));
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 8),
+                            content: Text("Failed to connect"),
+                          ),
+                        );
+                      }
                     },
                   )
                 : Container(),

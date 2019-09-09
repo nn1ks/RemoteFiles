@@ -34,7 +34,7 @@ class ConnectionMethods {
     }
   }
 
-  static Future<void> connectIndividually(
+  static Future<bool> connectIndividually(
     BuildContext context, {
     @required String address,
     String port,
@@ -78,12 +78,19 @@ class ConnectionMethods {
         port: int.parse(port),
         username: username,
         passwordOrKey: passwordOrKey,
-      );
+      ).then((bool connected) {
+        if (!connected) return false;
+      });
     }
 
     if (path.length == 0 || path[0] != "/") {
-      await model.client.execute("cd");
-      path = await model.client.execute("pwd");
+      try {
+        await model.client.execute("cd");
+        path = await model.client.execute("pwd");
+      } catch (e) {
+        print(e);
+        return false;
+      }
       path = path.substring(0, path.length - (Platform.isIOS ? 1 : 2));
       connectionPage.connection.path = path;
     }
@@ -140,16 +147,17 @@ class ConnectionMethods {
     loadingDone = true;
     model.isLoading = false;
     connectionPage.sortFileInfos();
+    return true;
   }
 
-  static Future<void> connect(
+  static Future<bool> connect(
     BuildContext context,
     Connection connection, {
     bool setIsLoading = true,
     bool closePageBefore = false,
     bool callConnectClient = false,
   }) async {
-    await connectIndividually(
+    return await connectIndividually(
       context,
       address: connection.address,
       port: connection.port,
