@@ -664,9 +664,8 @@ class _ConnectionPageState extends State<ConnectionPage>
                             }
                             setState(() {});
                           },
-                          onTap: () {
-                            setState(() {});
-                          }
+                          onTap: () => setState(() {}),
+                          onSubmitted: (String value) => setState(() {}),
                         ),
                       ),
                       CustomTooltip(
@@ -718,7 +717,10 @@ class _ConnectionPageState extends State<ConnectionPage>
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: _buildFloatingActionRow(),
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+          setState(() {});
+        },
         child: SafeArea(
           child: Consumer<ConnectionModel>(
             builder: (context, model, child) {
