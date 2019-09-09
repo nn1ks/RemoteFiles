@@ -244,6 +244,9 @@ class _ConnectionPageState extends State<ConnectionPage>
           child: Text(
             'Go to directory "' + _searchController.text + '"',
             style: TextStyle(fontSize: 16),
+            maxLines: 1,
+            overflow: TextOverflow.fade,
+            softWrap: false,
           ),
         ),
         onTap: () {
