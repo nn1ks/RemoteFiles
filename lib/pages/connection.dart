@@ -688,8 +688,10 @@ class _ConnectionPageState extends State<ConnectionPage>
                               primaryButtonOnPressed: () {
                                 var model =
                                     Provider.of<ConnectionModel>(context);
-                                model.client.disconnectSFTP();
-                                model.client.disconnect();
+                                if (!model.isLoading) {
+                                  model.client.disconnectSFTP();
+                                  model.client.disconnect();
+                                }
                                 Navigator.popUntil(
                                     context, ModalRoute.withName('/'));
                               },
