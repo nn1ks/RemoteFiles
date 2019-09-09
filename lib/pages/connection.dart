@@ -235,7 +235,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         borderRadius: BorderRadius.circular(16),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(15),
         child: Padding(
           padding: EdgeInsets.symmetric(
             vertical: 6,
