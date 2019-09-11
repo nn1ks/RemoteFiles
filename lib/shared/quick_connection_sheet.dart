@@ -227,8 +227,8 @@ class QuickConnectionSheet extends StatelessWidget {
                                 ),
                               ),
                             );
-                            HomePage.recentlyAddedPage.addToJson(_connection);
-                            HomePage.recentlyAddedPage.setConnectionsFromJson();
+                            HomePage.recentlyAddedPage
+                                .insertConnection(0, _connection);
                             Navigator.pop(context);
                             ConnectionMethods.connectClient(
                               context,

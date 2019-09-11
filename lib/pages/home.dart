@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hive/hive.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'pages.dart';
@@ -10,9 +14,8 @@ import '../services/services.dart';
 import '../shared/shared.dart';
 
 class HomePage extends StatefulWidget {
-  static TabViewPage favoritesPage = TabViewPage("favorites.json", true);
-  static TabViewPage recentlyAddedPage =
-      TabViewPage("recently_added.json", false);
+  static TabViewPage favoritesPage = TabViewPage("favorites", true);
+  static TabViewPage recentlyAddedPage = TabViewPage("recentlyAdded", false);
 
   static var scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -29,6 +32,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+    (Platform.isIOS
+            ? getApplicationSupportDirectory()
+            : getApplicationDocumentsDirectory())
+        .then((Directory dir) {
+      Hive.init(dir.path);
+      Hive.registerAdapter(ConnectionAdapter(), 0);
+    });
     SettingsVariables.initState();
     super.initState();
   }

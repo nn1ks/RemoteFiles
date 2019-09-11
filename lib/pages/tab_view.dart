@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hive/hive.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'pages.dart';
@@ -12,81 +11,33 @@ import '../services/services.dart';
 import '../shared/shared.dart';
 
 class TabViewPage extends StatefulWidget {
-  final String jsonFileName;
+  final String boxName;
   final bool isFavorites;
 
-  TabViewPage(this.jsonFileName, this.isFavorites);
+  TabViewPage(this.boxName, this.isFavorites);
 
+  Box box;
   List<Connection> connections = [];
 
-  Directory dir;
-  File jsonFile;
-  bool jsonFileExists = false;
-
-  List<Connection> getConnectionsFromJson() {
-    if (!jsonFileExists) return null;
-    List<dynamic> jsonContent = json.decode(jsonFile.readAsStringSync());
-    var jsonContent1 = List<Map<String, dynamic>>.from(jsonContent);
-    var connections = List<Connection>(jsonContent.length);
-    for (int i = 0; i < jsonContent.length; i++) {
-      connections[i] = Connection.fromMap(jsonContent1[i]);
-    }
-    return connections;
+  void insertConnection(int index, Connection connection) {
+    connections.insert(index, connection);
+    box.put(boxName, connections);
   }
 
-  void setConnectionsFromJson() {
-    connections = getConnectionsFromJson();
+  void replaceConnectionAt(int index, Connection connection) {
+    connections.insert(index, connection);
+    connections.removeAt(index + 1);
+    box.put(boxName, connections);
   }
 
-  Future<File> createJsonFile(Connection connection) async {
-    File file = jsonFile;
-    if (jsonFile == null) {
-      dir = await (Platform.isIOS
-          ? getApplicationSupportDirectory()
-          : getApplicationDocumentsDirectory());
-      file = File(dir.path + "/" + jsonFileName);
-    }
-    await file.create();
-    jsonFileExists = true;
-    file.writeAsStringSync(json.encode([connection.toMap()]));
-    return file;
+  void removeConnectionAt(int index) {
+    connections.removeAt(index);
+    box.put(boxName, connections);
   }
 
-  /// insert a new connection at a given index
-  void insertToJson(int index, Connection connection) {
-    if (jsonFileExists && jsonFile.readAsStringSync() != "") {
-      List<Connection> list = [];
-      list.addAll(getConnectionsFromJson());
-      list.insert(index, connection);
-      List<Map<String, String>> mapList = [];
-      list.forEach((v) {
-        mapList.add(v.toMap());
-      });
-      jsonFile.writeAsStringSync(json.encode(mapList));
-    } else {
-      createJsonFile(connection);
-    }
-  }
-
-  /// insert a new connection at index 0
-  void addToJson(Connection connection) {
-    insertToJson(0, connection);
-  }
-
-  /// remove a connection at a given index
-  void removeFromJsonAt(int index) {
-    List<Connection> list = [];
-    list.addAll(getConnectionsFromJson());
-    list.removeAt(index);
-    List<Map<String, String>> mapList = [];
-    list.forEach((v) {
-      mapList.add(v.toMap());
-    });
-    jsonFile.writeAsStringSync(json.encode(mapList));
-  }
-
-  void removeAllFromJson() {
-    jsonFile.writeAsStringSync(json.encode([]));
+  void removeAllConnections() {
+    connections.clear();
+    box.put(boxName, connections);
   }
 
   @override
@@ -196,9 +147,9 @@ class _TabViewPageState extends State<TabViewPage> {
                                 ),
                               );
                             } else {
-                              HomePage.favoritesPage
-                                  .addToJson(widget.connections[index]);
-                              HomePage.favoritesPage.setConnectionsFromJson();
+                              HomePage.favoritesPage.insertConnection(
+                                  0, widget.connections[index]);
+                              setState(() {});
                               Navigator.pop(context);
                             }
                           },
@@ -206,10 +157,8 @@ class _TabViewPageState extends State<TabViewPage> {
                           secondaryButtonIconData: OMIcons.delete,
                           secondaryButtonLabel: "Delete",
                           secondaryButtonOnPressed: () {
-                            widget.removeFromJsonAt(index);
-                            setState(() {
-                              widget.setConnectionsFromJson();
-                            });
+                            widget.removeConnectionAt(index);
+                            setState(() {});
                             Navigator.pop(context);
                           },
                         ).show();
@@ -250,19 +199,13 @@ class _TabViewPageState extends State<TabViewPage> {
 
   @override
   void initState() {
-    (Platform.isIOS
-            ? getApplicationSupportDirectory()
-            : getApplicationDocumentsDirectory())
-        .then((Directory dir) {
-      setState(() {
-        widget.dir = dir;
-        widget.jsonFile = File(widget.dir.path + "/" + widget.jsonFileName);
-        widget.jsonFileExists = widget.jsonFile.existsSync();
-        if (widget.jsonFileExists) {
-          widget.connections = [];
-          widget.connections.addAll(widget.getConnectionsFromJson());
-        }
-      });
+    Hive.openBox("connections").then((box) {
+      widget.box = box;
+      List<dynamic> connectionsTemp = box.get(widget.boxName);
+      if (connectionsTemp != null) {
+        widget.connections = connectionsTemp.cast<Connection>();
+      }
+      setState(() {});
     });
     super.initState();
   }
@@ -332,12 +275,12 @@ class _TabViewPageState extends State<TabViewPage> {
                 : null),
         padding: EdgeInsets.only(top: 10),
         children: _getWidgetList(),
-        onReorder: (int a, int b) {
-          var temp = widget.connections[a];
+        onReorder: (int oldIndex, int newIndex) {
+          var temp = widget.connections[oldIndex];
           setState(() {
-            widget.removeFromJsonAt(a);
-            widget.insertToJson(b - (a > b ? 0 : 1), temp);
-            widget.setConnectionsFromJson();
+            widget.removeConnectionAt(oldIndex);
+            widget.insertConnection(
+                newIndex - (oldIndex > newIndex ? 0 : 1), temp);
           });
         },
       ),

@@ -674,11 +674,9 @@ class _SettingsPageState extends State<SettingsPage>
                             ),
                             elevation: .0,
                             onPressed: () {
-                              HomePage.favoritesPage.removeAllFromJson();
-                              HomePage.favoritesPage.setConnectionsFromJson();
-                              HomePage.recentlyAddedPage.removeAllFromJson();
-                              HomePage.recentlyAddedPage
-                                  .setConnectionsFromJson();
+                              HomePage.favoritesPage.removeAllConnections();
+                              HomePage.recentlyAddedPage.removeAllConnections();
+                              setState(() {});
                               Navigator.pop(context);
                             },
                           ),

@@ -1,9 +1,25 @@
+import 'package:hive/hive.dart';
+
+part 'connection.g.dart';
+
+@HiveType()
 class Connection {
+  @HiveField(0)
   String name;
+
+  @HiveField(1)
   String address;
+
+  @HiveField(2)
   String port;
+
+  @HiveField(3)
   String username;
+
+  @HiveField(4)
   String passwordOrKey;
+
+  @HiveField(5)
   String path;
 
   Connection({

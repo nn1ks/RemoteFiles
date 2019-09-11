@@ -153,21 +153,16 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
           if (valid) {
             if (widget.isNew) {
               if (_addToFavorites) {
-                HomePage.favoritesPage = HomePage.favoritesPage
-                  ..addToJson(_connection)
-                  ..setConnectionsFromJson();
+                HomePage.favoritesPage.insertConnection(0, _connection);
               }
-              HomePage.recentlyAddedPage = HomePage.recentlyAddedPage
-                ..addToJson(_connection)
-                ..setConnectionsFromJson();
+              HomePage.recentlyAddedPage.insertConnection(0, _connection);
               Navigator.pop(context);
             } else {
-              HomePage.favoritesPage.insertToJson(widget.index, _connection);
-              HomePage.favoritesPage.removeFromJsonAt(widget.index + 1);
-              HomePage.favoritesPage = HomePage.favoritesPage
-                ..setConnectionsFromJson();
+              HomePage.favoritesPage
+                  .replaceConnectionAt(widget.index, _connection);
               Navigator.pop(context);
             }
+            setState(() {});
           }
         },
       ),
