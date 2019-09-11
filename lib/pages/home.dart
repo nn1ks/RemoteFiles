@@ -87,6 +87,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   icon: Icon(Icons.clear),
                                   onPressed: () {
                                     _searchController.clear();
+                                    Provider.of<HomeModel>(context)
+                                        .searchQuery = "";
                                     _isSearchMode = false;
                                     setState(() {});
                                   })
