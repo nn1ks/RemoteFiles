@@ -72,15 +72,14 @@ class ConnectionMethods {
     });
 
     if (callConnectClient) {
-      await connectClient(
+      bool connected = await connectClient(
         context,
         address: address,
         port: int.parse(port),
         username: username,
         passwordOrKey: passwordOrKey,
-      ).then((bool connected) {
-        if (!connected) return false;
-      });
+      );
+      if (!connected) return false;
     }
 
     if (path.length == 0 || path[0] != "/") {
