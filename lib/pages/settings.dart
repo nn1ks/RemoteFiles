@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart';
 import 'pages.dart';
 import '../services/services.dart';
 import '../shared/shared.dart';
@@ -695,7 +694,7 @@ class _SettingsPageState extends State<SettingsPage>
                       context,
                       CupertinoPageRoute(builder: (context) => AboutPage()),
                     );
-                  }
+                  },
                 ),
                 SizedBox(height: 26),
               ],

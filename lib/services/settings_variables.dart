@@ -1,109 +1,88 @@
 import 'dart:io';
 
+import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../pages/pages.dart';
 
 class SettingsVariables {
-  static SharedPreferences prefs;
-  static Future<void> setSharedPreferences() async {
-    prefs = await SharedPreferences.getInstance();
+  static Box box;
+  static Future<Box> initHive() async {
+    Directory dir = Platform.isIOS
+        ? await getApplicationSupportDirectory()
+        : await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
+    return Hive.openBox("settings");
   }
 
   static Directory downloadDirectory;
-  static Future<Directory> getDownloadDirectory() async {
-    Directory dirDefault;
-    if (!Platform.isIOS) {
-      dirDefault = await getExternalStorageDirectory();
-      dirDefault = Directory(dirDefault.path + "/RemoteFiles");
+  static Future<Directory> getDefaultDownloadDirectory() async {
+    if (Platform.isAndroid) {
+      Directory dir = await getExternalStorageDirectory();
+      return Directory(dir.path + "/RemoteFiles");
     } else {
       return getApplicationDocumentsDirectory();
     }
-    Directory dirPrefs;
-    if (prefs != null) {
-      if (prefs.getString("downloadDirectoryPath") != null) {
-        dirPrefs = Directory(prefs.getString("downloadDirectoryPath"));
-      }
-    }
-    if (dirPrefs != null) return dirPrefs;
-    return dirDefault;
+  }
+
+  static Future<Directory> getDownloadDirectory() async {
+    return box.get("downloadDirectoryPath") ?? getDefaultDownloadDirectory();
   }
 
   static Future<void> setDownloadDirectory(String path) async {
     downloadDirectory = Directory(path);
-    await prefs.setString("downloadDirectoryPath", path);
+    await box.put("downloadDirectoryPath", path);
   }
 
   static Future<Directory> setDownloadDirectoryToDefault() async {
-    if (!Platform.isIOS) {
-      downloadDirectory = await getExternalStorageDirectory();
-      downloadDirectory = Directory(downloadDirectory.path + "/RemoteFiles");
-    }
-    setDownloadDirectory(downloadDirectory.path);
-    return downloadDirectory;
+    Directory dir = await getDefaultDownloadDirectory();
+    setDownloadDirectory(dir.path);
+    return dir;
   }
 
   static String view = "list";
   static String getView() {
-    String viewPrefs;
-    if (prefs != null) viewPrefs = prefs.getString("view");
-    if (viewPrefs != null) return viewPrefs;
-    return view;
+    return box.get("view") ?? view;
   }
 
   static Future<void> setView(String value) async {
     view = value;
-    await prefs.setString("view", value);
+    await box.put("view", value);
   }
 
   static String sort = "name";
   static String getSort() {
-    String sortPrefs;
-    if (prefs != null) sortPrefs = prefs.getString("sort");
-    if (sortPrefs != null) return sortPrefs;
-    return sort;
+    return box.get("sort") ?? sort;
   }
 
   static Future<void> setSort(String value) async {
     sort = value;
-    await prefs.setString("sort", value);
+    await box.put("sort", value);
   }
 
   static bool sortIsDescending = true;
   static bool getSortIsDescending() {
-    bool sortIsDescendingPrefs;
-    if (prefs != null) {
-      sortIsDescendingPrefs = prefs.getBool("sortIsDescending");
-    }
-    if (sortIsDescendingPrefs != null) return sortIsDescendingPrefs;
-    return sortIsDescending;
+    return box.get("sortIsDescending") ?? sortIsDescending;
   }
 
   static Future<void> setSortIsDescending(bool value) async {
     sortIsDescending = value;
-    await prefs.setBool("sortIsDescending", value);
+    await box.put("sortIsDescending", value);
   }
 
   static bool showHiddenFiles = true;
   static bool getShowHiddenFiles() {
-    bool showHiddenFilesPrefs;
-    if (prefs != null) showHiddenFilesPrefs = prefs.getBool("showHiddenFiles");
-    if (showHiddenFilesPrefs != null) return showHiddenFilesPrefs;
-    return showHiddenFiles;
+    return box.get("showHiddenFiles") ?? showHiddenFiles;
   }
 
   static Future<void> setShowHiddenFiles(bool value) async {
     showHiddenFiles = value;
-    await prefs.setBool("showHiddenFiles", value);
+    await box.put("showHiddenFiles", value);
   }
 
   static String filesizeUnit = "automatic";
   static String getFilesizeUnit() {
-    String filesizeUnitPrefs;
-    if (prefs != null) filesizeUnitPrefs = prefs.getString("filesizeUnit");
-    if (filesizeUnitPrefs != null) return filesizeUnitPrefs;
-    return filesizeUnit;
+    return box.get("filesizeUnit") ?? filesizeUnit;
   }
 
   /// can be 'B', 'KB', 'MB', 'GB' and 'automatic'.
@@ -112,7 +91,7 @@ class SettingsVariables {
     ConnectionPage currentConnectionPage,
   ) async {
     filesizeUnit = value;
-    await prefs.setString("filesizeUnit", value);
+    await box.put("filesizeUnit", value);
 
     int unitDivisor;
     switch (value) {
@@ -159,15 +138,12 @@ class SettingsVariables {
 
   static String moveCommand = "mv";
   static String getMoveCommand() {
-    String moveCommandPrefs;
-    if (prefs != null) moveCommandPrefs = prefs.getString("moveCommand");
-    if (moveCommandPrefs != null) return moveCommandPrefs;
-    return moveCommand;
+    return box.get("moveCommand") ?? moveCommand;
   }
 
   static Future<void> setMoveCommand(String value) async {
     moveCommand = value;
-    await prefs.setString("moveCommand", value);
+    await box.put("moveCommand", value);
   }
 
   static Future<String> setMoveCommandToDefault() async {
@@ -177,29 +153,22 @@ class SettingsVariables {
 
   static bool moveCommandAppend = false;
   static bool getMoveCommandAppend() {
-    bool moveCommandAppendPrefs;
-    if (prefs != null)
-      moveCommandAppendPrefs = prefs.getBool("moveCommandAppend");
-    if (moveCommandAppendPrefs != null) return moveCommandAppendPrefs;
-    return moveCommandAppend;
+    return box.get("moveCommandAppend") ?? moveCommandAppend;
   }
 
   static Future<void> setMoveCommandAppend(bool value) async {
     moveCommandAppend = value;
-    await prefs.setBool("moveCommandAppend", value);
+    await box.put("moveCommandAppend", value);
   }
 
   static String copyCommand = "cp";
   static String getCopyCommand() {
-    String copyCommandPrefs;
-    if (prefs != null) copyCommandPrefs = prefs.getString("copyCommand");
-    if (copyCommandPrefs != null) return copyCommandPrefs;
-    return copyCommand;
+    return box.get("copyCommand") ?? copyCommand;
   }
 
   static Future<void> setCopyCommand(String value) async {
     copyCommand = value;
-    await prefs.setString("copyCommand", value);
+    await box.put("copyCommand", value);
   }
 
   static Future<String> setCopyCommandToDefault() async {
@@ -209,20 +178,17 @@ class SettingsVariables {
 
   static bool copyCommandAppend = true;
   static bool getCopyCommandAppend() {
-    bool copyCommandAppendPrefs;
-    if (prefs != null)
-      copyCommandAppendPrefs = prefs.getBool("copyCommandAppend");
-    if (copyCommandAppendPrefs != null) return copyCommandAppendPrefs;
-    return copyCommandAppend;
+    return box.get("copyCommandAppend") ?? copyCommandAppend;
   }
 
   static Future<void> setCopyCommandAppend(bool value) async {
     copyCommandAppend = value;
-    await prefs.setBool("copyCommandAppend", value);
+    await box.put("copyCommandAppend", value);
   }
 
   static initState() {
-    setSharedPreferences().then((_) {
+    initHive().then((box) {
+      SettingsVariables.box = box;
       getDownloadDirectory().then((Directory dir) => downloadDirectory = dir);
       view = getView();
       sort = getSort();
