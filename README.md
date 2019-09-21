@@ -23,9 +23,9 @@
 The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
 
 #### Connection data
-The connections are saved in two JSON files (favorites.json & recentlyAdded.json).<br/>
-On Android the files are located in the ApplicationDocumentsDirectory.<br/>
-On iOS the files are located in the ApplicationSupportDirectory.
+The connections are saved with the [hive](https://pub.dev/packages/hive) package and are encrypted using the [EncryptedBox](https://hivedb.github.io/hive/#/encrypted_box). The encryption key is stored using the [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) package.<br/>
+On Android the data is stored in the ApplicationDocumentsDirectory.<br/>
+On iOS the data is stored in the ApplicationSupportDirectory.
 
 #### Downloaded files
 On Android the downloaded files are saved to external storage. The location can be changed on Android in the settings.<br/>
@@ -41,6 +41,7 @@ To save files to external storage, the `WRITE_EXTERNAL_STORAGE` permission is ne
 User data is tracked with the [firebase_analytics](https://pub.dev/packages/firebase_analytics) package.
 
 #### Get latest available version
+When you go to the Settings page and then click on 'About RemoteFiles' at the bottom you can check if you have the latest available version.<br/>
 The releases on GitHub are received with the GitHub API and the [http](https://pub.dev/packages/http) package in the JSON format. To get the latest version the releases are compared with the `published_at` key. Then the version numbers of the latest available version and the currently used version are compared. The version number of the latest available version is determined by the `tag_name`. The version number of the currently used version is determined by the pubspec.yaml file. To get this version number the [package_info](https://pub.dev/packages/package_info) package is used.
 
 ## Screenshots
