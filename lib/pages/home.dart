@@ -29,6 +29,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   TabController _tabController;
 
+  bool _initIsDone = false;
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
@@ -40,20 +42,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       Hive.registerAdapter(ConnectionAdapter(), 0);
       Hive.openBox("connections").then((box) {
         setState(() {
-          HomePage.favoritesPage.box = box;
-          HomePage.recentlyAddedPage.box = box;
-          List<dynamic> connectionsTemp1 =
-              box.get(HomePage.favoritesPage.boxName);
-          if (connectionsTemp1 != null) {
-            HomePage.favoritesPage.connections =
-                connectionsTemp1.cast<Connection>();
-          }
-          List<dynamic> connectionsTemp2 =
-              box.get(HomePage.recentlyAddedPage.boxName);
-          if (connectionsTemp2 != null) {
-            HomePage.recentlyAddedPage.connections =
-                connectionsTemp2.cast<Connection>();
-          }
+          HomePage.favoritesPage.init(box);
+          HomePage.recentlyAddedPage.init(box);
+          _initIsDone = true;
         });
       });
     });
@@ -267,8 +258,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         child: TabBarView(
           controller: _tabController,
           children: <Widget>[
-            HomePage.favoritesPage,
-            HomePage.recentlyAddedPage,
+            _initIsDone
+                ? HomePage.favoritesPage
+                : Center(child: CircularProgressIndicator()),
+            _initIsDone
+                ? HomePage.recentlyAddedPage
+                : Center(child: CircularProgressIndicator()),
           ],
         ),
       ),

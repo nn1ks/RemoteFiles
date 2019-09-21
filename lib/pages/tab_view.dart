@@ -17,6 +17,14 @@ class TabViewPage extends StatefulWidget {
   Box box;
   List<Connection> connections = [];
 
+  void init(Box box) {
+    this.box = box;
+    List<dynamic> connectionsTemp = box.get(boxName);
+    if (connectionsTemp != null) {
+      connections = connectionsTemp.cast<Connection>();
+    }
+  }
+
   void insertConnection(int index, Connection connection) {
     connections.insert(index, connection);
     box.put(boxName, connections);
@@ -193,18 +201,6 @@ class _TabViewPageState extends State<TabViewPage> {
     if (widget.connections == null) return false;
     if (widget.connections.length <= 0) return false;
     return true;
-  }
-
-  @override
-  void initState() {
-    Future.delayed(Duration(seconds: 1)).then((_) {
-      try {
-        setState(() {});
-      } catch (e) {
-        print(e);
-      }
-    });
-    super.initState();
   }
 
   @override
