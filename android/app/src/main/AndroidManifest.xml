@@ -9,7 +9,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="RemoteFiles"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:fullBackupContent="@xml/my_backup_rules">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

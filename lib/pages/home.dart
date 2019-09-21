@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -31,6 +33,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   bool _initIsDone = false;
 
+  final _secureStorage = FlutterSecureStorage();
+
+  Future<List<int>> _getEncryptionKey() async {
+    String encryptionKey = await _secureStorage.read(key: "encryptionKey");
+    if (encryptionKey == null) {
+      encryptionKey = json.encode(Hive.generateSecureKey());
+      _secureStorage.write(
+        key: "encryptionKey",
+        value: encryptionKey,
+      );
+    }
+    return json.decode(encryptionKey).cast<int>();
+  }
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
@@ -40,11 +56,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         .then((Directory dir) {
       Hive.init(dir.path);
       Hive.registerAdapter(ConnectionAdapter(), 0);
-      Hive.openBox("connections").then((box) {
-        setState(() {
-          HomePage.favoritesPage.init(box);
-          HomePage.recentlyAddedPage.init(box);
-          _initIsDone = true;
+      _getEncryptionKey().then((encryptionKey) {
+        Hive.openBox("connections", encryptionKey: encryptionKey).then((box) {
+          setState(() {
+            HomePage.favoritesPage.init(box);
+            HomePage.recentlyAddedPage.init(box);
+            _initIsDone = true;
+          });
         });
       });
     });
