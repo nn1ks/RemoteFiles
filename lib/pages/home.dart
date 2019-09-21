@@ -38,6 +38,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         .then((Directory dir) {
       Hive.init(dir.path);
       Hive.registerAdapter(ConnectionAdapter(), 0);
+      Hive.openBox("connections").then((box) {
+        setState(() {
+          HomePage.favoritesPage.box = box;
+          HomePage.recentlyAddedPage.box = box;
+          List<dynamic> connectionsTemp1 =
+              box.get(HomePage.favoritesPage.boxName);
+          if (connectionsTemp1 != null) {
+            HomePage.favoritesPage.connections =
+                connectionsTemp1.cast<Connection>();
+          }
+          List<dynamic> connectionsTemp2 =
+              box.get(HomePage.recentlyAddedPage.boxName);
+          if (connectionsTemp2 != null) {
+            HomePage.recentlyAddedPage.connections =
+                connectionsTemp2.cast<Connection>();
+          }
+        });
+      });
     });
     SettingsVariables.initState();
     super.initState();

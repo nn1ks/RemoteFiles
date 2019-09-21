@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
@@ -199,13 +197,12 @@ class _TabViewPageState extends State<TabViewPage> {
 
   @override
   void initState() {
-    Hive.openBox("connections").then((box) {
-      widget.box = box;
-      List<dynamic> connectionsTemp = box.get(widget.boxName);
-      if (connectionsTemp != null) {
-        widget.connections = connectionsTemp.cast<Connection>();
+    Future.delayed(Duration(seconds: 1)).then((_) {
+      try {
+        setState(() {});
+      } catch (e) {
+        print(e);
       }
-      setState(() {});
     });
     super.initState();
   }
