@@ -25,18 +25,35 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  ThemeData _getLightTheme(CustomTheme model) {
-    if (model.themeValue == "dark") {
+  bool _automaticThemeIsLight = false;
+
+  Brightness _getStatusBarIconBrightness(CustomTheme themeModel) {
+    themeModel.getThemeValue().then((themeValue) {
+      if (themeValue == "automatic") {
+        return _automaticThemeIsLight ? Brightness.dark : Brightness.light;
+      } else if (themeValue == "light") {
+        return Brightness.dark;
+      } else {
+        return Brightness.light;
+      }
+    });
+    return null;
+  }
+
+  ThemeData _getLightTheme(CustomTheme themeModel) {
+    if (themeModel.themeValue == "dark") {
       return CustomThemes.dark;
-    } else if (model.themeValue == "black") {
+    } else if (themeModel.themeValue == "black") {
       return CustomThemes.black;
     } else {
+      _automaticThemeIsLight = true;
       return CustomThemes.light;
     }
   }
 
   ThemeData _getDarkTheme(CustomTheme themeModel) {
     if (themeModel.themeValue == "light") {
+      _automaticThemeIsLight = true;
       return CustomThemes.light;
     } else if (themeModel.themeValue == "black") {
       return CustomThemes.black;
@@ -50,7 +67,10 @@ class MyAppState extends State<MyApp> {
     var themeModel = Provider.of<CustomTheme>(context);
 
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Color.fromRGBO(0, 0, 0, .26)),
+      SystemUiOverlayStyle(
+        statusBarIconBrightness: _getStatusBarIconBrightness(themeModel),
+        statusBarColor: Colors.transparent,
+      ),
     );
 
     return MaterialApp(

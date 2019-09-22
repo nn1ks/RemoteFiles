@@ -86,6 +86,9 @@ class _AboutPageState extends State<AboutPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        brightness: Provider.of<CustomTheme>(context).isLightTheme(context)
+            ? Brightness.light
+            : Brightness.dark,
         backgroundColor: Theme.of(context).bottomAppBarColor,
         leading: Padding(
           padding: EdgeInsets.all(7),
