@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'shared.dart';
+
 class CustomTheme with ChangeNotifier {
   String _themeValue = "automatic";
 
@@ -56,6 +58,7 @@ class CustomThemes {
     brightness: Brightness.light,
     cursorColor: _lightAccentColor,
     dialogBackgroundColor: Colors.white,
+    highlightColor: Colors.transparent,
     indicatorColor: _lightAccentColor,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
@@ -69,6 +72,7 @@ class CustomThemes {
     primaryColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    splashFactory: CustomInkRipple.splashFactory,
     textSelectionHandleColor: _lightAccentColor,
   );
 
@@ -86,6 +90,7 @@ class CustomThemes {
     brightness: Brightness.dark,
     cursorColor: _darkAccentColor,
     dialogBackgroundColor: Color.fromRGBO(62, 62, 63, 1),
+    highlightColor: Colors.transparent,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
       contentPadding: EdgeInsets.all(14.0),
@@ -98,6 +103,7 @@ class CustomThemes {
     primaryColor: Color.fromRGBO(22, 22, 23, 1),
     scaffoldBackgroundColor: Color.fromRGBO(22, 22, 23, 1),
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    splashFactory: CustomInkRipple.splashFactory,
     textSelectionHandleColor: _darkAccentColor,
   );
 
@@ -114,6 +120,7 @@ class CustomThemes {
     brightness: Brightness.dark,
     cursorColor: _darkAccentColor,
     dialogBackgroundColor: Color.fromRGBO(52, 52, 53, 1),
+    highlightColor: Colors.transparent,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
       contentPadding: EdgeInsets.all(14.0),
@@ -126,6 +133,7 @@ class CustomThemes {
     primaryColor: Color.fromRGBO(0, 0, 0, 1),
     scaffoldBackgroundColor: Color.fromRGBO(0, 0, 0, 1),
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    splashFactory: CustomInkRipple.splashFactory,
     textSelectionHandleColor: _darkAccentColor,
   );
 }
