@@ -23,7 +23,7 @@
 The [ssh](https://pub.dev/packages/ssh) package is used to connect to SFTP, which wraps iOS library [NMSSH](https://github.com/NMSSH/NMSSH) and Android library [JSch](http://www.jcraft.com/jsch/).
 
 #### Connection data
-The connections are saved with the [hive](https://pub.dev/packages/hive) package and are encrypted using the [EncryptedBox](https://hivedb.github.io/hive/#/encrypted_box). The encryption key is stored using the [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) package.<br/>
+The connections are saved with the [hive](https://pub.dev/packages/hive) package and are encrypted using the [EncryptedBox](https://docs.hivedb.dev/advanced/encrypted_box). The encryption key is stored using the [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) package.<br/>
 On Android the data is stored in the ApplicationDocumentsDirectory.<br/>
 On iOS the data is stored in the ApplicationSupportDirectory.
 
