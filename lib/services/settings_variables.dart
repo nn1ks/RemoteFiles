@@ -26,7 +26,8 @@ class SettingsVariables {
   }
 
   static Future<Directory> getDownloadDirectory() async {
-    return box.get("downloadDirectoryPath") ?? getDefaultDownloadDirectory();
+    return Directory(box.get("downloadDirectoryPath")) ??
+        getDefaultDownloadDirectory();
   }
 
   static Future<void> setDownloadDirectory(String path) async {
