@@ -158,8 +158,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   child: Text(
                                     "RemoteFiles",
                                     style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                           _isSearchMode
