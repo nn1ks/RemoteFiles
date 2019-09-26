@@ -46,6 +46,5 @@ The releases on GitHub are received with the GitHub API and the [http](https://p
 
 ## Screenshots
 
-<img src="screenshots/1.png" width="280px"> <img src="screenshots/2.png" width="280px"> <img src="screenshots/3.png" width="280px">
-<img src="screenshots/4.png" width="280px"> <img src="screenshots/5.png" width="280px"> <img src="screenshots/6.png" width="280px">
-<img src="screenshots/7.png" width="280px"> <img src="screenshots/8.png" width="280px"> <img src="screenshots/9.png" width="280px">
+<img src="screenshots/1.jpg" width="280px"> <img src="screenshots/2.jpg" width="280px"> <img src="screenshots/3.jpg" width="280px">
+<img src="screenshots/4.jpg" width="280px"> <img src="screenshots/5.jpg" width="280px"> <img src="screenshots/6.jpg" width="280px">
