@@ -27,25 +27,61 @@
   <header class="page-header" role="banner">
     <img class="app-icon" src="https://github.com/niklas-8/RemoteFiles/blob/master/assets/app_icon_bg.png?raw=true">
     <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-    <h2 class="project-tagline first">The modern SFTP client for Android and iOS</h2>
+    <h2 class="project-tagline first">A open source SFTP client for Android and iOS</h2>
     <h2 class="project-tagline">Version 0.0.7 [Beta]</h2>
     {% if site.github.is_project_page %}
     <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>
     {% endif %}
     {% if site.show_downloads %}
     <a href="https://github.com/niklas-8/RemoteFiles/releases/download/v0.0.7-beta/remotefiles-v0.0.7-beta.apk"
-      class="btn">Download .apk</a>
+      class="btn">Download APK file</a>
     <a class="btn not-available">Google PlayStore (not yet available)</a>
     {% endif %}
   </header>
 
   <main id="content" class="main-content" role="main">
     <div class="info-container">
-      <h2>Free, open source, in active development.</h2>
-      <p>Written with <a href="https://flutter.dev">Flutter</a> in the <a href="https://dart.dev">Dart</a> programming
-        language, RemoteFiles is free and open-sourced under the GNU
-        General Public License v3.0. Please feel free to contribute it by opening an issue, sending a feature
-        request or a bug report on GitHub.</p>
+      <h2>About</h2>
+      <p>RemoteFiles is a SFTP client that was developed with <a href="https://flutter.dev">Flutter</a> in the <a
+          href="https://dart.dev">Dart</a> Programming language and the UI is based on
+        Material Design.</p>
+      <p>The app is open source, completely free, has no ads and lots of features.</p>
+
+      <p>File Management Features:</p>
+      <ul>
+        <li>Down- and upload files</li>
+        <li>Delete files/folders</li>
+        <li>Rename files/folders</li>
+        <li>Copy and move files and folders to other locations on the server</li>
+        <li>Share files</li>
+        <li>Open files without permanently saving them on your device</li>
+        <li>Create folders</li>
+        <li>Search for files in the current directory</li>
+        <li>Get informations like size, permissions and modification date</li>
+      </ul>
+      <p>Connection Features:</p>
+      <ul>
+        <li>Securely save your connections</li>
+        <li>Connect to a server quickly with the Quick Connect feature</li>
+        <li>Give your connections a name so you can better organise them</li>
+        <li>Use the favorites page to see your favorite connections or see your history of added connections on the
+          recently added page</li>
+        <li>Edit and delete existing connections</li>
+      </ul>
+      <p>Customisation:</p>
+      <ul>
+        <li>Choose between light, dark and black theme</li>
+        <li>Use list, detailed or grid view to view your files</li>
+        <li>Set how your files will be sorted</li>
+        <li>Choose whether to show dotfiles</li>
+        <li>Set location for downloaded files</li>
+        <li>Set shell commands for copying/moving files and folders</li>
+      </ul>
+      <h2>Contributing</h2>
+      <p>
+        Please feel free to contribute by opening an issue, sending a feature
+        request or a bug report on GitHub.
+      </p>
     </div>
 
     <h2>Screenshots</h2>
