@@ -6,9 +6,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-const Duration _kUnconfirmedRippleDuration = Duration(milliseconds: 400);
+const Duration _kUnconfirmedRippleDuration = Duration(milliseconds: 300);
 const Duration _kFadeInDuration = Duration(milliseconds: 75);
-const Duration _kRadiusDuration = Duration(milliseconds: 225);
+const Duration _kRadiusDuration = Duration(milliseconds: 245);
 const Duration _kFadeOutDuration = Duration(milliseconds: 375);
 const Duration _kCancelDuration = Duration(milliseconds: 75);
 
@@ -156,7 +156,7 @@ class CustomInkRipple extends InteractiveInkFeature {
     // diameter is 10dps larger than the target diameter.
     _radius = _radiusController.drive(
       Tween<double>(
-        begin: _targetRadius * 0.50,
+        begin: _targetRadius * 0.58,
         end: _targetRadius + 5.0,
       ).chain(_easeCurveTween),
     );

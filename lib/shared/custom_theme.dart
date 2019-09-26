@@ -103,6 +103,7 @@ class CustomThemes {
     primaryColor: Color.fromRGBO(22, 22, 23, 1),
     scaffoldBackgroundColor: Color.fromRGBO(22, 22, 23, 1),
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    splashColor: Color.fromRGBO(255, 255, 255, .1),
     splashFactory: CustomInkRipple.splashFactory,
     textSelectionHandleColor: _darkAccentColor,
   );
@@ -133,6 +134,7 @@ class CustomThemes {
     primaryColor: Color.fromRGBO(0, 0, 0, 1),
     scaffoldBackgroundColor: Color.fromRGBO(0, 0, 0, 1),
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
+    splashColor: Color.fromRGBO(255, 255, 255, .1),
     splashFactory: CustomInkRipple.splashFactory,
     textSelectionHandleColor: _darkAccentColor,
   );
