@@ -80,7 +80,7 @@ class CustomThemes {
   static final ThemeData dark = ThemeData(
     accentColor: _darkAccentColor,
     accentColorBrightness: Brightness.light,
-    bottomAppBarColor: Color.fromRGBO(49, 50, 52, 1),
+    bottomAppBarColor: Color.fromRGBO(52, 52, 54, 1),
     bottomAppBarTheme: BottomAppBarTheme(elevation: 8.0),
     buttonTheme: ButtonThemeData(
       textTheme: ButtonTextTheme.primary,
@@ -101,7 +101,7 @@ class CustomThemes {
       labelStyle: TextStyle(fontSize: 16.0, color: Colors.grey[300]),
     ),
     primaryColor: Color.fromRGBO(22, 22, 23, 1),
-    scaffoldBackgroundColor: Color.fromRGBO(22, 22, 23, 1),
+    scaffoldBackgroundColor: Color.fromRGBO(22, 22, 25, 1),
     snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating),
     splashColor: Color.fromRGBO(255, 255, 255, .1),
     splashFactory: CustomInkRipple.splashFactory,
@@ -111,8 +111,9 @@ class CustomThemes {
   static final ThemeData black = ThemeData(
     accentColor: _darkAccentColor,
     accentColorBrightness: Brightness.light,
-    bottomAppBarColor: Color.fromRGBO(30, 30, 31, 1),
+    bottomAppBarColor: Color.fromRGBO(32, 32, 34, 1),
     bottomAppBarTheme: BottomAppBarTheme(elevation: 8.0),
+    bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.grey[900]),
     buttonTheme: ButtonThemeData(
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
