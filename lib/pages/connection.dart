@@ -149,7 +149,7 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   List<Widget> _getItemList(
     ConnectionModel model, {
-    bool addBottomSpace = false,
+    bool isGridView = false,
   }) {
     if (widget.visibleFileInfos == null) widget.visibleFileInfos = [];
     _isSelected.length = widget.visibleFileInfos.length;
@@ -220,7 +220,13 @@ class _ConnectionPageState extends State<ConnectionPage>
         }
       }
     }
-    list.add(Container(height: addBottomSpace ? 84 : 0));
+    if (isGridView) {
+      list.add(Container());
+      list.add(Container());
+      list.add(Container());
+    } else {
+      list.add(Container(height: 84));
+    }
     return list;
   }
 
@@ -785,12 +791,13 @@ class _ConnectionPageState extends State<ConnectionPage>
                                     SettingsVariables.view == "detailed"
                                 ? SliverList(
                                     delegate: SliverChildListDelegate(
-                                      _getItemList(model, addBottomSpace: true),
+                                      _getItemList(model),
                                     ),
                                   )
                                 : SliverGrid.extent(
                                     maxCrossAxisExtent: 160,
-                                    children: _getItemList(model),
+                                    children:
+                                        _getItemList(model, isGridView: true),
                                   )),
                           ],
                         ),
