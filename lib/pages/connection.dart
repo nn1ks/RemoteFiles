@@ -271,7 +271,7 @@ class _ConnectionPageState extends State<ConnectionPage>
     var model = Provider.of<ConnectionModel>(context);
     if (_isSelectionMode) {
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Download",
           child: Opacity(
             opacity: _selectedItemsAreFiles ? 1 : .5,
@@ -380,7 +380,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         FloatingActionRowDivider(),
       );
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Delete",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.delete),
@@ -410,7 +410,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         FloatingActionRowDivider(),
       );
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Copy to",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.fileCopy),
@@ -438,7 +438,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         FloatingActionRowDivider(),
       );
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Move to",
           child: FloatingActionRowButton(
             icon: Icon(MdiIcons.fileSwapOutline),
@@ -466,7 +466,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         FloatingActionRowDivider(),
       );
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Cancel",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.clear),
@@ -483,7 +483,7 @@ class _ConnectionPageState extends State<ConnectionPage>
       );
     } else if (Provider.of<ConnectionModel>(context).isPasteMode) {
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Paste",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.saveAlt),
@@ -519,7 +519,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         FloatingActionRowDivider(),
       );
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Cancel",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.clear),
@@ -533,7 +533,7 @@ class _ConnectionPageState extends State<ConnectionPage>
       );
     } else {
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Create folder",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.createNewFolder),
@@ -580,7 +580,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         FloatingActionRowDivider(),
       );
       widgets.add(
-        CustomTooltip(
+        Tooltip(
           message: "Upload file",
           child: FloatingActionRowButton(
             icon: Icon(OMIcons.publish),
@@ -684,7 +684,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                         ),
                       ),
                       Material(
-                        child: CustomTooltip(
+                        child: Tooltip(
                           message: "Connection",
                           child: CustomIconButton(
                             icon: Icon(Icons.info_outline),
@@ -712,7 +712,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                         ),
                       ),
                       Material(
-                        child: CustomTooltip(
+                        child: Tooltip(
                           message: "Settings",
                           child: CustomIconButton(
                             icon: Icon(OMIcons.settings),

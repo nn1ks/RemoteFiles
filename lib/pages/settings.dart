@@ -142,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage>
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      CustomTooltip(
+                      Tooltip(
                         message: "Clear",
                         child: CustomIconButton(
                           icon: Icon(
@@ -155,7 +155,7 @@ class _SettingsPageState extends State<SettingsPage>
                           },
                         ),
                       ),
-                      CustomTooltip(
+                      Tooltip(
                         message: "Set to default",
                         child: CustomIconButton(
                           icon: Icon(

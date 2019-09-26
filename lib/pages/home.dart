@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           _isSearchMode
                               ? Container()
                               : Material(
-                                  child: CustomTooltip(
+                                  child: Tooltip(
                                     message: "Search",
                                     child: CustomIconButton(
                                       icon: Icon(Icons.search),
@@ -181,7 +181,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                           Material(
-                            child: CustomTooltip(
+                            child: Tooltip(
                               message: "Settings",
                               child: CustomIconButton(
                                 icon: Icon(OMIcons.settings),
@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           heroTag: "fab",
           color: Theme.of(context).accentColor,
           children: <Widget>[
-            CustomTooltip(
+            Tooltip(
               message: "Quick connect",
               child: FloatingActionRowButton(
                 icon: Icon(Icons.track_changes),
@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
             FloatingActionRowDivider(),
-            CustomTooltip(
+            Tooltip(
               message: "Add new connection",
               child: FloatingActionRowButton(
                 icon: Icon(Icons.add),
