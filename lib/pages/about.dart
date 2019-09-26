@@ -69,6 +69,24 @@ class _AboutPageState extends State<AboutPage> {
     return null;
   }
 
+  Future<void> _launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text("Could not launch $url"),
+        ),
+      );
+    }
+  }
+
+  Future<void> _launchPlayStoreUrl() async {
+    String url =
+        "https://play.google.com/store/apps/details?id=com.niklas8.remotefiles";
+    await _launchUrl(url);
+  }
+
   @override
   void initState() {
     PackageInfo.fromPlatform().then((packageInfo) {
@@ -143,47 +161,21 @@ class _AboutPageState extends State<AboutPage> {
                   leading: Icon(MdiIcons.githubCircle),
                   title: Text("GitHub"),
                   onTap: () async {
-                    const url = "https://github.com/niklas-8/RemoteFiles";
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      Navigator.pop(context);
-                      _scaffoldKey.currentState.showSnackBar(
-                        SnackBar(
-                          content: Text("Could not launch $url"),
-                        ),
-                      );
-                    }
+                    await _launchUrl("https://github.com/niklas-8/RemoteFiles");
                   },
                 ),
                 ListTile(
                   leading: Icon(MdiIcons.googlePlay),
                   title: Text("Google PlayStore"),
-                  onTap: () {
-                    _scaffoldKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "App is not yet available in the Google PlayStore",
-                        ),
-                      ),
-                    );
+                  onTap: () async {
+                    await _launchPlayStoreUrl();
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.link),
                   title: Text("Website"),
                   onTap: () async {
-                    const url = "https://niklas-8.github.io/RemoteFiles";
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      Navigator.pop(context);
-                      _scaffoldKey.currentState.showSnackBar(
-                        SnackBar(
-                          content: Text("Could not launch $url"),
-                        ),
-                      );
-                    }
+                    await _launchUrl("https://niklas-8.github.io/RemoteFiles");
                   },
                 ),
               ],
@@ -241,15 +233,8 @@ class _AboutPageState extends State<AboutPage> {
                               ListTile(
                                 leading: Icon(Icons.open_in_new),
                                 title: Text("Update on PlayStore"),
-                                onTap: () {
-                                  _scaffoldKey.currentState.showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "App is not yet available in the " +
-                                            "Google PlayStore",
-                                      ),
-                                    ),
-                                  );
+                                onTap: () async {
+                                  await _launchPlayStoreUrl();
                                 },
                               ),
                               ListTile(
@@ -257,18 +242,8 @@ class _AboutPageState extends State<AboutPage> {
                                 title: Text(
                                     "Download the latest version from GitHub"),
                                 onTap: () async {
-                                  String url = _latestVersion["assets"][0]
-                                      ["browser_download_url"];
-                                  if (await canLaunch(url)) {
-                                    await launch(url);
-                                  } else {
-                                    Navigator.pop(context);
-                                    _scaffoldKey.currentState.showSnackBar(
-                                      SnackBar(
-                                        content: Text("Could not launch $url"),
-                                      ),
-                                    );
-                                  }
+                                  await _launchUrl(_latestVersion["assets"][0]
+                                      ["browser_download_url"]);
                                 },
                               ),
                             ],
