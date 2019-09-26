@@ -121,6 +121,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         children: <Widget>[
                           _isSearchMode
                               ? Material(
+                                  color: Colors.transparent,
                                   child: CustomIconButton(
                                     icon: Icon(Icons.clear),
                                     onPressed: () {
@@ -169,6 +170,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           _isSearchMode
                               ? Container()
                               : Material(
+                                  color: Colors.transparent,
                                   child: Tooltip(
                                     message: "Search",
                                     child: CustomIconButton(
@@ -181,6 +183,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                           Material(
+                            color: Colors.transparent,
                             child: Tooltip(
                               message: "Settings",
                               child: CustomIconButton(

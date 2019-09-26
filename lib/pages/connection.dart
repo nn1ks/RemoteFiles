@@ -631,6 +631,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Material(
+                        color: Colors.transparent,
                         child: CustomIconButton(
                           icon: Icon(_searchFocusNode.hasFocus
                               ? Icons.clear
@@ -651,6 +652,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                         ),
                       ),
                       Material(
+                        color: Colors.transparent,
                         child: SizedBox(
                           width: constraints.maxWidth - 3 * 44,
                           child: TextField(
@@ -684,6 +686,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                         ),
                       ),
                       Material(
+                        color: Colors.transparent,
                         child: Tooltip(
                           message: "Connection",
                           child: CustomIconButton(
@@ -712,6 +715,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                         ),
                       ),
                       Material(
+                        color: Colors.transparent,
                         child: Tooltip(
                           message: "Settings",
                           child: CustomIconButton(
