@@ -269,6 +269,7 @@ class FileBottomSheet extends StatelessWidget {
                           );
                         },
                       ),
+                      SizedBox(height: 18),
                     ],
                   ),
                 );
