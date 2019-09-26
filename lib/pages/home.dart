@@ -120,15 +120,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           _isSearchMode
-                              ? CustomIconButton(
-                                  icon: Icon(Icons.clear),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    Provider.of<HomeModel>(context)
-                                        .searchQuery = "";
-                                    _isSearchMode = false;
-                                    setState(() {});
-                                  })
+                              ? Material(
+                                  child: CustomIconButton(
+                                    icon: Icon(Icons.clear),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      Provider.of<HomeModel>(context)
+                                          .searchQuery = "";
+                                      _isSearchMode = false;
+                                      setState(() {});
+                                    },
+                                  ),
+                                )
                               : Container(),
                           _isSearchMode
                               ? SizedBox(
@@ -165,28 +168,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                           _isSearchMode
                               ? Container()
-                              : CustomTooltip(
-                                  message: "Search",
-                                  child: CustomIconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      _isSearchMode = true;
-                                      setState(() {});
-                                    },
+                              : Material(
+                                  child: CustomTooltip(
+                                    message: "Search",
+                                    child: CustomIconButton(
+                                      icon: Icon(Icons.search),
+                                      onPressed: () {
+                                        _isSearchMode = true;
+                                        setState(() {});
+                                      },
+                                    ),
                                   ),
                                 ),
-                          CustomTooltip(
-                            message: "Settings",
-                            child: CustomIconButton(
-                              icon: Icon(OMIcons.settings),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) => SettingsPage(),
-                                  ),
-                                );
-                              },
+                          Material(
+                            child: CustomTooltip(
+                              message: "Settings",
+                              child: CustomIconButton(
+                                icon: Icon(OMIcons.settings),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => SettingsPage(),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ],

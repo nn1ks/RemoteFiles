@@ -630,93 +630,101 @@ class _ConnectionPageState extends State<ConnectionPage>
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      CustomIconButton(
-                        icon: Icon(_searchFocusNode.hasFocus
-                            ? Icons.clear
-                            : Icons.arrow_back),
-                        onPressed: () {
-                          if (_searchFocusNode.hasFocus) {
-                            _searchController.clear();
-                            if (widget.fileInfos != null) {
-                              widget.visibleFileInfos =
-                                  List.from(widget.fileInfos);
-                            }
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            setState(() {});
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        },
-                      ),
-                      SizedBox(
-                        width: constraints.maxWidth - 3 * 44,
-                        child: TextField(
-                          controller: _searchController,
-                          focusNode: _searchFocusNode,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            focusColor: Theme.of(context).accentColor,
-                            hintText: "Search",
-                          ),
-                          onChanged: (String value) {
-                            if (value.isEmpty) {
-                              widget.visibleFileInfos =
-                                  List.from(widget.fileInfos);
+                      Material(
+                        child: CustomIconButton(
+                          icon: Icon(_searchFocusNode.hasFocus
+                              ? Icons.clear
+                              : Icons.arrow_back),
+                          onPressed: () {
+                            if (_searchFocusNode.hasFocus) {
+                              _searchController.clear();
+                              if (widget.fileInfos != null) {
+                                widget.visibleFileInfos =
+                                    List.from(widget.fileInfos);
+                              }
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              setState(() {});
                             } else {
-                              widget.visibleFileInfos = [];
-                              widget.fileInfos.forEach((v) {
-                                if (v.name
-                                    .toLowerCase()
-                                    .contains(value.toLowerCase())) {
-                                  widget.visibleFileInfos.add(v);
-                                }
-                              });
+                              Navigator.pop(context);
                             }
-                            setState(() {});
-                          },
-                          onTap: () => setState(() {}),
-                          onSubmitted: (String value) => setState(() {}),
-                        ),
-                      ),
-                      CustomTooltip(
-                        message: "Connection",
-                        child: CustomIconButton(
-                          icon: Icon(Icons.info_outline),
-                          onPressed: () {
-                            ConnectionDialog(
-                              context: context,
-                              connection: widget.connection,
-                              isConnectionPage: true,
-                              primaryButtonIconData:
-                                  Icons.remove_circle_outline,
-                              primaryButtonLabel: "Disconnect",
-                              primaryButtonOnPressed: () {
-                                var model =
-                                    Provider.of<ConnectionModel>(context);
-                                if (!model.isLoading) {
-                                  model.client.disconnectSFTP();
-                                  model.client.disconnect();
-                                }
-                                Navigator.popUntil(
-                                    context, ModalRoute.withName('/'));
-                              },
-                            ).show();
                           },
                         ),
                       ),
-                      CustomTooltip(
-                        message: "Settings",
-                        child: CustomIconButton(
-                          icon: Icon(OMIcons.settings),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (context) => SettingsPage(),
-                              ),
-                            );
-                          },
+                      Material(
+                        child: SizedBox(
+                          width: constraints.maxWidth - 3 * 44,
+                          child: TextField(
+                            controller: _searchController,
+                            focusNode: _searchFocusNode,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              focusColor: Theme.of(context).accentColor,
+                              hintText: "Search",
+                            ),
+                            onChanged: (String value) {
+                              if (value.isEmpty) {
+                                widget.visibleFileInfos =
+                                    List.from(widget.fileInfos);
+                              } else {
+                                widget.visibleFileInfos = [];
+                                widget.fileInfos.forEach((v) {
+                                  if (v.name
+                                      .toLowerCase()
+                                      .contains(value.toLowerCase())) {
+                                    widget.visibleFileInfos.add(v);
+                                  }
+                                });
+                              }
+                              setState(() {});
+                            },
+                            onTap: () => setState(() {}),
+                            onSubmitted: (String value) => setState(() {}),
+                          ),
+                        ),
+                      ),
+                      Material(
+                        child: CustomTooltip(
+                          message: "Connection",
+                          child: CustomIconButton(
+                            icon: Icon(Icons.info_outline),
+                            onPressed: () {
+                              ConnectionDialog(
+                                context: context,
+                                connection: widget.connection,
+                                isConnectionPage: true,
+                                primaryButtonIconData:
+                                    Icons.remove_circle_outline,
+                                primaryButtonLabel: "Disconnect",
+                                primaryButtonOnPressed: () {
+                                  var model =
+                                      Provider.of<ConnectionModel>(context);
+                                  if (!model.isLoading) {
+                                    model.client.disconnectSFTP();
+                                    model.client.disconnect();
+                                  }
+                                  Navigator.popUntil(
+                                      context, ModalRoute.withName('/'));
+                                },
+                              ).show();
+                            },
+                          ),
+                        ),
+                      ),
+                      Material(
+                        child: CustomTooltip(
+                          message: "Settings",
+                          child: CustomIconButton(
+                            icon: Icon(OMIcons.settings),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) => SettingsPage(),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
