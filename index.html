@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>RemoteFiles - A open source SFTP client</title>
+
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: rgb(15, 16, 18);
+            color: #ccc;
+            font-family: "Roboto", sans-serif;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        a {
+            color: #5999f8;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: rgba(60, 120, 255, .18);
+            padding: 3.6rem 0;
+            text-align: center;
+        }
+
+        header img {
+            width: 100px;
+        }
+
+        header h1 {
+            color: #ddd;
+            font-family: "Roboto Mono", monospace;
+            font-size: 2.6em;
+            font-weight: 600;
+            margin: .3em 0 .6em 0;
+        }
+
+        header h3 {
+            font-size: 1.2em;
+            font-weight: 400;
+            margin: .8em 0;
+            opacity: .8;
+        }
+
+        #button-container {
+            margin-top: 3rem;
+        }
+
+        #button {
+            background-color: rgba(255, 255, 255, .16);
+            border-radius: .34em;
+            color: #ffffff;
+            display: inline-block;
+            margin: .75rem;
+            padding: .75rem 1rem;
+            text-decoration: none;
+            transition: .2s;
+        }
+
+        #button:hover {
+            background-color: rgba(255, 255, 255, .24);
+            box-shadow: 0 .12rem .2rem rgba(0, 0, 0, .3);
+        }
+
+        #button #icon {
+            margin-right: .8rem;
+        }
+
+        #button #icon::before {
+            transform: scale(1.3);
+        }
+
+        main {
+            margin: 0 auto;
+            max-width: 60rem;
+            padding: 2rem 6rem;
+        }
+
+        main h2 {
+            font-family: "Roboto Mono", monospace;
+            font-size: 1.9rem;
+            font-weight: 500;
+        }
+
+        #divider {
+            height: 2px;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            background-color: rgba(255, 255, 255, .2);
+        }
+
+        #screenshot-container {
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+        }
+
+        #screenshot-container div {
+            display: inline-block;
+        }
+
+        #screenshot-container img {
+            max-width: 100%;
+            width: 280px;
+        }
+
+        #screenshot-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        #screenshot-container::-webkit-scrollbar-track {
+            background: #444;
+        }
+
+        #screenshot-container::-webkit-scrollbar-thumb {
+            background: #777;
+        }
+
+        #screenshot-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        #screenshot-container::-webkit-scrollbar-thumb:active {
+            background: #bbb;
+        }
+
+        @media screen and (max-width: 54em) {
+            main {
+                padding: 2rem;
+                padding-top: .8rem;
+            }
+        }
+
+        @media screen and (max-width: 42em) {
+            header {
+                padding: 2rem 0;
+            }
+        }
+
+        @media only screen and (max-device-width: 768px) {
+            #button {
+                font-size: 1.3em;
+            }
+        }
+
+        @media only screen and (max-device-width: 600px) {
+            body {
+                font-size: 1.2rem;
+            }
+
+            header {
+                padding-bottom: 0;
+            }
+
+            header img {
+                width: 200px;
+            }
+
+            header h1 {
+                font-size: 3.6em;
+            }
+
+            #button {
+                background-color: rgba(255, 255, 255, .1);
+                border-bottom: 2px solid rgba(255, 255, 255, .1);
+                border-radius: 0;
+                font-size: 2.1em;
+                margin: 0;
+                padding: 1em;
+                text-align: start;
+                width: calc(100% - 2em);
+            }
+
+            #button #icon {
+                margin-right: .8em;
+            }
+
+            main {
+                padding: 3rem;
+                padding-top: 1rem;
+            }
+
+            main h2 {
+                font-size: 3.3rem;
+            }
+
+            #divider {
+                height: 3px;
+                margin-top: 4rem;
+            }
+
+            #screenshot-container img {
+                width: 600px;
+            }
+
+            #screenshot-container::-webkit-scrollbar {
+                height: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="https://github.com/niklas-8/RemoteFiles/blob/master/assets/app_icon_bg.png?raw=true" />
+        <h1>RemoteFiles</h1>
+        <h3>A open source SFTP client for Android and iOS</h3>
+        <h3>Version 0.0.9 [Beta]</h3>
+        <div id="button-container">
+            <a id="button" href="https://github.com/niklas-8/RemoteFiles"><span id="icon"
+                    class="mdi mdi-github-circle"></span><span id="text">View on GitHub</span></a>
+            <a id="button" href="https://play.google.com/store/apps/details?id=com.niklas8.remotefiles"><span id="icon"
+                    class="mdi mdi-google-play"></span><span id="text">Google PlayStore</span></a>
+            <a id="button"
+                href="https://github.com/niklas-8/RemoteFiles/releases/download/v0.0.9-beta/remotefiles-v0.0.9-beta.apk"><span
+                    id="icon" class="mdi mdi-download"></span><span id="text">Download APK file</span></a>
+        </div>
+    </header>
+    <main>
+        <h2>About</h2>
+        <p>RemoteFiles is a SFTP client that was developed with <a href="https://flutter.dev">Flutter</a> in the <a
+                href="https://dart.dev">Dart</a> Programming language and the UI is based on
+            Material Design.</p>
+        <p>The app is open source, completely free, has no ads and lots of features.</p>
+
+        <p>File Management Features:</p>
+        <ul>
+            <li>Down- and upload files</li>
+            <li>Delete files/folders</li>
+            <li>Rename files/folders</li>
+            <li>Copy and move files and folders to other locations on the server</li>
+            <li>Share files</li>
+            <li>Open files without permanently saving them on your device</li>
+            <li>Create folders</li>
+            <li>Search for files in the current directory</li>
+            <li>Get informations like size, permissions and modification date</li>
+        </ul>
+        <p>Connection Features:</p>
+        <ul>
+            <li>Securely save your connections</li>
+            <li>Connect to a server quickly with the Quick Connect feature</li>
+            <li>Give your connections a name so you can better organise them</li>
+            <li>Use the favorites page to see your favorite connections or see your history of added connections on the
+                recently added page</li>
+            <li>Edit and delete existing connections</li>
+        </ul>
+        <p>Customisation:</p>
+        <ul>
+            <li>Choose between light, dark and black theme</li>
+            <li>Use list, detailed or grid view to view your files</li>
+            <li>Set how your files will be sorted</li>
+            <li>Choose whether to show dotfiles</li>
+            <li>Set location for downloaded files</li>
+            <li>Set shell commands for copying/moving files and folders</li>
+        </ul>
+        <div id="divider"></div>
+        <h2>Contributing</h2>
+        <p>
+            Please feel free to contribute by opening an issue, sending a feature
+            request or a bug report on GitHub.
+        </p>
+        <div id="divider"></div>
+        <h2>Screenshots</h2>
+        <div id="screenshot-container">
+            <div><img src="https://github.com/niklas-8/RemoteFiles/blob/master/screenshots/1.jpg?raw=true" /></div>
+            <div><img src="https://github.com/niklas-8/RemoteFiles/blob/master/screenshots/2.jpg?raw=true" /></div>
+            <div><img src="https://github.com/niklas-8/RemoteFiles/blob/master/screenshots/3.jpg?raw=true" /></div>
+            <div><img src="https://github.com/niklas-8/RemoteFiles/blob/master/screenshots/4.jpg?raw=true" /></div>
+            <div><img src="https://github.com/niklas-8/RemoteFiles/blob/master/screenshots/5.jpg?raw=true" /></div>
+            <div><img src="https://github.com/niklas-8/RemoteFiles/blob/master/screenshots/6.jpg?raw=true" /></div>
+        </div>
+    </main>
+</body>
+
+</html>
