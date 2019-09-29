@@ -14,8 +14,8 @@
 
 ## Downloads
 
+- [Google PlayStore](https://play.google.com/store/apps/details?id=com.niklas8.remotefiles)
 - [APK file](https://github.com/niklas-8/RemoteFiles/releases)
-- Google PlayStore (not yet available)
 
 ## Information
 
