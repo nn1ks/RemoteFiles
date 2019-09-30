@@ -757,6 +757,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                     )
                   : Scrollbar(
                       child: CustomScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
                         slivers: <Widget>[
                           SliverAppBar(
                             floating: true,
