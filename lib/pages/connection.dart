@@ -741,82 +741,76 @@ class _ConnectionPageState extends State<ConnectionPage>
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: _buildFloatingActionRow(),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-          setState(() {});
-        },
-        child: SafeArea(
-          child: Consumer<ConnectionModel>(
-            builder: (context, model, child) {
-              return RefreshIndicator(
-                key: _refreshKey,
-                onRefresh: () async {
-                  await ConnectionMethods.refresh(context, widget.connection);
-                },
-                child: model.isLoading
-                    ? Container(
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
-                    : Scrollbar(
-                        child: CustomScrollView(
-                          slivers: <Widget>[
-                            SliverAppBar(
-                              floating: true,
-                              snap: true,
-                              elevation: 2,
-                              automaticallyImplyLeading: false,
-                              titleSpacing: 6,
-                              title: SingleChildScrollView(
-                                reverse: true,
-                                scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 10.0),
-                                  child: Row(
-                                    children: _getCurrentPathWidgets(),
-                                  ),
-                                ),
-                              ),
-                              bottom: PreferredSize(
-                                preferredSize: Size.fromHeight(
-                                    _searchController.text != "" ? 42 : 1),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: <Widget>[
-                                    _searchController.text != ""
-                                        ? _buildGoToDirectoryWidget()
-                                        : Container(),
-                                    Container(
-                                      height: 1,
-                                      color: Theme.of(context).dividerColor,
-                                    ),
-                                  ],
+      body: SafeArea(
+        child: Consumer<ConnectionModel>(
+          builder: (context, model, child) {
+            return RefreshIndicator(
+              key: _refreshKey,
+              onRefresh: () async {
+                await ConnectionMethods.refresh(context, widget.connection);
+              },
+              child: model.isLoading
+                  ? Container(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Scrollbar(
+                      child: CustomScrollView(
+                        slivers: <Widget>[
+                          SliverAppBar(
+                            floating: true,
+                            snap: true,
+                            elevation: 2,
+                            automaticallyImplyLeading: false,
+                            titleSpacing: 6,
+                            title: SingleChildScrollView(
+                              reverse: true,
+                              scrollDirection: Axis.horizontal,
+                              physics: BouncingScrollPhysics(),
+                              child: Container(
+                                margin: EdgeInsets.only(right: 10.0),
+                                child: Row(
+                                  children: _getCurrentPathWidgets(),
                                 ),
                               ),
                             ),
-                            (SettingsVariables.view == "list" ||
-                                    SettingsVariables.view == "detailed"
-                                ? SliverList(
-                                    delegate: SliverChildListDelegate(
-                                      _getItemList(model),
-                                    ),
-                                  )
-                                : SliverGrid.extent(
-                                    maxCrossAxisExtent: 160,
-                                    children:
-                                        _getItemList(model, isGridView: true),
-                                  )),
-                          ],
-                        ),
+                            bottom: PreferredSize(
+                              preferredSize: Size.fromHeight(
+                                  _searchController.text != "" ? 42 : 1),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  _searchController.text != ""
+                                      ? _buildGoToDirectoryWidget()
+                                      : Container(),
+                                  Container(
+                                    height: 1,
+                                    color: Theme.of(context).dividerColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          (SettingsVariables.view == "list" ||
+                                  SettingsVariables.view == "detailed"
+                              ? SliverList(
+                                  delegate: SliverChildListDelegate(
+                                    _getItemList(model),
+                                  ),
+                                )
+                              : SliverGrid.extent(
+                                  maxCrossAxisExtent: 160,
+                                  children:
+                                      _getItemList(model, isGridView: true),
+                                )),
+                        ],
                       ),
-              );
-            },
-          ),
+                    ),
+            );
+          },
         ),
       ),
     );
