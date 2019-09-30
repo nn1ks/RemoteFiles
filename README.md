@@ -37,9 +37,6 @@ The [path_provider](https://pub.dev/packages/path_provider) package is used to g
 #### Permissions
 To save files to external storage, the `WRITE_EXTERNAL_STORAGE` permission is needed on Android. To request and check this permission the [permission_handler](https://pub.dev/packages/permission_handler) package is used.
 
-#### Analytics
-User data is tracked with the [firebase_analytics](https://pub.dev/packages/firebase_analytics) package.
-
 #### Get latest available version
 When you go to the Settings page and then click on 'About RemoteFiles' at the bottom you can check if you have the latest available version.<br/>
 The releases on GitHub are received with the GitHub API and the [http](https://pub.dev/packages/http) package in the JSON format. To get the latest version the releases are compared with the `published_at` key. Then the version numbers of the latest available version and the currently used version are compared. The version number of the latest available version is determined by the `tag_name`. The version number of the currently used version is determined by the pubspec.yaml file. To get this version number the [package_info](https://pub.dev/packages/package_info) package is used.
