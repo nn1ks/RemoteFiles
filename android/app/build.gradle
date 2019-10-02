@@ -41,8 +41,8 @@ android {
         applicationId "com.niklas8.remotefiles"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        versionCode 11
+        versionName v0.0.11-beta
         testInstrumentationRunner "android.test.runner.AndroidJUnitRunner"
 	    multiDexEnabled true
     }
