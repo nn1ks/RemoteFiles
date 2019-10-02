@@ -44,7 +44,7 @@ android {
         versionCode 11
         versionName v0.0.11-beta
         testInstrumentationRunner "android.test.runner.AndroidJUnitRunner"
-	    multiDexEnabled true
+        multiDexEnabled true
     }
 
     signingConfigs {
