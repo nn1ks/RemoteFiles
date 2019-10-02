@@ -1,0 +1,29 @@
+RemoteFiles is a SFTP client that was developed with Flutter in the Dart Programming language and the UI is based on Material Design.
+It is open source, completely free, has no ads and lots of features.
+Source Code: https://github.com/niklas-8/RemoteFiles
+
+File Management Features:
+- Down- and upload files
+- Delete files/folders
+- Rename files/folders
+- Copy and move files and folders to other locations on the server
+- Share files
+- Open files without permanently saving them on your device
+- Create folders
+- Search for files in the current directory
+- Get informations like size, permissions and modification date
+
+Connection Features:
+- Securely save your connections
+- Connect to a server quickly with the Quick Connect feature
+- Give your connections a name so you can better organise them
+- Use the favorites page to see your favorite connections or see your history of added connections on the recently added page
+- Edit and delete existing connections
+
+Customisation:
+- Choose between light, dark and black theme
+- Use list, detailed or grid view to view your files
+- Set how your files will be sorted
+- Choose whether to show dotfiles
+- Set location for downloaded files
+- Set shell commands for copying/moving files and folders
