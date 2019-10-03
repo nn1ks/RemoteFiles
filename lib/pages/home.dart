@@ -94,18 +94,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 12,
-                    top: 12,
-                    right: 12,
-                    bottom: 9,
-                  ),
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 140),
+                  margin: _isSearchMode
+                      ? EdgeInsets.all(0)
+                      : EdgeInsets.only(
+                          left: 12,
+                          top: 12,
+                          right: 12,
+                          bottom: 9,
+                        ),
                   padding: EdgeInsets.symmetric(horizontal: 4),
                   height: 50,
                   decoration: BoxDecoration(
                     color: Theme.of(context).bottomAppBarColor,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(_isSearchMode ? 0 : 8),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black26,
@@ -119,86 +122,83 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       return Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          _isSearchMode
-                              ? Material(
-                                  color: Colors.transparent,
-                                  child: CustomIconButton(
-                                    icon: Icon(Icons.clear),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      Provider.of<HomeModel>(context)
-                                          .searchQuery = "";
-                                      _isSearchMode = false;
-                                      setState(() {});
-                                    },
-                                  ),
-                                )
-                              : Container(),
-                          _isSearchMode
-                              ? SizedBox(
-                                  width: constraints.maxWidth - 2 * 44,
-                                  child: TextField(
-                                    controller: _searchController,
-                                    autofocus: true,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      focusColor: Theme.of(context).accentColor,
-                                      hintText: "Search",
-                                    ),
-                                    onChanged: (String value) {
-                                      Provider.of<HomeModel>(context)
-                                          .searchQuery = value.trim();
-                                      setState(() {});
-                                    },
-                                  ),
-                                )
-                              : Container(),
-                          _isSearchMode
-                              ? Container()
-                              : Container(
-                                  width: constraints.maxWidth - 2 * 44,
-                                  padding: EdgeInsets.only(left: 14),
-                                  child: Text(
-                                    "RemoteFiles",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                          _isSearchMode
-                              ? Container()
-                              : Material(
-                                  color: Colors.transparent,
-                                  child: Tooltip(
-                                    message: "Search",
-                                    child: CustomIconButton(
-                                      icon: Icon(Icons.search),
-                                      onPressed: () {
-                                        _isSearchMode = true;
-                                        setState(() {});
-                                      },
-                                    ),
-                                  ),
-                                ),
-                          Material(
-                            color: Colors.transparent,
-                            child: Tooltip(
-                              message: "Settings",
+                          if (_isSearchMode)
+                            Material(
+                              color: Colors.transparent,
                               child: CustomIconButton(
-                                icon: Icon(OMIcons.settings),
+                                icon: Icon(Icons.clear),
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => SettingsPage(),
-                                    ),
-                                  );
+                                  _searchController.clear();
+                                  Provider.of<HomeModel>(context).searchQuery =
+                                      "";
+                                  _isSearchMode = false;
+                                  setState(() {});
                                 },
                               ),
                             ),
-                          ),
+                          if (_isSearchMode)
+                            SizedBox(
+                              width: constraints.maxWidth - 44,
+                              child: TextField(
+                                controller: _searchController,
+                                autofocus: true,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  focusColor: Theme.of(context).accentColor,
+                                  hintText: "Search",
+                                ),
+                                onChanged: (String value) {
+                                  Provider.of<HomeModel>(context).searchQuery =
+                                      value.trim();
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                          if (!_isSearchMode)
+                            Container(
+                              width: constraints.maxWidth - 2 * 44,
+                              padding: EdgeInsets.only(left: 14),
+                              child: Text(
+                                "RemoteFiles",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          if (!_isSearchMode)
+                            Material(
+                              color: Colors.transparent,
+                              child: Tooltip(
+                                message: "Search",
+                                child: CustomIconButton(
+                                  icon: Icon(Icons.search),
+                                  onPressed: () {
+                                    _isSearchMode = true;
+                                    setState(() {});
+                                  },
+                                ),
+                              ),
+                            ),
+                          if (!_isSearchMode)
+                            Material(
+                              color: Colors.transparent,
+                              child: Tooltip(
+                                message: "Settings",
+                                child: CustomIconButton(
+                                  icon: Icon(OMIcons.settings),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => SettingsPage(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                         ],
                       );
                     },
