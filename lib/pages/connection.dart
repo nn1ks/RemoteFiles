@@ -206,7 +206,9 @@ class _ConnectionPageState extends State<ConnectionPage>
                   .show();
             },
             onLongPress: () {
+              FocusScope.of(context).requestFocus(FocusNode());
               setState(() {
+                _isSearchMode = false;
                 _isSelected[i] = !_isSelected[i];
                 if (_isSelected.contains(true)) {
                   _isSelectionMode = true;
@@ -264,6 +266,14 @@ class _ConnectionPageState extends State<ConnectionPage>
         },
       ),
     );
+  }
+
+  int _getNumberOfSelectedItems() {
+    int num = 0;
+    _isSelected.forEach((v) {
+      if (v) num++;
+    });
+    return num;
   }
 
   Widget _buildFloatingActionRow() {
@@ -462,25 +472,6 @@ class _ConnectionPageState extends State<ConnectionPage>
           ),
         ),
       );
-      widgets.add(
-        FloatingActionRowDivider(),
-      );
-      widgets.add(
-        Tooltip(
-          message: "Cancel",
-          child: FloatingActionRowButton(
-            icon: Icon(OMIcons.clear),
-            onTap: () {
-              setState(() {
-                for (int i = 0; i < _isSelected.length; i++) {
-                  _isSelected[i] = false;
-                }
-                _isSelectionMode = false;
-              });
-            },
-          ),
-        ),
-      );
     } else if (Provider.of<ConnectionModel>(context).isPasteMode) {
       widgets.add(
         Tooltip(
@@ -599,8 +590,143 @@ class _ConnectionPageState extends State<ConnectionPage>
     );
   }
 
+  Widget _buildAppBarIconButtons(
+      BuildContext context, BoxConstraints constraints) {
+    List<Widget> buttons = [];
+    if (_isSearchMode) {
+      buttons.add(
+        Material(
+          color: Colors.transparent,
+          child: CustomIconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () {
+              _searchController.clear();
+              if (widget.fileInfos != null) {
+                widget.visibleFileInfos = List.from(widget.fileInfos);
+              }
+              FocusScope.of(context).requestFocus(FocusNode());
+              setState(() {
+                _isSearchMode = false;
+              });
+            },
+          ),
+        ),
+      );
+    } else if (_isSelectionMode) {
+      buttons.add(
+        Material(
+          color: Colors.transparent,
+          child: CustomIconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () {
+              setState(() {
+                for (int i = 0; i < _isSelected.length; i++) {
+                  _isSelected[i] = false;
+                }
+                _isSelectionMode = false;
+              });
+            },
+          ),
+        ),
+      );
+      buttons.add(
+        SizedBox(width: constraints.maxWidth - 2 * 44),
+      );
+      buttons.add(
+        Material(
+          color: Colors.transparent,
+          child: Tooltip(
+            message: "Select all",
+            child: CustomIconButton(
+              icon: Icon(Icons.select_all),
+              onPressed: () {
+                setState(() {
+                  for (int i = 0; i < _isSelected.length; i++) {
+                    _isSelected[i] = true;
+                  }
+                  _setDownloadEnable();
+                });
+              },
+            ),
+          ),
+        ),
+      );
+    } else {
+      buttons.add(
+        Material(
+          color: Colors.transparent,
+          child: CustomIconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
+      buttons.add(
+        SizedBox(width: constraints.maxWidth - 3 * 44),
+      );
+      buttons.add(
+        Material(
+          color: Colors.transparent,
+          child: Tooltip(
+            message: "Connection",
+            child: CustomIconButton(
+              icon: Icon(Icons.info_outline),
+              onPressed: () {
+                ConnectionDialog(
+                  context: context,
+                  connection: widget.connection,
+                  isConnectionPage: true,
+                  primaryButtonIconData: Icons.remove_circle_outline,
+                  primaryButtonLabel: "Disconnect",
+                  primaryButtonOnPressed: () {
+                    var model = Provider.of<ConnectionModel>(context);
+                    if (!model.isLoading) {
+                      model.client.disconnectSFTP();
+                      model.client.disconnect();
+                    }
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                ).show();
+              },
+            ),
+          ),
+        ),
+      );
+      buttons.add(
+        Material(
+          color: Colors.transparent,
+          child: Tooltip(
+            message: "Settings",
+            child: CustomIconButton(
+              icon: Icon(OMIcons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => SettingsPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(top: 3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: buttons,
+      ),
+    );
+  }
+
   var _searchController = TextEditingController();
-  var _searchFocusNode = FocusNode();
+  var _isSearchMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -610,13 +736,16 @@ class _ConnectionPageState extends State<ConnectionPage>
         preferredSize: Size.fromHeight(100),
         child: Container(
           child: SafeArea(
-            child: Container(
-              margin: EdgeInsets.only(left: 12, top: 12, right: 12),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 140),
+              margin: _isSearchMode
+                  ? EdgeInsets.all(0)
+                  : EdgeInsets.only(left: 12, top: 12, right: 12),
               padding: EdgeInsets.symmetric(horizontal: 4),
               height: 50,
               decoration: BoxDecoration(
                 color: Theme.of(context).bottomAppBarColor,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(_isSearchMode ? 0 : 8),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
@@ -627,110 +756,67 @@ class _ConnectionPageState extends State<ConnectionPage>
               ),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
+                  return Stack(
                     children: <Widget>[
-                      Material(
-                        color: Colors.transparent,
-                        child: CustomIconButton(
-                          icon: Icon(_searchFocusNode.hasFocus
-                              ? Icons.clear
-                              : Icons.arrow_back),
-                          onPressed: () {
-                            if (_searchFocusNode.hasFocus) {
-                              _searchController.clear();
-                              if (widget.fileInfos != null) {
-                                widget.visibleFileInfos =
-                                    List.from(widget.fileInfos);
-                              }
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              setState(() {});
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          },
-                        ),
-                      ),
-                      Material(
-                        color: Colors.transparent,
-                        child: SizedBox(
-                          width: constraints.maxWidth - 3 * 44,
-                          child: TextField(
-                            controller: _searchController,
-                            focusNode: _searchFocusNode,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              focusColor: Theme.of(context).accentColor,
-                              hintText: "Search",
-                            ),
-                            onChanged: (String value) {
-                              if (value.isEmpty) {
-                                widget.visibleFileInfos =
-                                    List.from(widget.fileInfos);
-                              } else {
-                                widget.visibleFileInfos = [];
-                                widget.fileInfos.forEach((v) {
-                                  if (v.name
-                                      .toLowerCase()
-                                      .contains(value.toLowerCase())) {
-                                    widget.visibleFileInfos.add(v);
-                                  }
-                                });
-                              }
-                              setState(() {});
-                            },
-                            onTap: () => setState(() {}),
-                            onSubmitted: (String value) => setState(() {}),
-                          ),
-                        ),
-                      ),
-                      Material(
-                        color: Colors.transparent,
-                        child: Tooltip(
-                          message: "Connection",
-                          child: CustomIconButton(
-                            icon: Icon(Icons.info_outline),
-                            onPressed: () {
-                              ConnectionDialog(
-                                context: context,
-                                connection: widget.connection,
-                                isConnectionPage: true,
-                                primaryButtonIconData:
-                                    Icons.remove_circle_outline,
-                                primaryButtonLabel: "Disconnect",
-                                primaryButtonOnPressed: () {
-                                  var model =
-                                      Provider.of<ConnectionModel>(context);
-                                  if (!model.isLoading) {
-                                    model.client.disconnectSFTP();
-                                    model.client.disconnect();
-                                  }
-                                  Navigator.popUntil(
-                                      context, ModalRoute.withName('/'));
-                                },
-                              ).show();
-                            },
-                          ),
-                        ),
-                      ),
-                      Material(
-                        color: Colors.transparent,
-                        child: Tooltip(
-                          message: "Settings",
-                          child: CustomIconButton(
-                            icon: Icon(OMIcons.settings),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => SettingsPage(),
+                      _isSelectionMode
+                          ? Padding(
+                              padding: EdgeInsets.only(left: 50, top: 15.5),
+                              child: Text(
+                                _getNumberOfSelectedItems().toString() +
+                                    " Item" +
+                                    (_getNumberOfSelectedItems() == 1
+                                        ? ""
+                                        : "s") +
+                                    " selected",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                              ),
+                            )
+                          : Material(
+                              color: Colors.transparent,
+                              child: SizedBox(
+                                width: constraints.maxWidth,
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(
+                                      left: 50,
+                                      top: 15.5,
+                                      right: 20,
+                                      bottom: 14.5,
+                                    ),
+                                    focusedBorder: InputBorder.none,
+                                    focusColor: Theme.of(context).accentColor,
+                                    hintText: "Search",
+                                  ),
+                                  onChanged: (String value) {
+                                    if (value.isEmpty) {
+                                      widget.visibleFileInfos =
+                                          List.from(widget.fileInfos);
+                                    } else {
+                                      widget.visibleFileInfos = [];
+                                      widget.fileInfos.forEach((v) {
+                                        if (v.name
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase())) {
+                                          widget.visibleFileInfos.add(v);
+                                        }
+                                      });
+                                    }
+                                    setState(() {});
+                                  },
+                                  onTap: () => setState(() {
+                                    _isSearchMode = true;
+                                  }),
+                                  onSubmitted: (String value) =>
+                                      setState(() {}),
+                                ),
+                              ),
+                            ),
+                      _buildAppBarIconButtons(context, constraints),
                     ],
                   );
                 },
