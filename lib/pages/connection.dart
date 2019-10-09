@@ -412,6 +412,12 @@ class _ConnectionPageState extends State<ConnectionPage>
                 currentConnection: widget.connection,
                 calledFromFileBottomSheet: false,
               );
+              setState(() {
+                for (int i = 0; i < _isSelected.length; i++) {
+                  _isSelected[i] = false;
+                }
+                _isSelectionMode = false;
+              });
             },
           ),
         ),
