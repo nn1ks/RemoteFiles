@@ -352,10 +352,10 @@ class LoadFile {
     model.showProgress = false;
     currentConnectionPage.scaffoldKey.currentState.showSnackBar(
       SnackBar(
-        content: Text("Upload completed"),
+        duration: Duration(seconds: 6),
+        content: Text("Upload completed. Refresh the page to see the changes."),
       ),
     );
-    ConnectionMethods.refresh(context, currentConnectionPage.connection);
   }
 
   static Future<String> saveInCache(
