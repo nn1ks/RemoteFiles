@@ -810,7 +810,9 @@ class _ConnectionPageState extends State<ConnectionPage>
                                         }
                                       });
                                     }
-                                    setState(() {});
+                                    setState(() {
+                                      _isSearchMode = true;
+                                    });
                                   },
                                   onTap: () => setState(() {
                                     _isSearchMode = true;
