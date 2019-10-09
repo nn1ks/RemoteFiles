@@ -620,6 +620,10 @@ class _ConnectionPageState extends State<ConnectionPage>
             icon: Icon(Icons.clear),
             onPressed: () {
               setState(() {
+                _searchController.clear();
+                if (widget.fileInfos != null) {
+                  widget.visibleFileInfos = List.from(widget.fileInfos);
+                }
                 for (int i = 0; i < _isSelected.length; i++) {
                   _isSelected[i] = false;
                 }
