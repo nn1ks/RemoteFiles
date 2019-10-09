@@ -21,19 +21,6 @@ class _AboutPageState extends State<AboutPage> {
   bool _isLatestVersion;
   Map<dynamic, dynamic> _latestVersion;
 
-  Future<bool> _getIsLatestVersion(Map<dynamic, dynamic> latestVersion) async {
-    String latestVersionNumber = latestVersion["tag_name"].substring(1);
-    for (int i = 0; i < latestVersionNumber.length; i++) {
-      if (latestVersionNumber[i] == "-") {
-        latestVersionNumber = latestVersionNumber.substring(0, i);
-      }
-    }
-    if (_version == latestVersionNumber) {
-      return true;
-    }
-    return false;
-  }
-
   Future<Map<dynamic, dynamic>> _getLatestVersion() async {
     int convertTimeStringToInt(String publishedAt) {
       var timeString = "";
@@ -93,7 +80,7 @@ class _AboutPageState extends State<AboutPage> {
       _version = packageInfo.version;
       _getLatestVersion().then((latestVersion) async {
         _latestVersion = latestVersion;
-        _isLatestVersion = await _getIsLatestVersion(latestVersion);
+        _isLatestVersion = _version == latestVersion["tag_name"];
       });
     });
     super.initState();
@@ -137,7 +124,7 @@ class _AboutPageState extends State<AboutPage> {
           ),
           SizedBox(height: 5),
           Text(
-            "Version $_version",
+            _version,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
