@@ -59,7 +59,7 @@ RemoteFiles is an open source SFTP client for Android and iOS with a beautiful d
   - Down- and Upload files ([`sftpDownload`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpDownload.html), [`sftpUpload`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpUpload.html))
   - Delete files/folders ([`sftpRm`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpRm.html), [`sftpRmdir`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpRmdir.html))
   - Rename files/folders ([`sftpRename`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpRename.html))
-  - Move and copy files/folders ([`execute`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpRename.html)): The shell commands that are executed can be set in the settings page of the app. The default commands are `mv` and `cp`/`cp -r`.
+  - Move and copy files/folders ([`execute`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/execute.html)): The shell commands that are executed can be set in the settings page of the app. The default commands are `mv` and `cp`/`cp -r`.
   - Create folders ([`sftpMkdir`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpMkdir.html))
   - Get informations like size, permissions and modification date ([`sftpLs`](https://pub.dev/documentation/ssh/latest/ssh/SSHClient/sftpLs.html))
 
