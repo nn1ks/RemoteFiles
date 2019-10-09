@@ -294,7 +294,6 @@ class ConnectionMethods {
                 }
                 Navigator.pop(context);
                 if (calledFromFileBottomSheet) Navigator.pop(context);
-                ConnectionMethods.refresh(context, currentConnection);
               },
             ),
             SizedBox(width: .0),
