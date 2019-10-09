@@ -837,6 +837,55 @@ class _ConnectionPageState extends State<ConnectionPage>
           ),
         ),
       ),
+      bottomNavigationBar:
+          Consumer<ConnectionModel>(builder: (context, model, child) {
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 100),
+          decoration: BoxDecoration(
+            color: Theme.of(context).bottomAppBarColor,
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset(0, -1), blurRadius: 1.4, color: Colors.black12)
+            ],
+          ),
+          height: model.showProgress ? 54 : 0,
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 18),
+                height: 48,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      (model.progressType == "download"
+                              ? "Downloading"
+                              : model.progressType == "upload"
+                                  ? "Uploading"
+                                  : "Caching") +
+                          " ${model.loadFilename}",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      "${model.progressValue}%",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              LinearProgressIndicator(value: model.progressValue * .01),
+            ],
+          ),
+        );
+      }),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: _buildFloatingActionRow(),
       body: SafeArea(
