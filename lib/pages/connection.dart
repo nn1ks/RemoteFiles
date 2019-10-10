@@ -747,7 +747,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         child: Container(
           child: SafeArea(
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 140),
+              duration: Duration(milliseconds: 80),
               margin: _isSearchMode
                   ? EdgeInsets.all(0)
                   : EdgeInsets.only(left: 12, top: 12, right: 12),

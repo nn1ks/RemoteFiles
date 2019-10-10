@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 140),
+                  duration: Duration(milliseconds: 80),
                   margin: _isSearchMode
                       ? EdgeInsets.all(0)
                       : EdgeInsets.only(
