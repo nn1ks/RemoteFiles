@@ -19,7 +19,7 @@ class EditConnectionPage extends StatefulWidget {
 class _EditConnectionPageState extends State<EditConnectionPage> {
   Connection _connection = Connection();
 
-  bool _addToFavorites = false;
+  bool _addToFavorites = true;
   bool _addressIsEntered = true;
   bool _usernameIsEntered = true;
   bool _passwordIsEntered = true;
@@ -222,7 +222,7 @@ class _EditConnectionPageState extends State<EditConnectionPage> {
                 ),
                 widget.isNew ? Divider() : Container(),
                 widget.isNew
-                    ? CheckboxListTile(
+                    ? SwitchListTile(
                         activeColor: Theme.of(context).accentColor,
                         title: Padding(
                           padding: EdgeInsets.only(left: 10),
