@@ -90,8 +90,13 @@ RemoteFiles is an open source SFTP client for Android and iOS with a beautiful d
   - Generate app icons for Android and iOS
 
 - [open_file](https://pub.dev/packages/open_file)
+  - Open files
+
+- [share_extend](https://pub.dev/packages/share_extend)
+  - Share files
 
 - [provider](https://pub.dev/packages/provider)
+  - Used for state management
 
 - [shared_preferences](https://pub.dev/packages/shared_preferences)
 
