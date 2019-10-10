@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:share_extend/share_extend.dart';
 
 import '../pages/pages.dart';
 import '../services/services.dart';
@@ -199,6 +200,28 @@ class FileBottomSheet extends StatelessWidget {
                                   },
                                 ),
                               ],
+                            ),
+                      fileInfo.isDirectory
+                          ? Container()
+                          : ListTile(
+                              leading: Icon(
+                                OMIcons.share,
+                                color: Theme.of(context).accentColor,
+                              ),
+                              title: Padding(
+                                padding: EdgeInsets.only(top: 2.0),
+                                child: Text(
+                                  "Share",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              onTap: () async {
+                                Navigator.pop(context);
+                                ShareExtend.share(
+                                  await LoadFile.saveInCache(filePath, model),
+                                  "file",
+                                );
+                              },
                             ),
                       ListTile(
                         leading: Icon(

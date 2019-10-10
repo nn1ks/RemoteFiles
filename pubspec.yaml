@@ -33,6 +33,7 @@ dependencies:
   path_provider: ^1.1.0
   permission_handler: ^2.2.0
   provider: ^2.0.0
+  share_extend: ^1.0.9
   shared_preferences: ^0.5.2+1
   ssh:
     path: ./ssh_package
