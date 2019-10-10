@@ -90,6 +90,7 @@ class CustomThemes {
     brightness: Brightness.dark,
     cursorColor: _darkAccentColor,
     dialogBackgroundColor: Color.fromRGBO(62, 62, 63, 1),
+    dividerColor: Colors.white24,
     highlightColor: Colors.transparent,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
@@ -122,6 +123,7 @@ class CustomThemes {
     brightness: Brightness.dark,
     cursorColor: _darkAccentColor,
     dialogBackgroundColor: Color.fromRGBO(52, 52, 53, 1),
+    dividerColor: Colors.white24,
     highlightColor: Colors.transparent,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
