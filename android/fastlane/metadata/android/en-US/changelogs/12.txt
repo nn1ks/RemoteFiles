@@ -1,0 +1,6 @@
+- Fixed download
+- Fixed open
+- Fixed upload
+- Added function to share files
+- Updated AppBar when searching and selecting files
+- Added Fastlane file structure
